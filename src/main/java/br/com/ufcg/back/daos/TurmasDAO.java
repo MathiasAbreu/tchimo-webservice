@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.ufcg.back.entities.Turma;
 
-
 @Repository
 public interface TurmasDAO extends JpaRepository<Turma, Long> {
     Turma save(Turma course);

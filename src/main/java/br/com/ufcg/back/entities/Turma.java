@@ -13,7 +13,14 @@ public class Turma {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private long ownerID;
+    private String linkIdentifier;
+    private Long managerID;
     private ArrayList<Long> memberIDs;
+
+    private int numMinGrupos;
+    private int numMaxGrupos;
+    private int numMinAlunosPorGrupo;
+    private int numMaxAlunosPorGrupo;
+
     private ArrayList<Grupo> groups;
 }
