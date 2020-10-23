@@ -1,6 +1,7 @@
 package br.com.ufcg.back;
 
 import br.com.ufcg.back.controllers.UsuariosController;
+import br.com.ufcg.back.controllers.filters.TokenFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -21,6 +22,16 @@ public class LetsWorkTogetherApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(LetsWorkTogetherApplication.class, args);
+	}
+
+	@Bean
+	public FilterRegistrationBean<TokenFilter> filterJwt() {
+
+		FilterRegistrationBean<TokenFilter> filterRB = new FilterRegistrationBean<>();
+		filterRB.setFilter(new TokenFilter());
+		filterRB.addUrlPatterns("/ajude/usuarios","/ajude/campanhas/add");
+
+		return filterRB;
 	}
 
 	@Bean
