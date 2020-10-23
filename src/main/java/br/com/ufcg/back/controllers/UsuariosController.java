@@ -63,4 +63,11 @@ public class UsuariosController {
 
         return new ResponseEntity<Usuario>(new Usuario(), HttpStatus.NOT_FOUND);
     }
+
+    @RequestMapping(value = "/remove", method = RequestMethod.DELETE, produces = "application/json", consumes = "application/json")
+    public ResponseEntity<String> rotinaLimpeza() {
+
+        usuariosService.rotinaDeLimpeza();
+        return new ResponseEntity<String>(HttpStatus.OK);
+    }
 }
