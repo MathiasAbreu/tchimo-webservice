@@ -25,6 +25,8 @@ public class UsuariosController {
         super();
 
         this.usuariosService = usuariosService;
+
+        rotinaLimpeza();
     }
 
     @ApiOperation(value = "Adiciona um novo usuário ao sistema.", notes = "Adição de um novo Usuário. Recebe como parâmetro de entrada, " +
@@ -68,6 +70,7 @@ public class UsuariosController {
     public ResponseEntity<String> rotinaLimpeza() {
 
         usuariosService.rotinaDeLimpeza();
+        System.out.println("Rotina de limpeza aplicada.");
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 }

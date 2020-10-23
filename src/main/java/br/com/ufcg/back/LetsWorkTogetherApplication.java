@@ -1,5 +1,6 @@
 package br.com.ufcg.back;
 
+import br.com.ufcg.back.controllers.UsuariosController;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -18,6 +19,7 @@ import org.springframework.context.annotation.ComponentScan;
 public class LetsWorkTogetherApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(LetsWorkTogetherApplication.class, args);
 	}
 
