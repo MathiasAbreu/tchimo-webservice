@@ -38,9 +38,4 @@ public class UsuariosService {
 
         return usuariosDao.findById(email);
     }
-
-    public void rotinaDeLimpeza() {
-
-        usuariosDao.deleteAll();
-    }
 }
