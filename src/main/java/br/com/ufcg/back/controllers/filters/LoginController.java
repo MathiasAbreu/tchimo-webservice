@@ -45,6 +45,11 @@ public class LoginController {
 
         Optional<Usuario> authUsuario = usuariosService.getUsuario(usuario.getEmail());
 
+        Date date = new Date();
+        long unixTime = date.getTime() / 1000L;
+        System.out.println(unixTime);
+
+        long timeToken = 3600;
         try {
 
             if (!authUsuario.isPresent())
@@ -53,20 +58,29 @@ public class LoginController {
             if (!authUsuario.get().getPassword().equals(usuario.getPassword()))
                 throw new UserPasswordIncorrectException();
 
-            String token = Jwts.builder().setSubject(authUsuario.get().getEmail()).signWith(SignatureAlgorithm.HS512, TOKEN_KEY).setExpiration(new Date(System.currentTimeMillis() + 21600 * 1000)).compact();
-            return new ResponseEntity<>(new LoginResponse(token), HttpStatus.OK);
+            String token = Jwts.builder().setSubject(authUsuario.get().getEmail()).signWith(SignatureAlgorithm.HS512, TOKEN_KEY).setExpiration(new Date(System.currentTimeMillis() + (timeToken * 1000))).compact();
+            return new ResponseEntity<>(new LoginResponse(token,unixTime + timeToken, usuario.getEmail()),HttpStatus.OK);
         } catch (UserException err) {
 
-            return new ResponseEntity<>(new LoginResponse("Usuário não encontrado!"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new LoginResponse("Usuário não encontrado!",0), HttpStatus.NOT_FOUND);
         }
     }
 
     private class LoginResponse {
 
         public String token;
+        public long expires_in;
+        public String email;
 
-        public LoginResponse(String token) {
+        public LoginResponse(String token, long expires_in, String email) {
             this.token = token;
+            this.expires_in = expires_in;
+            this.email = email;
+        }
+
+        public LoginResponse(String token, long expires_in) {
+            this.token = token;
+            this.expires_in = expires_in;
         }
     }
 }
