@@ -14,20 +14,19 @@ public class Usuario {
     @Id
     private String email;
     private String password;
-    private String firstName;
-    private String lastName;
+    private String name;
 
     private ArrayList<Long> turmaIDs;
 
     @JsonCreator
-    public Usuario(String email, String password, String firstName, String lastName) {
+    public Usuario(String email, String password, String name) {
 
         super();
 
         this.email = email;
         this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
+
     }
 
     @JsonCreator
@@ -52,18 +51,11 @@ public class Usuario {
     }
 
     public String getFirstName() {
-        return firstName;
+        return name;
     }
 
     public void setFirstName(String firstName) {
-        this.firstName = firstName;
+        this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 }
