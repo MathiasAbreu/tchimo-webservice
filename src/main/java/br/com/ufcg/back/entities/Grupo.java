@@ -1,5 +1,8 @@
 package br.com.ufcg.back.entities;
 
+import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
+import br.com.ufcg.back.exceptions.user.UserNotFoundException;
+
 import java.util.ArrayList;
 
 import javax.persistence.Entity;
@@ -14,4 +17,28 @@ public class Grupo {
     private long id;
 
     private ArrayList<Long> memberIDs;
+
+    public Grupo() {
+        memberIDs = new ArrayList<Long>();
+    }
+
+    public Long getId(){
+        return id;
+    }
+
+    public int quantidadeDeMembros(){
+        return memberIDs.size();
+    }
+
+    public void adicionaUsuario(Long usrId) throws UserAlreadyExistException {
+        if (memberIDs.contains(usrId))
+            throw new UserAlreadyExistException();
+        else memberIDs.add(usrId);
+    }
+
+    public void removeUsuario(Long usrId) throws UserNotFoundException {
+        if (memberIDs.contains(usrId))
+            memberIDs.remove(usrId);
+        else throw new UserNotFoundException();
+    }
 }
