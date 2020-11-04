@@ -67,7 +67,7 @@ public class TurmasController {
         }
     }
 
-    @ApiOperation(value = "Lista os grupos de uma turma um usuário de um grupo de uma turma e remove o grupo caso esteja vazio.")
+    @ApiOperation(value = "Lista os grupos de uma turma.")
     @RequestMapping(value = "/{id}/grupos", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Grupo[]> listarGrupos(@PathVariable Long id) {
         try {
