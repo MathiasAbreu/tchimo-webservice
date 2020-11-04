@@ -5,6 +5,7 @@ import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.exceptions.grupo.GrupoNotFoundException;
 import br.com.ufcg.back.exceptions.turma.TurmaMaximoGruposException;
+import br.com.ufcg.back.exceptions.turma.TurmaNotFoundException;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 import br.com.ufcg.back.services.TurmasService;
@@ -46,7 +47,7 @@ public class TurmasController {
             turmasService.adicionaUsuarioANovoGrupo(id, usrId);
             return new ResponseEntity<Boolean>(true, HttpStatus.CREATED);
 
-        } catch (TurmaMaximoGruposException | UserAlreadyExistException ex) {
+        } catch (TurmaMaximoGruposException | UserAlreadyExistException | TurmaNotFoundException ex) {
             return new ResponseEntity<Boolean>(false, HttpStatus.NOT_ACCEPTABLE);
         }
     }
@@ -61,7 +62,7 @@ public class TurmasController {
             turmasService.removeUsuarioDeGrupo(id, groupId, usrId);
             return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 
-        } catch (UserNotFoundException | GrupoNotFoundException ex) {
+        } catch (UserNotFoundException | GrupoNotFoundException | TurmaNotFoundException ex) {
             return new ResponseEntity<Boolean>(false, HttpStatus.NOT_FOUND);
         }
     }
@@ -69,6 +70,10 @@ public class TurmasController {
     @ApiOperation(value = "Lista os grupos de uma turma um usuário de um grupo de uma turma e remove o grupo caso esteja vazio.")
     @RequestMapping(value = "/{id}/grupos", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Grupo[]> listarGrupos(@PathVariable Long id) {
-        return new ResponseEntity<Grupo[]>(turmasService.listarGrupos(id), HttpStatus.OK);
+        try {
+            return new ResponseEntity<Grupo[]>(turmasService.listarGrupos(id), HttpStatus.OK);
+        } catch (TurmaNotFoundException e) {
+            return new ResponseEntity<Grupo[]>(new Grupo[0], HttpStatus.NOT_FOUND);
+        }
     }
 }
