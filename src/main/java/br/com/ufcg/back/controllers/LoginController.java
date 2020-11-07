@@ -1,4 +1,4 @@
-package br.com.ufcg.back.controllers.filters;
+package br.com.ufcg.back.controllers;
 
 import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.exceptions.user.UserException;

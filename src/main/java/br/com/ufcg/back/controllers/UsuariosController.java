@@ -2,6 +2,7 @@ package br.com.ufcg.back.controllers;
 
 import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.exceptions.user.UserException;
+import br.com.ufcg.back.services.TurmasService;
 import br.com.ufcg.back.services.UsuariosService;
 import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
@@ -19,12 +20,14 @@ import java.util.Optional;
 public class UsuariosController {
 
     private UsuariosService usuariosService;
+    private TurmasService turmasService;
 
-    public UsuariosController(UsuariosService usuariosService) {
+    public UsuariosController(UsuariosService usuariosService, TurmasService turmasService) {
 
         super();
 
         this.usuariosService = usuariosService;
+        this.turmasService = turmasService;
     }
 
     @ApiOperation(value = "Adiciona um novo usuário ao sistema.", notes = "Adição de um novo Usuário. Recebe como parâmetro de entrada, " +

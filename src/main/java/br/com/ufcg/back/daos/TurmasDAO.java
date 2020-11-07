@@ -7,10 +7,12 @@ import org.springframework.stereotype.Repository;
 
 import br.com.ufcg.back.entities.Turma;
 
+import java.io.Serializable;
+
 @Repository
-public interface TurmasDAO extends JpaRepository<Turma, Long> {
+public interface TurmasDAO<T, ID extends Serializable> extends JpaRepository<Turma, String> {
     Turma save(Turma course);
 
     @Query(value="Select t from Turma t where t.id=:plogin")
-    Turma findByID(@Param("plogin") Long id);
+    Turma findByID(@Param("plogin") String id);
 }

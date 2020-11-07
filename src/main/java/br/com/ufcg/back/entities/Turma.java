@@ -4,8 +4,10 @@ import br.com.ufcg.back.exceptions.grupo.GrupoNotFoundException;
 import br.com.ufcg.back.exceptions.turma.TurmaMaximoGruposException;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,19 +17,56 @@ import javax.persistence.Id;
 @Entity
 public class Turma {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private String id;
+    private String name;
+    private long creationDate;
+    private long endDate;
 
-    private String linkIdentifier;
-    private Long managerID;
-    private ArrayList<Long> memberIDs;
+    private String managerId;
 
-    private int numMinGrupos;
-    private int numMaxGrupos;
-    private int numMinAlunosPorGrupo;
-    private int numMaxAlunosPorGrupo;
+    private String trainingStrategy;
+    private String closureForm;
+
+    private ArrayList<String> memberIDs;
+    private int numGrupos;
 
     private ArrayList<Grupo> groups;
+
+    @JsonCreator
+    public Turma(String name, String trainingStrategy, String closureForm, int endTime, int minutes) {
+
+        super();
+
+        this.name = name;
+        this.creationDate = ((new Date()).getTime() / 1000L);
+
+        this.trainingStrategy = trainingStrategy;
+        this.closureForm = closureForm;
+
+        this.endDate = ((endTime * 3600) + (minutes * 60));
+    }
+
+    @JsonCreator
+    public Turma() {
+
+        super();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getManagerId() {
+        return managerId;
+    }
+
+    public void setManagerId(String managerId) {
+        this.managerId = managerId;
+    }
 
     private Grupo grupoComId(Long groupID) throws GrupoNotFoundException {
         Grupo grupo = null;
@@ -46,14 +85,17 @@ public class Turma {
         groups.remove(grupoComId(groupID));
     }
 
-    public void adicionaUsuarioANovoGrupo(Long usrId) throws TurmaMaximoGruposException, UserAlreadyExistException {
+    /*
+        Necessita revisão
+     */
+    /*public void adicionaUsuarioANovoGrupo(Long usrId) throws TurmaMaximoGruposException, UserAlreadyExistException {
         if (groups.size() < numMaxGrupos) {
             Grupo grupo = new Grupo();
             grupo.adicionaUsuario(usrId);
             groups.add(grupo);
         }
         else throw new TurmaMaximoGruposException();
-    }
+    }*/
 
     public void removeUsuarioDeGrupo(Long groupID, Long usrId) throws UserNotFoundException, GrupoNotFoundException {
         Grupo grupo = grupoComId(groupID);
