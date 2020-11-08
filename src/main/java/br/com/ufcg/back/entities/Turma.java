@@ -43,13 +43,37 @@ public class Turma {
         this.trainingStrategy = trainingStrategy;
         this.closureForm = closureForm;
 
-        this.endDate = ((endTime * 3600) + (minutes * 60));
+        this.endDate = creationDate + ((endTime * 3600) + (minutes * 60));
     }
 
     @JsonCreator
     public Turma() {
 
         super();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public long getCreationDate() {
+        return creationDate;
+    }
+
+    public long getEndDate() {
+        return endDate;
+    }
+
+    public String getTrainingStrategy() {
+        return trainingStrategy;
+    }
+
+    public String getClosureForm() {
+        return closureForm;
     }
 
     public String getId() {
