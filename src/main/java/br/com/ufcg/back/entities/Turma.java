@@ -24,8 +24,8 @@ public class Turma {
 
     private String managerId;
 
-    private String trainingStrategy;
-    private String closureForm;
+    private String formationStrategy;
+    private String endingStrategy;
 
     private ArrayList<String> memberIDs;
     private int numGrupos;
@@ -33,15 +33,15 @@ public class Turma {
     private ArrayList<Grupo> groups;
 
     @JsonCreator
-    public Turma(String name, String trainingStrategy, String closureForm, int endTime, int minutes) {
+    public Turma(String name, String formationStrategy, String endingStrategy, int endTime, int minutes) {
 
         super();
 
         this.name = name;
         this.creationDate = ((new Date()).getTime() / 1000L);
 
-        this.trainingStrategy = trainingStrategy;
-        this.closureForm = closureForm;
+        this.formationStrategy = formationStrategy;
+        this.endingStrategy = endingStrategy;
 
         this.endDate = creationDate + ((endTime * 3600) + (minutes * 60));
     }
@@ -68,12 +68,12 @@ public class Turma {
         return endDate;
     }
 
-    public String getTrainingStrategy() {
-        return trainingStrategy;
+    public String getFormationStrategy() {
+        return formationStrategy;
     }
 
-    public String getClosureForm() {
-        return closureForm;
+    public String getEndingStrategy() {
+        return endingStrategy;
     }
 
     public String getId() {
