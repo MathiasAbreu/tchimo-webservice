@@ -29,7 +29,7 @@ public class LetsWorkTogetherApplication {
 
 		FilterRegistrationBean<TokenFilter> filterRB = new FilterRegistrationBean<>();
 		filterRB.setFilter(new TokenFilter());
-		filterRB.addUrlPatterns("/ajude/usuarios","/ajude/campanhas/add");
+		filterRB.addUrlPatterns("/api/usuarios","/api/turma");
 
 		return filterRB;
 	}

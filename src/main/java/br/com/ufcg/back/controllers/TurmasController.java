@@ -1,8 +1,10 @@
 package br.com.ufcg.back.controllers;
 import java.util.List;
+import java.util.Optional;
 
 import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
+import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.exceptions.grupo.GrupoNotFoundException;
 import br.com.ufcg.back.exceptions.turma.TurmaMaximoGruposException;
 import br.com.ufcg.back.exceptions.turma.TurmaNotFoundException;
@@ -11,6 +13,7 @@ import br.com.ufcg.back.exceptions.user.UserException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 import br.com.ufcg.back.services.JWTService;
 import br.com.ufcg.back.services.TurmasService;
+import br.com.ufcg.back.services.UsuariosService;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,17 +23,19 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(value = "Controle de Turmas da API")
 @RestController
-@RequestMapping("/turma")
+@RequestMapping("turma")
 public class TurmasController {
 
     private TurmasService turmasService;
+    private UsuariosService usuariosService;
     private JWTService jwtService;
 
     @JsonCreator
-    public TurmasController(TurmasService turmasService, JWTService jwtService) {
+    public TurmasController(TurmasService turmasService, UsuariosService usuariosService, JWTService jwtService) {
 
         super();
         this.turmasService = turmasService;
+        this.usuariosService = usuariosService;
         this.jwtService = jwtService;
     }
 
@@ -98,10 +103,8 @@ public class TurmasController {
 
         try {
 
-            if(jwtService.usuarioExiste(header)) {
-                turma.setManagerId(jwtService.getUsuarioDoToken(header));
-                return new ResponseEntity<String>(turmasService.criaTurma(turma), HttpStatus.CREATED);
-            }
+            if(jwtService.usuarioExiste(header))
+                return new ResponseEntity<String>(turmasService.criaTurma(turma,jwtService.getUsuarioDoToken(header)), HttpStatus.CREATED);
             return new ResponseEntity<String>("Usuário não encontrado!",HttpStatus.NOT_FOUND);
         } catch (UserException userE) {
             return new ResponseEntity<String>(userE.getMessage(),HttpStatus.UNAUTHORIZED);

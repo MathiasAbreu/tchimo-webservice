@@ -5,14 +5,13 @@ import br.com.ufcg.back.exceptions.turma.TurmaMaximoGruposException;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Turma {
@@ -22,7 +21,10 @@ public class Turma {
     private long creationDate;
     private long endDate;
 
-    private String managerId;
+    @ApiModelProperty(value = "Usuario que criou a turma.")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idUser")
+    private Usuario manager;
 
     private String formationStrategy;
     private String endingStrategy;
@@ -84,12 +86,13 @@ public class Turma {
         this.id = id;
     }
 
-    public String getManagerId() {
-        return managerId;
+    @JsonIgnore
+    public Usuario getManager() {
+        return manager;
     }
 
-    public void setManagerId(String managerId) {
-        this.managerId = managerId;
+    public void setManager(Usuario manager) {
+        this.manager = manager;
     }
 
     private Grupo grupoComId(Long groupID) throws GrupoNotFoundException {

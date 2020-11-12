@@ -2,27 +2,33 @@ package br.com.ufcg.back.entities;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Usuario {
 
-    @Id
+    @Id @GeneratedValue
+    private Long idUser;
+
     private String email;
     private String password;
     private String name;
 
-    private ArrayList<Long> turmaIDs;
+    @OneToMany(mappedBy = "manager", fetch = FetchType.EAGER)
+    private List<Turma> managedTurma = new ArrayList<>();
 
     @JsonCreator
-    public Usuario(String email, String password, String name) {
+    public Usuario(long idUser, String email, String password, String name) {
 
         super();
 
+        this.idUser = idUser;
         this.email = email;
         this.password = password;
         this.name = name;
@@ -32,6 +38,10 @@ public class Usuario {
     @JsonCreator
     public Usuario() {
         super();
+    }
+
+    public long getIdUser() {
+        return idUser;
     }
 
     public String getEmail() {
@@ -50,12 +60,15 @@ public class Usuario {
         this.password = password;
     }
 
-    public String getFirstName() {
+    public String getName() {
         return name;
     }
 
-    public void setFirstName(String firstName) {
+    public void setName(String firstName) {
         this.name = name;
     }
 
+    public List<Turma> getManagedTurma() {
+        return managedTurma;
+    }
 }

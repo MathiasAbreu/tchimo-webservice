@@ -4,6 +4,7 @@ import br.com.ufcg.back.daos.UsuariosDAO;
 import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserException;
+import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,7 +22,7 @@ public class UsuariosService {
 
     public void adicionaUsuario(Usuario usuario) throws UserException {
 
-        Optional<Usuario> verificaUsuario = usuariosDao.findById(usuario.getEmail());
+        Optional<Usuario> verificaUsuario = usuariosDao.findById(usuario.getIdUser());
 
         if(!verificaUsuario.isPresent())
             usuariosDao.save(usuario);
@@ -36,6 +37,15 @@ public class UsuariosService {
      */
     public Optional<Usuario> getUsuario(String email) {
 
-        return usuariosDao.findById(email);
+        return usuariosDao.findByEmail(email);
+    }
+
+    public long getIdUsuario(String email) throws UserNotFoundException {
+
+        Optional<Usuario> usuario = usuariosDao.findByEmail(email);
+        if(usuario.isPresent())
+            return usuario.get().getIdUser();
+
+        throw new UserNotFoundException();
     }
 }

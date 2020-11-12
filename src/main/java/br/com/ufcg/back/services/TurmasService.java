@@ -1,11 +1,14 @@
 package br.com.ufcg.back.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import br.com.ufcg.back.daos.TurmasDAO;
+import br.com.ufcg.back.daos.UsuariosDAO;
 import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
+import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.exceptions.grupo.GrupoNotFoundException;
 import br.com.ufcg.back.exceptions.turma.TurmaMaximoGruposException;
 import br.com.ufcg.back.exceptions.turma.TurmaNotFoundException;
@@ -15,10 +18,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TurmasService {
+
     private final TurmasDAO turmasDAO;
 
-    TurmasService(TurmasDAO turmasDAO) {
+    private UsuariosDAO<Usuario, Long> usuariosDAO;
+
+    public TurmasService(TurmasDAO turmasDAO, UsuariosDAO usuariosDAO) {
+
+        super();
         this.turmasDAO = turmasDAO;
+        this.usuariosDAO = usuariosDAO;
     }
 
     public Turma create(Turma course) {
@@ -55,11 +64,18 @@ public class TurmasService {
         return findByID(id).listarGrupos();
     }
 
-    public String criaTurma(Turma turma) {
+    public String criaTurma(Turma turma, String emailUsuario) throws UserNotFoundException {
 
-        turma.setId(gerarId());
-        turmasDAO.save(turma);
-        return turma.getId();
+        Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUsuario);
+        if(usuario.isPresent()) {
+
+            turma.setId(gerarId());
+            turma.setManager(usuario.get());
+
+            turmasDAO.save(turma);
+            return turma.getId();
+        }
+        throw new UserNotFoundException();
     }
 
     private String gerarId() {
