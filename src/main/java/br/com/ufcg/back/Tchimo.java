@@ -1,6 +1,5 @@
 package br.com.ufcg.back;
 
-import br.com.ufcg.back.controllers.UsuariosController;
 import br.com.ufcg.back.controllers.filters.TokenFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,11 +16,11 @@ import org.springframework.context.annotation.ComponentScan;
 		"br.com.ufcg.back.daos",
 		"br.com.ufcg.back.entities",
 		"br.com.ufcg.back.services"})
-public class LetsWorkTogetherApplication {
+public class Tchimo {
 
 	public static void main(String[] args) {
 
-		SpringApplication.run(LetsWorkTogetherApplication.class, args);
+		SpringApplication.run(Tchimo.class, args);
 	}
 
 	@Bean

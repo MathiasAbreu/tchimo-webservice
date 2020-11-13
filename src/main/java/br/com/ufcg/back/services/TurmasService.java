@@ -10,9 +10,12 @@ import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.exceptions.grupo.GrupoNotFoundException;
+import br.com.ufcg.back.exceptions.turma.TurmaException;
+import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
 import br.com.ufcg.back.exceptions.turma.TurmaMaximoGruposException;
 import br.com.ufcg.back.exceptions.turma.TurmaNotFoundException;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
+import br.com.ufcg.back.exceptions.user.UserException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -99,20 +102,26 @@ public class TurmasService {
             return retorno;
     }
 
-    public String addUsuarioEmTurma(String idTurma, String emailUser) throws TurmaNotFoundException {
+    public String addUsuarioEmTurma(String idTurma, String emailUser) throws TurmaManagerException, TurmaNotFoundException, UserException {
 
         Optional<Turma> turma = turmasDAO.findById(idTurma);
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
         if(turma.isPresent()) {
+
+            if(turma.get().getManager().getEmail().equals(emailUser))
+                throw new TurmaManagerException("Usuário não pode entrar na turma pois é o manager dela!");
 
             usuariosDAO.findByEmail(emailUser).map(record -> {
                 record.addTurma(turma.get());
                 return usuariosDAO.save(record);
             });
 
+            if(turma.get().verificaSeUsuarioJaPertece(emailUser))
+                throw new UserAlreadyExistException("Usuário já pertence a turma.");
+
             turma.get().addUser(usuario.get());
             turmasDAO.save(turma.get());
-            return idTurma;
+            return turma.get().getId();
         }
         throw new TurmaNotFoundException();
     }

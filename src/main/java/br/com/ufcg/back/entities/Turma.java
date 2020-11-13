@@ -108,10 +108,18 @@ public class Turma {
         this.manager = manager;
     }
 
-    /*@JsonIgnore
-    public List<Usuario> getUsuarios() {
-        return usuarios;
-    }*/
+    @JsonIgnore
+    public List<Usuario> getIntegrantes() {
+        return integrantes;
+    }
+
+    public boolean verificaSeUsuarioJaPertece(String email) {
+        for(Usuario usuario : integrantes) {
+            if(usuario.getEmail().equals(email))
+                return true;
+        }
+        return false;
+    }
 
     public void addUser(Usuario usuario) {
         integrantes.add(usuario);

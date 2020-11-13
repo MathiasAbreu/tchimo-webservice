@@ -22,7 +22,7 @@ public class UsuariosService {
 
     public void adicionaUsuario(Usuario usuario) throws UserException {
 
-        Optional<Usuario> verificaUsuario = usuariosDao.findById(usuario.getIdUser());
+        Optional<Usuario> verificaUsuario = usuariosDao.findByEmail(usuario.getEmail());
 
         if(!verificaUsuario.isPresent())
             usuariosDao.save(usuario);

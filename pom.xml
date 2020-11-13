@@ -12,7 +12,7 @@
 	<artifactId>back</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Lets Work Together</name>
-	<description>Projeto de Backend para o software Lets Work Together.</description>
+	<description>Projeto de Backend para o software Tchimo - WebService.</description>
 
 	<properties>
 		<java.version>1.8</java.version>

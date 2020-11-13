@@ -6,6 +6,8 @@ import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.exceptions.grupo.GrupoNotFoundException;
+import br.com.ufcg.back.exceptions.turma.TurmaException;
+import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
 import br.com.ufcg.back.exceptions.turma.TurmaMaximoGruposException;
 import br.com.ufcg.back.exceptions.turma.TurmaNotFoundException;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
@@ -133,18 +135,20 @@ public class TurmasController {
         }
     }
 
-    @RequestMapping(value = "/entraTurma", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-    public ResponseEntity<String> entrarEmUmTurma(@ApiParam("Token Válido") @RequestHeader("Authorization") String header, @ApiParam("Id da Truma") @RequestBody String id) {
+    @RequestMapping(value = "/{id}/entraTurma", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<String> entrarEmUmTurma(@ApiParam("Token Válido") @RequestHeader("Authorization") String header, @ApiParam("Turma") @PathVariable String id) {
 
         try {
 
             if(jwtService.usuarioExiste(header))
                 return new ResponseEntity<String>(turmasService.addUsuarioEmTurma(id,jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
             throw new UserNotFoundException("Usuário não encontrado.");
+        } catch (TurmaManagerException | UserAlreadyExistException turmaErr) {
+            return new ResponseEntity<String>(turmaErr.getMessage(), HttpStatus.CONFLICT);
         } catch (TurmaNotFoundException errTurma) {
             return new ResponseEntity<String>("Turma não encontrada.",HttpStatus.NOT_FOUND);
         } catch (UserException errUser) {
-            return new ResponseEntity<String>("Sem autorização.",HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<String>("Sem autorização.", HttpStatus.UNAUTHORIZED);
         }
     }
 }
