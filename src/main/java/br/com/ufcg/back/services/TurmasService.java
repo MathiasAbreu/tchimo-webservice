@@ -10,13 +10,12 @@ import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.exceptions.grupo.GrupoNotFoundException;
-import br.com.ufcg.back.exceptions.turma.TurmaException;
 import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
-import br.com.ufcg.back.exceptions.turma.TurmaMaximoGruposException;
 import br.com.ufcg.back.exceptions.turma.TurmaNotFoundException;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
+import br.com.ufcg.back.exceptions.user.UserUnauthorizedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,11 +36,16 @@ public class TurmasService {
         return turmasDAO.save(course);
     }
 
-    public Turma findByID(String id) throws TurmaNotFoundException {
-        Turma t = turmasDAO.findByID(id);
-        if (t == null)
-            throw new TurmaNotFoundException();
-        else return turmasDAO.findByID(id);
+    public Turma buscaTurma(String idTurma, String emailUser) throws TurmaNotFoundException, UserUnauthorizedException {
+
+        Optional<Turma> turma = turmasDAO.findById(idTurma);
+        if(turma.isPresent()) {
+
+            if(turma.get().getManager().getEmail().equals(emailUser) || turma.get().verificaSeUsuarioJaPertece(emailUser))
+                return turma.get();
+            throw new UserUnauthorizedException();
+        }
+        throw new TurmaNotFoundException();
     }
 
     public List<Turma> findAll() {
@@ -57,15 +61,15 @@ public class TurmasService {
         create(t);
     }*/
 
-    public void removeUsuarioDeGrupo(String id, Long groupID, Long usrId) throws UserNotFoundException, GrupoNotFoundException, TurmaNotFoundException {
-        Turma t = findByID(id);
+    /*public void removeUsuarioDeGrupo(String id, Long groupID, Long usrId) throws UserNotFoundException, GrupoNotFoundException, TurmaNotFoundException {
+        Turma t = buscaTurma(id);
         t.removeUsuarioDeGrupo(groupID, usrId);
         create(t);
-    }
+    }*/
 
-    public Grupo[] listarGrupos(String id) throws TurmaNotFoundException {
-        return findByID(id).listarGrupos();
-    }
+    /*public Grupo[] listarGrupos(String id) throws TurmaNotFoundException {
+        return buscaTurma(id).listarGrupos();
+    }*/
 
     public String criaTurma(Turma turma, String emailUsuario) throws UserNotFoundException {
 
