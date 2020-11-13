@@ -27,20 +27,18 @@ public class Turma {
     @JoinColumn(name = "idUser")
     private Usuario manager;
 
-    //@ApiModelProperty(value = "Usuarios que participam da turma.")
-    //@OneToMany(mappedBy = "idUser", fetch = FetchType.LAZY)
-    //private List<Usuario> usuarios = new ArrayList<>();
-
+    @ManyToMany(mappedBy = "membersTurma")
+    private List<Usuario> integrantes = new ArrayList<>();
 
     private String formationStrategy;
     private String endingStrategy;
 
-    private int numGrupos;
+    private int quantityOfGroups;
 
     private ArrayList<Grupo> groups;
 
     @JsonCreator
-    public Turma(String name, String formationStrategy, String endingStrategy, int numGrupos, int endTime, int minutes) {
+    public Turma(String name, String formationStrategy, String endingStrategy, int quantityOfGroups, int endTime, int minutes) {
 
         super();
 
@@ -50,7 +48,7 @@ public class Turma {
         this.formationStrategy = formationStrategy;
         this.endingStrategy = endingStrategy;
 
-        this.numGrupos = numGrupos;
+        this.quantityOfGroups = quantityOfGroups;
         this.endDate = creationDate + ((endTime * 3600) + (minutes * 60));
     }
 
@@ -94,11 +92,11 @@ public class Turma {
     }
 
     public int getNumGrupos() {
-        return numGrupos;
+        return quantityOfGroups;
     }
 
     public void setNumGrupos(int numGrupos) {
-        this.numGrupos = numGrupos;
+        this.quantityOfGroups = numGrupos;
     }
 
     @JsonIgnore
@@ -114,6 +112,10 @@ public class Turma {
     public List<Usuario> getUsuarios() {
         return usuarios;
     }*/
+
+    public void addUser(Usuario usuario) {
+        integrantes.add(usuario);
+    }
 
     private Grupo grupoComId(Long groupID) throws GrupoNotFoundException {
         Grupo grupo = null;

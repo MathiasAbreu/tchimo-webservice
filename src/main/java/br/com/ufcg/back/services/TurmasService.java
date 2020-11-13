@@ -98,4 +98,22 @@ public class TurmasService {
         else
             return retorno;
     }
+
+    public String addUsuarioEmTurma(String idTurma, String emailUser) throws TurmaNotFoundException {
+
+        Optional<Turma> turma = turmasDAO.findById(idTurma);
+        Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
+        if(turma.isPresent()) {
+
+            usuariosDAO.findByEmail(emailUser).map(record -> {
+                record.addTurma(turma.get());
+                return usuariosDAO.save(record);
+            });
+
+            turma.get().addUser(usuario.get());
+            turmasDAO.save(turma.get());
+            return idTurma;
+        }
+        throw new TurmaNotFoundException();
+    }
 }

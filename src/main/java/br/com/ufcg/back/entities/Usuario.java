@@ -23,8 +23,9 @@ public class Usuario {
     @OneToMany(mappedBy = "manager", fetch = FetchType.LAZY)
     private List<Turma> managedTurma = new ArrayList<>();
 
-    //@OneToMany(mappedBy = "usuarios", fetch = FetchType.LAZY)
-    //private List<Turma> myTurmas = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "integrantes_turma", joinColumns = @JoinColumn(name = "id_user"), inverseJoinColumns = @JoinColumn(name = "turma_id"))
+    private List<Turma> membersTurma = new ArrayList<>();
 
     @JsonCreator
     public Usuario(long idUser, String email, String password, String name) {
@@ -73,5 +74,13 @@ public class Usuario {
 
     public List<Turma> getManagedTurma() {
         return managedTurma;
+    }
+
+    public List<Turma> getMembersTurma() {
+        return membersTurma;
+    }
+
+    public void addTurma(Turma turma) {
+        membersTurma.add(turma);
     }
 }

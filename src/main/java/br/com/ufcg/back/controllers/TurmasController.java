@@ -133,6 +133,18 @@ public class TurmasController {
         }
     }
 
-    //@RequestMapping(value = "/entraTurma", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-    //public ResponseEntity<>
+    @RequestMapping(value = "/entraTurma", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    public ResponseEntity<String> entrarEmUmTurma(@ApiParam("Token Válido") @RequestHeader("Authorization") String header, @ApiParam("Id da Truma") @RequestBody String id) {
+
+        try {
+
+            if(jwtService.usuarioExiste(header))
+                return new ResponseEntity<String>(turmasService.addUsuarioEmTurma(id,jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
+            throw new UserNotFoundException("Usuário não encontrado.");
+        } catch (TurmaNotFoundException errTurma) {
+            return new ResponseEntity<String>("Turma não encontrada.",HttpStatus.NOT_FOUND);
+        } catch (UserException errUser) {
+            return new ResponseEntity<String>("Sem autorização.",HttpStatus.UNAUTHORIZED);
+        }
+    }
 }
