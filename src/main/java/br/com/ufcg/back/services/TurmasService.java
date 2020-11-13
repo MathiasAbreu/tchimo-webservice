@@ -111,13 +111,13 @@ public class TurmasService {
             if(turma.get().getManager().getEmail().equals(emailUser))
                 throw new TurmaManagerException("Usuário não pode entrar na turma pois é o manager dela!");
 
+            if(turma.get().verificaSeUsuarioJaPertece(emailUser))
+                throw new UserAlreadyExistException("Usuário já pertence a turma.");
+
             usuariosDAO.findByEmail(emailUser).map(record -> {
                 record.addTurma(turma.get());
                 return usuariosDAO.save(record);
             });
-
-            if(turma.get().verificaSeUsuarioJaPertece(emailUser))
-                throw new UserAlreadyExistException("Usuário já pertence a turma.");
 
             turma.get().addUser(usuario.get());
             turmasDAO.save(turma.get());
