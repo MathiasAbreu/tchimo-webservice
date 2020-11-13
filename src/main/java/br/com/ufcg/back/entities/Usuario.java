@@ -20,8 +20,11 @@ public class Usuario {
     private String password;
     private String name;
 
-    @OneToMany(mappedBy = "manager", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "manager", fetch = FetchType.LAZY)
     private List<Turma> managedTurma = new ArrayList<>();
+
+    //@OneToMany(mappedBy = "usuarios", fetch = FetchType.LAZY)
+    //private List<Turma> myTurmas = new ArrayList<>();
 
     @JsonCreator
     public Usuario(long idUser, String email, String password, String name) {

@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -26,16 +27,20 @@ public class Turma {
     @JoinColumn(name = "idUser")
     private Usuario manager;
 
+    //@ApiModelProperty(value = "Usuarios que participam da turma.")
+    //@OneToMany(mappedBy = "idUser", fetch = FetchType.LAZY)
+    //private List<Usuario> usuarios = new ArrayList<>();
+
+
     private String formationStrategy;
     private String endingStrategy;
 
-    private ArrayList<String> memberIDs;
     private int numGrupos;
 
     private ArrayList<Grupo> groups;
 
     @JsonCreator
-    public Turma(String name, String formationStrategy, String endingStrategy, int endTime, int minutes) {
+    public Turma(String name, String formationStrategy, String endingStrategy, int numGrupos, int endTime, int minutes) {
 
         super();
 
@@ -45,6 +50,7 @@ public class Turma {
         this.formationStrategy = formationStrategy;
         this.endingStrategy = endingStrategy;
 
+        this.numGrupos = numGrupos;
         this.endDate = creationDate + ((endTime * 3600) + (minutes * 60));
     }
 
@@ -78,12 +84,21 @@ public class Turma {
         return endingStrategy;
     }
 
+    @JsonIgnore
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public int getNumGrupos() {
+        return numGrupos;
+    }
+
+    public void setNumGrupos(int numGrupos) {
+        this.numGrupos = numGrupos;
     }
 
     @JsonIgnore
@@ -94,6 +109,11 @@ public class Turma {
     public void setManager(Usuario manager) {
         this.manager = manager;
     }
+
+    /*@JsonIgnore
+    public List<Usuario> getUsuarios() {
+        return usuarios;
+    }*/
 
     private Grupo grupoComId(Long groupID) throws GrupoNotFoundException {
         Grupo grupo = null;

@@ -132,4 +132,7 @@ public class TurmasController {
             return new ResponseEntity<Turma>(new Turma(), HttpStatus.UNAUTHORIZED);
         }
     }
+
+    //@RequestMapping(value = "/entraTurma", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    //public ResponseEntity<>
 }

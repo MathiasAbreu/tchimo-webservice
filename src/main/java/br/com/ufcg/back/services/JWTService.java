@@ -38,7 +38,7 @@ public class JWTService {
             if(!(usuariosService.getUsuario(subject)).isPresent())
                 throw new UserTokenExpired();
 
-        } catch (UserException err) {
+        } catch (Exception err) {
 
             throw new UserTokenBadlyFormattedException();
         }
