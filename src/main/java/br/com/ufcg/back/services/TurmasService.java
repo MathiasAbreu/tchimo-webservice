@@ -10,6 +10,7 @@ import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.exceptions.grupo.GrupoNotFoundException;
+import br.com.ufcg.back.exceptions.turma.TurmaException;
 import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
 import br.com.ufcg.back.exceptions.turma.TurmaNotFoundException;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
@@ -128,5 +129,21 @@ public class TurmasService {
             return turma.get().getId();
         }
         throw new TurmaNotFoundException();
+    }
+
+    public Grupo addGrupo(String emailUser, String idTurma, Grupo grupo) throws TurmaException, UserUnauthorizedException {
+
+        Optional<Turma> turma = turmasDAO.findById(idTurma);
+
+        if(turma.isPresent()) {
+            if(turma.get().verificaSeUsuarioJaPertece(emailUser)) {
+
+                turma.get().adicionaGrupo(grupo);
+                turmasDAO.save(turma.get());
+                return grupo;
+            }
+            throw new UserUnauthorizedException("Usuário não tem permissão para criar grupos.");
+        }
+        throw new TurmaNotFoundException("Turma não encontrada.");
     }
 }

@@ -14,16 +14,17 @@ import javax.persistence.Id;
 public class Grupo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long idGroup;
 
     private ArrayList<Long> memberIDs;
 
     public Grupo() {
+
         memberIDs = new ArrayList<Long>();
     }
 
-    public Long getId(){
-        return id;
+    public Long getIdGroup(){
+        return idGroup;
     }
 
     public int quantidadeDeMembros(){

@@ -1,8 +1,6 @@
 package br.com.ufcg.back.entities;
 
 import br.com.ufcg.back.exceptions.grupo.GrupoNotFoundException;
-import br.com.ufcg.back.exceptions.turma.TurmaMaximoGruposException;
-import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -30,12 +28,13 @@ public class Turma {
     @ManyToMany(mappedBy = "membersTurma")
     private List<Usuario> integrantes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "idGroup", fetch = FetchType.LAZY)
+    private List<Grupo> groups = new ArrayList<>();
+
     private String formationStrategy;
     private String endingStrategy;
 
     private int quantityOfGroups;
-
-    private ArrayList<Grupo> groups;
 
     @JsonCreator
     public Turma(String name, String formationStrategy, String endingStrategy, int quantityOfGroups, int endTime, int minutes) {
@@ -129,7 +128,7 @@ public class Turma {
         Grupo grupo = null;
 
         for (Grupo g : groups)
-            if (g.getId().equals(groupID))
+            if (g.getIdGroup().equals(groupID))
                 grupo = g;
 
         if (grupo == null)
@@ -140,6 +139,10 @@ public class Turma {
 
     private void removeGrupo(Long groupID) throws GrupoNotFoundException {
         groups.remove(grupoComId(groupID));
+    }
+
+    public void adicionaGrupo(Grupo grupo) {
+        groups.add(grupo);
     }
 
     /*

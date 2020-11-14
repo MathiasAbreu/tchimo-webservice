@@ -4,11 +4,13 @@ import java.util.List;
 import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.exceptions.grupo.GrupoNotFoundException;
+import br.com.ufcg.back.exceptions.turma.TurmaException;
 import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
 import br.com.ufcg.back.exceptions.turma.TurmaNotFoundException;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
+import br.com.ufcg.back.exceptions.user.UserUnauthorizedException;
 import br.com.ufcg.back.services.JWTService;
 import br.com.ufcg.back.services.TurmasService;
 import br.com.ufcg.back.services.UsuariosService;
@@ -36,7 +38,7 @@ public class TurmasController {
         this.jwtService = jwtService;
     }
 
-    @RequestMapping(value = "")
+    /*@RequestMapping(value = "")
     public ResponseEntity<List<Turma>> findAll() {
         List<Turma> turmas = turmasService.findAll();
 
@@ -44,11 +46,8 @@ public class TurmasController {
             throw new InternalError("Something went wrong");
 
         return new ResponseEntity<>(turmas, HttpStatus.OK);
-    }
+    }*/
 
-    /*
-        Necessita revisão
-     */
     /*
     @ApiOperation(value = "Cria um novo grupo na turma e adiciona o usuário que o criou a ele.")
     @RequestMapping(value = "/{id}/adiciona", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
@@ -130,6 +129,13 @@ public class TurmasController {
         }
     }
 
+    @ApiOperation(value = "Operação que permite que um usuário entre em uma turma através do Id dela.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Usuario adicionado."),
+            @ApiResponse(code = 404, message = "Turma não encontrada."),
+            @ApiResponse(code = 409, message = "Usuário já pertence a turma, ou é o proprietário da mesma."),
+            @ApiResponse(code = 401, message = "Usuario não autorizado pelo token.")
+    })
     @RequestMapping(value = "/{id}/entraTurma", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<String> entrarEmUmTurma(@ApiParam("Token Válido") @RequestHeader("Authorization") String header, @ApiParam("Turma") @PathVariable String id) {
 
@@ -146,4 +152,21 @@ public class TurmasController {
             return new ResponseEntity<String>("Sem autorização.", HttpStatus.UNAUTHORIZED);
         }
     }
+
+    @ApiOperation(value = "Cria um novo grupo.")
+    @RequestMapping(value = "/{id}/addGrupo", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    public ResponseEntity<Grupo> adicionaGrupo(@ApiParam("Token válido") @RequestHeader("Authorization") String header, @ApiParam("Id da Turma") @PathVariable String id, @ApiParam("Grupo") @RequestBody Grupo grupo) {
+
+        try {
+
+            if (jwtService.usuarioExiste(header))
+                return new ResponseEntity<Grupo>(turmasService.addGrupo(jwtService.getUsuarioDoToken(header), id, grupo), HttpStatus.OK);
+            throw new UserNotFoundException("Usuário não encontrado.");
+        } catch (UserUnauthorizedException userUna) {
+            return new ResponseEntity<Grupo>(new Grupo(), HttpStatus.UNAUTHORIZED);
+        } catch (UserException | TurmaException userErr) {
+            return new ResponseEntity<Grupo>(new Grupo(), HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
