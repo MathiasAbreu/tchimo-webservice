@@ -19,7 +19,6 @@ import java.util.Optional;
 
 @Api(value = "Controle de Usuários da API")
 @RestController
-@RequestMapping("usuarios")
 public class UsuariosController {
 
     private UsuariosService usuariosService;
