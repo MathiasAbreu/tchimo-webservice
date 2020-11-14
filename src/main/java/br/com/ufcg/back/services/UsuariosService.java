@@ -40,9 +40,9 @@ public class UsuariosService {
         List<TurmaDTO> turmas = new ArrayList<>();
 
         for(Turma turma : usuario.get().getManagedTurma())
-            turmas.add(new TurmaDTO(turma.getName(),turma.getCreationDate(),turma.getEndDate(),turma.getFormationStrategy(),turma.getEndingStrategy(),turma.getQuantityOfGroups(),true,turma.getIntegrantes()));
+            turmas.add(new TurmaDTO(turma.getId(),turma.getName(),turma.getCreationDate(),turma.getEndDate(),turma.getFormationStrategy(),turma.getEndingStrategy(),turma.getQuantityOfGroups(),true,turma.getIntegrantes()));
         for(Turma turma : usuario.get().getMembersTurma())
-            turmas.add(new TurmaDTO(turma.getName(),turma.getCreationDate(),turma.getEndDate(),turma.getFormationStrategy(),turma.getEndingStrategy(),turma.getQuantityOfGroups(),false,turma.getIntegrantes()));
+            turmas.add(new TurmaDTO(turma.getId(),turma.getName(),turma.getCreationDate(),turma.getEndDate(),turma.getFormationStrategy(),turma.getEndingStrategy(),turma.getQuantityOfGroups(),false,turma.getIntegrantes()));
 
         return turmas;
     }

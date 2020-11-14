@@ -22,8 +22,9 @@ public class TurmaDTO {
     private List<String> integrantes = new ArrayList<>();
     private List<String> groups = new ArrayList<>();
 
-    public TurmaDTO(String name, long creationDate, long endDate, String formationStrategy, String endingStrategy, int quantityOfGroupsAvailable, boolean usuario, List<Usuario> integrantes) {
+    public TurmaDTO(String id, String name, long creationDate, long endDate, String formationStrategy, String endingStrategy, int quantityOfGroupsAvailable, boolean usuario, List<Usuario> integrantes) {
 
+        this.id = id;
         this.name = name;
         this.creationDate = creationDate;
         this.endDate = endDate;
@@ -33,6 +34,14 @@ public class TurmaDTO {
         this.usuario = usuario;
 
         configureIntegrantes(integrantes);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
