@@ -35,6 +35,7 @@ public class Turma {
     private String endingStrategy;
 
     private int quantityOfGroups;
+    private int totalNumberOfGroups;
 
     @JsonCreator
     public Turma(String name, String formationStrategy, String endingStrategy, int quantityOfGroups, int endTime, int minutes) {
@@ -48,6 +49,8 @@ public class Turma {
         this.endingStrategy = endingStrategy;
 
         this.quantityOfGroups = quantityOfGroups;
+        this.totalNumberOfGroups = 0;
+
         this.endDate = creationDate + ((endTime * 3600) + (minutes * 60));
     }
 
@@ -123,8 +126,12 @@ public class Turma {
         integrantes.add(usuario);
     }
 
-    public long quantidadeGruposNaTurma() {
-        return groups.size();
+    public int quantidadeGruposNaTurma() {
+        return totalNumberOfGroups;
+    }
+
+    public void addQGrupo() {
+        this.totalNumberOfGroups += 1;
     }
 
     private Grupo grupoComId(Long groupID) throws GroupNotFoundException {
@@ -160,13 +167,13 @@ public class Turma {
         else throw new TurmaMaximoGruposException();
     }*/
 
-    public void removeUsuarioDeGrupo(Long groupID, Long usrId) throws UserNotFoundException, GroupNotFoundException {
+    /*public void removeUsuarioDeGrupo(Long groupID, Long usrId) throws UserNotFoundException, GroupNotFoundException {
         Grupo grupo = grupoComId(groupID);
 
         grupo.removeUsuario(usrId);
         if (grupo.quantidadeDeMembros() == 0)
             removeGrupo(groupID);
-    }
+    }*/
 
     public Grupo[] listarGrupos() {
         return (Grupo[]) groups.toArray();

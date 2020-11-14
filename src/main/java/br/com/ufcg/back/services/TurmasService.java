@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import br.com.ufcg.back.daos.GruposDAO;
 import br.com.ufcg.back.daos.TurmasDAO;
 import br.com.ufcg.back.daos.UsuariosDAO;
 import br.com.ufcg.back.entities.Grupo;
@@ -139,11 +138,12 @@ public class TurmasService {
         if(turma.isPresent()) {
             if(turma.get().verificaSeUsuarioJaPertece(emailUser)) {
 
-                long quantidadeDegrupos = turma.get().quantidadeGruposNaTurma();
+                int quantidadeDegrupos = turma.get().quantidadeGruposNaTurma();
                 if(quantidadeDegrupos < turma.get().getQuantityOfGroups()) {
 
                     Grupo grupo = new Grupo((quantidadeDegrupos + 1),emailUser);
                     turma.get().adicionaGrupo(grupo);
+                    turma.get().addQGrupo();
                     turmasDAO.save(turma.get());
                     return grupo;
                 }
