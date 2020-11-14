@@ -2,6 +2,7 @@ package br.com.ufcg.back.entities;
 
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.ArrayList;
 
@@ -12,15 +13,35 @@ import javax.persistence.Id;
 
 @Entity
 public class Grupo {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idGroup;
+    private String emailManager;
 
     private ArrayList<Long> memberIDs;
 
-    public Grupo() {
+    @JsonCreator
+    public Grupo(long idGroup, String emailManager) {
+
+        super();
+
+        this.idGroup = idGroup;
+        this.emailManager = emailManager;
 
         memberIDs = new ArrayList<Long>();
+    }
+
+    @JsonCreator
+    public Grupo() {
+        super();
+    }
+
+    public String getEmailManager() {
+        return emailManager;
+    }
+
+    public void setEmailManager(String emailManager) {
+        this.emailManager = emailManager;
     }
 
     public Long getIdGroup(){

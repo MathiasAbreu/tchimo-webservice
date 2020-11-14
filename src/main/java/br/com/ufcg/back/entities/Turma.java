@@ -1,6 +1,6 @@
 package br.com.ufcg.back.entities;
 
-import br.com.ufcg.back.exceptions.grupo.GrupoNotFoundException;
+import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -81,7 +81,6 @@ public class Turma {
         return endingStrategy;
     }
 
-    @JsonIgnore
     public String getId() {
         return id;
     }
@@ -124,7 +123,11 @@ public class Turma {
         integrantes.add(usuario);
     }
 
-    private Grupo grupoComId(Long groupID) throws GrupoNotFoundException {
+    public int quantidadeGruposNaTurma() {
+        return groups.size();
+    }
+
+    private Grupo grupoComId(Long groupID) throws GroupNotFoundException {
         Grupo grupo = null;
 
         for (Grupo g : groups)
@@ -132,12 +135,12 @@ public class Turma {
                 grupo = g;
 
         if (grupo == null)
-            throw new GrupoNotFoundException();
+            throw new GroupNotFoundException();
 
         return grupo;
     }
 
-    private void removeGrupo(Long groupID) throws GrupoNotFoundException {
+    private void removeGrupo(Long groupID) throws GroupNotFoundException {
         groups.remove(grupoComId(groupID));
     }
 
@@ -157,7 +160,7 @@ public class Turma {
         else throw new TurmaMaximoGruposException();
     }*/
 
-    public void removeUsuarioDeGrupo(Long groupID, Long usrId) throws UserNotFoundException, GrupoNotFoundException {
+    public void removeUsuarioDeGrupo(Long groupID, Long usrId) throws UserNotFoundException, GroupNotFoundException {
         Grupo grupo = grupoComId(groupID);
 
         grupo.removeUsuario(usrId);

@@ -9,7 +9,7 @@ import br.com.ufcg.back.daos.UsuariosDAO;
 import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
-import br.com.ufcg.back.exceptions.grupo.GrupoNotFoundException;
+import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.turma.TurmaException;
 import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
 import br.com.ufcg.back.exceptions.turma.TurmaNotFoundException;
@@ -131,16 +131,22 @@ public class TurmasService {
         throw new TurmaNotFoundException();
     }
 
-    public Grupo addGrupo(String emailUser, String idTurma, Grupo grupo) throws TurmaException, UserUnauthorizedException {
+    public Grupo addGrupo(String emailUser, String idTurma) throws TurmaException, UserUnauthorizedException, OverflowNumberOfGroupsException {
 
         Optional<Turma> turma = turmasDAO.findById(idTurma);
 
         if(turma.isPresent()) {
             if(turma.get().verificaSeUsuarioJaPertece(emailUser)) {
 
-                turma.get().adicionaGrupo(grupo);
-                turmasDAO.save(turma.get());
-                return grupo;
+                int quantidadeDegrupos = turma.get().quantidadeGruposNaTurma();
+                if(quantidadeDegrupos < turma.get().getNumGrupos()) {
+
+                    Grupo grupo = new Grupo((quantidadeDegrupos + 1),emailUser);
+                    turma.get().adicionaGrupo(grupo);
+                    turmasDAO.save(turma.get());
+                    return grupo;
+                }
+                throw new OverflowNumberOfGroupsException("A turma já atingiu o número permitido de grupos.");
             }
             throw new UserUnauthorizedException("Usuário não tem permissão para criar grupos.");
         }

@@ -1,9 +1,8 @@
 package br.com.ufcg.back.controllers;
-import java.util.List;
 
 import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
-import br.com.ufcg.back.exceptions.grupo.GrupoNotFoundException;
+import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.turma.TurmaException;
 import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
 import br.com.ufcg.back.exceptions.turma.TurmaNotFoundException;
@@ -155,17 +154,19 @@ public class TurmasController {
 
     @ApiOperation(value = "Cria um novo grupo.")
     @RequestMapping(value = "/{id}/addGrupo", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-    public ResponseEntity<Grupo> adicionaGrupo(@ApiParam("Token válido") @RequestHeader("Authorization") String header, @ApiParam("Id da Turma") @PathVariable String id, @ApiParam("Grupo") @RequestBody Grupo grupo) {
+    public ResponseEntity<Grupo> adicionaGrupo(@ApiParam("Token válido") @RequestHeader("Authorization") String header, @ApiParam("Id da Turma") @PathVariable String id) {
 
         try {
 
             if (jwtService.usuarioExiste(header))
-                return new ResponseEntity<Grupo>(turmasService.addGrupo(jwtService.getUsuarioDoToken(header), id, grupo), HttpStatus.OK);
+                return new ResponseEntity<Grupo>(turmasService.addGrupo(jwtService.getUsuarioDoToken(header), id), HttpStatus.OK);
             throw new UserNotFoundException("Usuário não encontrado.");
         } catch (UserUnauthorizedException userUna) {
             return new ResponseEntity<Grupo>(new Grupo(), HttpStatus.UNAUTHORIZED);
         } catch (UserException | TurmaException userErr) {
             return new ResponseEntity<Grupo>(new Grupo(), HttpStatus.NOT_FOUND);
+        } catch (OverflowNumberOfGroupsException errOver) {
+            return new ResponseEntity<Grupo>(new Grupo(), HttpStatus.CONFLICT);
         }
     }
 

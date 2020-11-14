@@ -1,12 +1,14 @@
 package br.com.ufcg.back.services;
 
 import br.com.ufcg.back.daos.UsuariosDAO;
+import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,6 +30,15 @@ public class UsuariosService {
             usuariosDao.save(usuario);
         else
             throw new UserAlreadyExistException(usuario.getEmail());
+    }
+
+    public List<Turma> buscaTodasAsTurmas(String emailUser) {
+
+        Optional<Usuario> usuario = usuariosDao.findByEmail(emailUser);
+        List<Turma> turmas = usuario.get().getManagedTurma();
+        turmas.addAll(usuario.get().getMembersTurma());
+
+        return turmas;
     }
 
     /**

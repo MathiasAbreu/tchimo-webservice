@@ -1,17 +1,19 @@
 package br.com.ufcg.back.controllers;
 
+import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.exceptions.user.UserException;
+import br.com.ufcg.back.exceptions.user.UserNotFoundException;
+import br.com.ufcg.back.services.JWTService;
 import br.com.ufcg.back.services.TurmasService;
 import br.com.ufcg.back.services.UsuariosService;
 import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Api(value = "Controle de Usuários da API")
@@ -21,13 +23,15 @@ public class UsuariosController {
 
     private UsuariosService usuariosService;
     private TurmasService turmasService;
+    private JWTService jwtService;
 
-    public UsuariosController(UsuariosService usuariosService, TurmasService turmasService) {
+    public UsuariosController(UsuariosService usuariosService, TurmasService turmasService, JWTService jwtService) {
 
         super();
 
         this.usuariosService = usuariosService;
         this.turmasService = turmasService;
+        this.jwtService = jwtService;
     }
 
     @ApiOperation(value = "Adiciona um novo usuário ao sistema.", notes = "Adição de um novo Usuário. Recebe como parâmetro de entrada, " +
@@ -65,5 +69,21 @@ public class UsuariosController {
         }
 
         return new ResponseEntity<Usuario>(new Usuario(), HttpStatus.NOT_FOUND);
+    }
+
+    @ApiOperation(value = "Método que retorna todas as turmas que um usuário participa ou administra.", notes = "Busca todas as turmas relacionadas a um usuário.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna todas as turmas de um usuário.")
+    })
+    @RequestMapping(value = "/buscaTotal", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<List<Turma>> buscaTodasAsTurmas(@ApiParam(value = "Token de usuário.") @RequestHeader("Authorization") String header) {
+
+        try {
+            if(jwtService.usuarioExiste(header))
+                return new ResponseEntity<List<Turma>>(usuariosService.buscaTodasAsTurmas(jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
+            throw new UserNotFoundException("Usuario não foi encontrado!");
+        } catch (UserException userErr) {
+            return new ResponseEntity<>(new ArrayList<Turma>(),HttpStatus.NOT_FOUND);
+        }
     }
 }
