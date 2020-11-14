@@ -89,12 +89,12 @@ public class Turma {
         this.id = id;
     }
 
-    public int getNumGrupos() {
+    public int getQuantityOfGroups() {
         return quantityOfGroups;
     }
 
-    public void setNumGrupos(int numGrupos) {
-        this.quantityOfGroups = numGrupos;
+    public void setQuantityOfGroups(int quantityOfGroups) {
+        this.quantityOfGroups = quantityOfGroups;
     }
 
     @JsonIgnore
@@ -123,7 +123,7 @@ public class Turma {
         integrantes.add(usuario);
     }
 
-    public int quantidadeGruposNaTurma() {
+    public long quantidadeGruposNaTurma() {
         return groups.size();
     }
 

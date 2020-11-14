@@ -2,6 +2,7 @@ package br.com.ufcg.back.controllers;
 
 import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
+import br.com.ufcg.back.entities.dtos.TurmaDTO;
 import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.turma.TurmaException;
 import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
@@ -19,9 +20,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Api(value = "Controle de Turmas da API")
 @RestController
-@RequestMapping("turma")
 public class TurmasController {
 
     private TurmasService turmasService;
@@ -93,7 +96,7 @@ public class TurmasController {
             @ApiResponse(code = 401, message = "Token inválido."),
             @ApiResponse(code = 404, message = "Usuário não encontrado.")
     })
-    @RequestMapping(value = "/add", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "turmas", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     public ResponseEntity<String> criaTurma(@ApiParam("Token Válido.") @RequestHeader("Authorization") String header, @ApiParam("Turma a ser criada.") @RequestBody Turma turma) {
 
         try {
@@ -112,7 +115,7 @@ public class TurmasController {
             @ApiResponse(code = 401, message = "O token do usuário não é válido."),
             @ApiResponse(code = 404, message = "O usuário não foi encontrado.")
     })
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "turmas/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Turma> buscaTurma(@ApiParam("Token válido.") @RequestHeader("Authorization") String header, @ApiParam("Id da Turma") @PathVariable String id) {
 
         try {
@@ -135,7 +138,7 @@ public class TurmasController {
             @ApiResponse(code = 409, message = "Usuário já pertence a turma, ou é o proprietário da mesma."),
             @ApiResponse(code = 401, message = "Usuario não autorizado pelo token.")
     })
-    @RequestMapping(value = "/{id}/entraTurma", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "turmas/{id}", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<String> entrarEmUmTurma(@ApiParam("Token Válido") @RequestHeader("Authorization") String header, @ApiParam("Turma") @PathVariable String id) {
 
         try {
@@ -153,7 +156,7 @@ public class TurmasController {
     }
 
     @ApiOperation(value = "Cria um novo grupo.")
-    @RequestMapping(value = "/{id}/addGrupo", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "turmas/{id}/grupos", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<Grupo> adicionaGrupo(@ApiParam("Token válido") @RequestHeader("Authorization") String header, @ApiParam("Id da Turma") @PathVariable String id) {
 
         try {
@@ -170,4 +173,19 @@ public class TurmasController {
         }
     }
 
+    @ApiOperation(value = "Método que retorna todas as turmas que um usuário participa ou administra.", notes = "Busca todas as turmas relacionadas a um usuário.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna todas as turmas de um usuário.")
+    })
+    @RequestMapping(value = "turmas", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<List<TurmaDTO>> buscaTodasAsTurmas(@ApiParam(value = "Token de usuário.") @RequestHeader("Authorization") String header) {
+
+        try {
+            if(jwtService.usuarioExiste(header))
+                return new ResponseEntity<List<TurmaDTO>>(usuariosService.buscaTodasAsTurmas(jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
+            throw new UserNotFoundException("Usuario não foi encontrado!");
+        } catch (UserException userErr) {
+            return new ResponseEntity<>(new ArrayList<TurmaDTO>(),HttpStatus.NOT_FOUND);
+        }
+    }
 }
