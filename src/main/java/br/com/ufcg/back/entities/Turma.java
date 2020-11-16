@@ -134,10 +134,6 @@ public class Turma {
         this.totalNumberOfGroups += 1;
     }
 
-    public int getCurrentAmountOfGroups() {
-        return groups.size();
-    }
-
     private Grupo grupoComId(Long groupID) throws GroupNotFoundException {
         Grupo grupo = null;
 
