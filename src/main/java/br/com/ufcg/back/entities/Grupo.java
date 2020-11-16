@@ -1,5 +1,7 @@
 package br.com.ufcg.back.entities;
 
+import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
+import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ public class Grupo {
     private long idGroup;
     private String emailManager;
 
-    private ArrayList<String> memberIDs = new ArrayList<>();
+    private ArrayList<String> memberIDs = new ArrayList<String>();
 
     @JsonCreator
     public Grupo(long idGroup, String emailManager) {
@@ -48,19 +50,19 @@ public class Grupo {
         return idGroup;
     }
 
-    public int quantidadeDeMembros(){
+    public int amountOfMembers(){
         return memberIDs.size();
     }
 
-    /*public void adicionaUsuario(Long usrId) throws UserAlreadyExistException {
+    public void addUser(String usrId) throws UserAlreadyExistException {
         if (memberIDs.contains(usrId))
             throw new UserAlreadyExistException();
         else memberIDs.add(usrId);
-    }*/
+    }
 
-    /*public void removeUsuario(Long usrId) throws UserNotFoundException {
+    public void removeUser(String usrId) throws UserNotFoundException {
         if (memberIDs.contains(usrId))
             memberIDs.remove(usrId);
         else throw new UserNotFoundException();
-    }*/
+    }
 }
