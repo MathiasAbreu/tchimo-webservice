@@ -62,12 +62,14 @@ public class UsuariosController {
     @RequestMapping(value = "usuarios", method = RequestMethod.GET, produces = "application/json", consumes = "application/json")
     public ResponseEntity<Usuario> buscaUsuario(@ApiParam(value = "Email do Usuário.") @RequestBody Usuario usuario) {
 
-        Optional<Usuario> retornoUsuario = usuariosService.getUsuario(usuario.getEmail());
-        if(retornoUsuario.isPresent()) {
-            return new ResponseEntity<Usuario>(retornoUsuario.get(), HttpStatus.OK);
-
+        try {
+            Optional<Usuario> retornoUsuario = usuariosService.getUsuario(usuario.getEmail());
+            if (retornoUsuario.isPresent() && retornoUsuario.get().getEmail().equals(usuario.getEmail())) {
+                return new ResponseEntity<Usuario>(retornoUsuario.get(), HttpStatus.OK);
+            }
+            throw new UserNotFoundException("Usuário não encontrado: " + usuario.getEmail());
+        } catch (UserException err) {
+            return new ResponseEntity<Usuario>(new Usuario(), HttpStatus.NOT_FOUND);
         }
-
-        return new ResponseEntity<Usuario>(new Usuario(), HttpStatus.NOT_FOUND);
     }
 }

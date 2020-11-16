@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 public class UserTokenBadlyFormattedException extends UserException {
 
     public UserTokenBadlyFormattedException() {
-        super("Token do Usuário inexistente ou mal formatado!");
+        super();
+    }
+    public UserTokenBadlyFormattedException(String message) {
+        super("     UserTokenBadlyFormattedException() -> " + message);
     }
 }

@@ -5,8 +5,7 @@ public class OverflowNumberOfGroupsException extends GroupException{
     public OverflowNumberOfGroupsException() {
         super();
     }
-
     public OverflowNumberOfGroupsException(String message) {
-        super(message);
+        super("     OverflowNumberOfGroupsException() -> " + message);
     }
 }

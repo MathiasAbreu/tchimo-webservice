@@ -24,14 +24,14 @@ public class UsuariosService {
         this.usuariosDao = usuariosDao;
     }
 
-    public void adicionaUsuario(Usuario usuario) throws UserException {
+    public void adicionaUsuario(Usuario usuario) throws UserAlreadyExistException {
 
         Optional<Usuario> verificaUsuario = usuariosDao.findByEmail(usuario.getEmail());
 
         if(!verificaUsuario.isPresent())
             usuariosDao.save(usuario);
         else
-            throw new UserAlreadyExistException(usuario.getEmail());
+            throw new UserAlreadyExistException("Usuário já existe: " + usuario.getEmail());
     }
 
     public List<TurmaDTO> buscaTodasAsTurmas(String emailUser) {
@@ -63,6 +63,6 @@ public class UsuariosService {
         if(usuario.isPresent())
             return usuario.get().getIdUser();
 
-        throw new UserNotFoundException();
+        throw new UserNotFoundException("Usuário não encontrado: " + email);
     }
 }

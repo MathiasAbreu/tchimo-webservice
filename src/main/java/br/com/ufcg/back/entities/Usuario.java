@@ -83,4 +83,12 @@ public class Usuario {
     public void addTurma(Turma turma) {
         membersTurma.add(turma);
     }
+
+    public void removeTurma(String idTurma) {
+        for(Turma turma : membersTurma)
+            if(turma.getId().equals(idTurma)) {
+                membersTurma.remove(turma);
+                break;
+            }
+    }
 }

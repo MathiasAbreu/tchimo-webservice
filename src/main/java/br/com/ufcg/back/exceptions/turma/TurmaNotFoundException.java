@@ -7,6 +7,6 @@ public class TurmaNotFoundException extends TurmaException {
     }
 
     public TurmaNotFoundException(String message) {
-        super(message);
+        super("     TurmaNotFoundException() -> " + message);
     }
 }

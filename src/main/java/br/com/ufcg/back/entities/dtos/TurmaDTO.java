@@ -36,6 +36,10 @@ public class TurmaDTO {
         configureIntegrantes(integrantes);
     }
 
+    public TurmaDTO() {
+
+    }
+
     public String getId() {
         return id;
     }

@@ -44,9 +44,9 @@ public class TurmasService {
 
             if(turma.get().getManager().getEmail().equals(emailUser) || turma.get().verificaSeUsuarioJaPertece(emailUser))
                 return turma.get();
-            throw new UserUnauthorizedException();
+            throw new UserUnauthorizedException("O usuário não possui autorização. ");
         }
-        throw new TurmaNotFoundException();
+        throw new TurmaNotFoundException("Turma não encontrada: " + idTurma);
     }
 
     public List<Turma> findAll() {
@@ -83,7 +83,7 @@ public class TurmasService {
             turmasDAO.save(turma);
             return turma.getId();
         }
-        throw new UserNotFoundException();
+        throw new UserNotFoundException("Usuário não encontrado.");
     }
 
     private String gerarId() {
@@ -128,7 +128,7 @@ public class TurmasService {
             turmasDAO.save(turma.get());
             return turma.get().getId();
         }
-        throw new TurmaNotFoundException();
+        throw new TurmaNotFoundException("Turma não encontrada.");
     }
 
     public Grupo addGrupo(String emailUser, String idTurma) throws TurmaException, UserUnauthorizedException, OverflowNumberOfGroupsException {
@@ -152,5 +152,26 @@ public class TurmasService {
             throw new UserUnauthorizedException("Usuário não tem permissão para criar grupos.");
         }
         throw new TurmaNotFoundException("Turma não encontrada.");
+    }
+
+    public void removerUsuarioDeTurma(String emailUser, String idTurma) throws TurmaNotFoundException, TurmaManagerException {
+
+        Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
+        Optional<Turma> turma = turmasDAO.findById(idTurma);
+
+        if(turma.isPresent()) {
+
+            if(turma.get().verificaSeUsuarioJaPertece(emailUser)) {
+                turma.get().removeUser(emailUser);
+                turmasDAO.save(turma.get());
+
+                usuariosDAO.findByEmail(emailUser).map(record -> {
+                   record.removeTurma(idTurma);
+                   return usuariosDAO.save(record);
+                });
+            }
+            throw new TurmaManagerException("Usuário não pode sair da turma que administra ou não pertence a mesma.");
+        }
+        throw new TurmaNotFoundException("Turma não encontrada: " + idTurma);
     }
 }

@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
@@ -50,6 +49,16 @@ public class Grupo {
 
     public int quantidadeDeMembros(){
         return memberIDs.size();
+    }
+
+    public boolean usuarioParticipa(String email) {
+        if(memberIDs.contains(email))
+            return true;
+        return false;
+    }
+
+    public void removeUsuario(String email) {
+        memberIDs.remove(email);
     }
 
     /*public void adicionaUsuario(Long usrId) throws UserAlreadyExistException {

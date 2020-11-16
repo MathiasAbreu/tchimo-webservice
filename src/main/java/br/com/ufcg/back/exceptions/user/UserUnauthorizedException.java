@@ -7,6 +7,6 @@ public class UserUnauthorizedException extends UserException{
     }
 
     public UserUnauthorizedException(String message) {
-        super(message);
+        super("     UserUnauthorizedException() -> " + message);
     }
 }

@@ -27,7 +27,7 @@ public class JWTService {
     public String getUsuarioDoToken(String authorizationHeader) throws UserException {
 
         if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer "))
-            throw new UserTokenBadlyFormattedException();
+            throw new UserTokenBadlyFormattedException("Token mal-formatado.");
 
         String token = authorizationHeader.substring(TokenFilter.TOKEN_INDEX);
         String subject = null;
@@ -36,11 +36,11 @@ public class JWTService {
 
             subject = Jwts.parser().setSigningKey("DefaultUserLogin").parseClaimsJws(token).getBody().getSubject();
             if(!(usuariosService.getUsuario(subject)).isPresent())
-                throw new UserTokenExpired();
+                throw new UserTokenExpired("Tempo de token expirado.");
 
         } catch (Exception err) {
 
-            throw new UserTokenBadlyFormattedException();
+            throw new UserTokenBadlyFormattedException("Token mal-formatado.");
         }
 
         return subject;

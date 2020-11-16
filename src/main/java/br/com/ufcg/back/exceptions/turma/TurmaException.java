@@ -5,9 +5,8 @@ public class TurmaException extends Exception {
     public TurmaException() {
         super();
     }
-
     public TurmaException(String message) {
-        super(message);
+        super("throw: TurmaException() by: \n" + message);
     }
 
 }

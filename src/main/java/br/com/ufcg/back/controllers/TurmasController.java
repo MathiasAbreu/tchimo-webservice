@@ -188,4 +188,21 @@ public class TurmasController {
             return new ResponseEntity<>(new ArrayList<TurmaDTO>(),HttpStatus.NOT_FOUND);
         }
     }
+
+    @ApiOperation(value = "Permite ao usuário que ele saia de uma turma da qual participa como integrante.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna uma confirmação que o usuário saiu da turma desejada."),
+            @ApiResponse(code = 404, message = "Usuário não encontrado.")
+    })
+    @RequestMapping(value = "turmas/{id}", method = RequestMethod.DELETE, produces = "application/json")
+    public ResponseEntity<String> sairDeTurma(@ApiParam("Token de verificação do usuário.") @RequestHeader("Authorization") String header, @ApiParam("Id da turma") @PathVariable String idTurma) {
+
+        try {
+            if(jwtService.usuarioExiste(header))
+                return new ResponseEntity<String>("Operação bem sucedida!", HttpStatus.OK);
+            throw new UserNotFoundException("Usuário não foi encontrado.");
+        } catch (UserException userErr) {
+            return new ResponseEntity<String>(userErr.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }

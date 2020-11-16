@@ -10,6 +10,7 @@ public class UserException extends Exception {
     }
 
     public UserException(String message) {
-        super(message);
+
+        super("throw: UserException() by: \n" + message);
     }
 }

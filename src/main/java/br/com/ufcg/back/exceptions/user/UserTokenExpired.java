@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 public class UserTokenExpired extends UserException {
 
     public UserTokenExpired() {
-        super("Token expirado!");
+        super();
+    }
+    public UserTokenExpired(String message) {
+        super("     UserTokenExpired() -> " + message);
     }
 }

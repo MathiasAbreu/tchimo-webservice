@@ -142,13 +142,28 @@ public class Turma {
                 grupo = g;
 
         if (grupo == null)
-            throw new GroupNotFoundException();
+            throw new GroupNotFoundException("Grupo não encontrado.");
 
         return grupo;
     }
 
     private void removeGrupo(Long groupID) throws GroupNotFoundException {
         groups.remove(grupoComId(groupID));
+    }
+
+    public void removeUser(String email) {
+
+        for(Usuario usuario : integrantes)
+            if(usuario.getEmail().equals(email)) {
+                integrantes.remove(usuario);
+                break;
+            }
+
+        for(Grupo grupo : groups)
+            if(grupo.usuarioParticipa(email)) {
+                grupo.removeUsuario(email);
+                break;
+            }
     }
 
     public void adicionaGrupo(Grupo grupo) {
