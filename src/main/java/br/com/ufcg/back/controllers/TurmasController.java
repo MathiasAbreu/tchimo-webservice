@@ -158,15 +158,21 @@ public class TurmasController {
         }
     }
 
+    @ApiOperation(value = "Método que retorna todos os grupos de uma turma.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna todos os grupos de uma turma.")
+    })
+    @RequestMapping(value = "turmas/{id}/groups", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<Grupo[]> listarGrupos(
+            @ApiParam(value = "Token de usuário.") @RequestHeader("Authorization") String header,
+            @ApiParam("Id da Turma") @PathVariable String id) {
 
-
-    /*@ApiOperation(value = "Lista os grupos de uma turma.")
-    @RequestMapping(value = "/{id}/grupos", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<Grupo[]> listarGrupos(@PathVariable String id) {
         try {
-            return new ResponseEntity<Grupo[]>(turmasService.listarGrupos(id), HttpStatus.OK);
-        } catch (TurmaNotFoundException e) {
+            if (jwtService.usuarioExiste(header))
+                return new ResponseEntity<Grupo[]>(turmasService.listGroups(id, jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
+            throw new UserNotFoundException("Usuario não foi encontrado!");
+        } catch (TurmaNotFoundException | UserException e) {
             return new ResponseEntity<Grupo[]>(new Grupo[0], HttpStatus.NOT_FOUND);
         }
-    }*/
+    }
 }
