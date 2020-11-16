@@ -9,6 +9,7 @@ import br.com.ufcg.back.daos.UsuariosDAO;
 import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
+import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.turma.TurmaException;
 import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
@@ -53,25 +54,6 @@ public class TurmasService {
         return turmasDAO.findAll();
     }
 
-    /*
-        Necessita revisão
-     */
-    /*public void adicionaUsuarioANovoGrupo(Long id, Long usrId) throws TurmaMaximoGruposException, UserAlreadyExistException, TurmaNotFoundException {
-        Turma t = findByID(id);
-        t.adicionaUsuarioANovoGrupo(usrId);
-        create(t);
-    }*/
-
-    /*public void removeUsuarioDeGrupo(String id, Long groupID, Long usrId) throws UserNotFoundException, GrupoNotFoundException, TurmaNotFoundException {
-        Turma t = buscaTurma(id);
-        t.removeUsuarioDeGrupo(groupID, usrId);
-        create(t);
-    }*/
-
-    /*public Grupo[] listarGrupos(String id) throws TurmaNotFoundException {
-        return buscaTurma(id).listarGrupos();
-    }*/
-
     public String criaTurma(Turma turma, String emailUsuario) throws UserNotFoundException {
 
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUsuario);
@@ -111,12 +93,12 @@ public class TurmasService {
 
         Optional<Turma> turma = turmasDAO.findById(idTurma);
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
-        if(turma.isPresent()) {
+        if (turma.isPresent()) {
 
-            if(turma.get().getManager().getEmail().equals(emailUser))
+            if (turma.get().getManager().getEmail().equals(emailUser))
                 throw new TurmaManagerException("Usuário não pode entrar na turma pois é o manager dela!");
 
-            if(turma.get().verificaSeUsuarioJaPertece(emailUser))
+            if (turma.get().verificaSeUsuarioJaPertece(emailUser))
                 throw new UserAlreadyExistException("Usuário já pertence a turma.");
 
             usuariosDAO.findByEmail(emailUser).map(record -> {
@@ -128,11 +110,10 @@ public class TurmasService {
             turmasDAO.save(turma.get());
             return turma.get().getId();
         }
-        throw new TurmaNotFoundException("Turma não encontrada.");
+        throw new TurmaNotFoundException();
     }
 
     public Grupo addGrupo(String emailUser, String idTurma) throws TurmaException, UserUnauthorizedException, OverflowNumberOfGroupsException {
-
         Optional<Turma> turma = turmasDAO.findById(idTurma);
 
         if(turma.isPresent()) {
@@ -152,6 +133,21 @@ public class TurmasService {
             throw new UserUnauthorizedException("Usuário não tem permissão para criar grupos.");
         }
         throw new TurmaNotFoundException("Turma não encontrada.");
+    }
+
+    public Boolean removeUserFromGroup(String id, Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException, TurmaNotFoundException, UserUnauthorizedException {
+        Turma t = buscaTurma(id, emailUser);
+        t.removeUserFromGroup(groupID, emailUser);
+        create(t);
+        return true;
+    }
+
+    public Grupo[] listGroups(String id, String usrEmail) throws TurmaNotFoundException, UserUnauthorizedException {
+        return buscaTurma(id, usrEmail).listGroups();
+    }
+
+    public String[] listMembers(String id, String usrEmail) throws TurmaNotFoundException, UserUnauthorizedException {
+        return buscaTurma(id, usrEmail).listMembers();
     }
 
     public void removerUsuarioDeTurma(String emailUser, String idTurma) throws TurmaNotFoundException, TurmaManagerException {

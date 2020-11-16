@@ -134,6 +134,10 @@ public class Turma {
         this.totalNumberOfGroups += 1;
     }
 
+    public int getCurrentAmountOfGroups() {
+        return groups.size();
+    }
+
     private Grupo grupoComId(Long groupID) throws GroupNotFoundException {
         Grupo grupo = null;
 
@@ -147,7 +151,7 @@ public class Turma {
         return grupo;
     }
 
-    private void removeGrupo(Long groupID) throws GroupNotFoundException {
+    private void removeGroup(Long groupID) throws GroupNotFoundException {
         groups.remove(grupoComId(groupID));
     }
 
@@ -170,27 +174,26 @@ public class Turma {
         groups.add(grupo);
     }
 
-    /*
-        Necessita revisão
-     */
-    /*public void adicionaUsuarioANovoGrupo(Long usrId) throws TurmaMaximoGruposException, UserAlreadyExistException {
-        if (groups.size() < numMaxGrupos) {
-            Grupo grupo = new Grupo();
-            grupo.adicionaUsuario(usrId);
-            groups.add(grupo);
-        }
-        else throw new TurmaMaximoGruposException();
-    }*/
-
-    /*public void removeUsuarioDeGrupo(Long groupID, Long usrId) throws UserNotFoundException, GroupNotFoundException {
+    public void removeUserFromGroup(Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException {
         Grupo grupo = grupoComId(groupID);
 
-        grupo.removeUsuario(usrId);
-        if (grupo.quantidadeDeMembros() == 0)
-            removeGrupo(groupID);
-    }*/
+        grupo.removeUser(emailUser);
+        if (grupo.amountOfMembers() == 0)
+            removeGroup(groupID);
+    }
 
-    public Grupo[] listarGrupos() {
+    public Grupo[] listGroups() {
         return (Grupo[]) groups.toArray();
+    }
+
+    public String[] listMembers() {
+        List<String> members = new ArrayList<String>();
+
+        members.add(manager.getEmail());
+
+        for (Usuario u : integrantes)
+            members.add(u.getEmail());
+
+        return (String[]) members.toArray();
     }
 }
