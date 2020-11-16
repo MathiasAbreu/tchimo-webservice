@@ -138,4 +138,8 @@ public class TurmasService {
     public Grupo[] listGroups(String id, String usrEmail) throws TurmaNotFoundException, UserUnauthorizedException {
         return buscaTurma(id, usrEmail).listGroups();
     }
+
+    public String[] listMembers(String id, String usrEmail) throws TurmaNotFoundException, UserUnauthorizedException {
+        return buscaTurma(id, usrEmail).listMembers();
+    }
 }

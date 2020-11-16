@@ -160,4 +160,15 @@ public class Turma {
     public Grupo[] listGroups() {
         return (Grupo[]) groups.toArray();
     }
+
+    public String[] listMembers() {
+        List<String> members = new ArrayList<String>();
+
+        members.add(manager.getEmail());
+
+        for (Usuario u : integrantes)
+            members.add(u.getEmail());
+
+        return (String[]) members.toArray();
+    }
 }
