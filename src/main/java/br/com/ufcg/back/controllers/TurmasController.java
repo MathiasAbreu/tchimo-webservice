@@ -175,7 +175,7 @@ public class TurmasController {
         }
     }
 
-    @ApiOperation(value = "Método que retorna todos os grupos de uma turma.")
+    /*@ApiOperation(value = "Método que retorna todos os grupos de uma turma.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retorna todos os grupos de uma turma.")
     })
@@ -191,7 +191,7 @@ public class TurmasController {
         } catch (TurmaNotFoundException | UserException e) {
             return new ResponseEntity<Grupo[]>(new Grupo[0], HttpStatus.NOT_FOUND);
         }
-    }
+    }*/
 
     @ApiOperation(value = "Método que retorna todos os membros de uma turma.")
     @ApiResponses(value = {

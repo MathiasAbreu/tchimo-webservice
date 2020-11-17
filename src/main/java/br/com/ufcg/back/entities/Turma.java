@@ -28,7 +28,7 @@ public class Turma {
     @ManyToMany(mappedBy = "membersTurma")
     private List<Usuario> integrantes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "idGroup", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "idUnique", fetch = FetchType.LAZY)
     private List<Grupo> groups = new ArrayList<>();
 
     private String formationStrategy;
@@ -151,7 +151,7 @@ public class Turma {
         groups.remove(grupoComId(groupID));
     }
 
-    public void removeUser(String email) {
+    /*public void removeUser(String email) {
 
         for(Usuario usuario : integrantes)
             if(usuario.getEmail().equals(email)) {
@@ -164,7 +164,7 @@ public class Turma {
                 grupo.removeUsuario(email);
                 break;
             }
-    }
+    }*/
 
     public void adicionaGrupo(Grupo grupo) {
         groups.add(grupo);
@@ -178,8 +178,11 @@ public class Turma {
             removeGroup(groupID);
     }
 
-    public Grupo[] listGroups() {
-        return (Grupo[]) groups.toArray();
+    public List<Grupo> listGroups() {
+        List<Grupo> grupos = new ArrayList<>();
+        for(Grupo grupo : groups)
+            grupos.add(grupo);
+        return grupos;
     }
 
     public String[] listMembers() {

@@ -5,6 +5,7 @@ import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,18 +16,28 @@ public class Grupo {
 
     @Id
     @GeneratedValue
-    private long idUnique;
+    private Long idUnique;
 
-    private long idGroup;
+    private Long idGroup;
     private String emailManager;
 
-    private ArrayList<String> memberIDs = new ArrayList<>();
+    private ArrayList<Long> memberIDs = new ArrayList<>();
 
     @JsonCreator
     public Grupo(long idGroup, String emailManager) {
 
         super();
 
+        this.idGroup = idGroup;
+        this.emailManager = emailManager;
+    }
+
+    @JsonCreator
+    public Grupo(Long idUnique, Long idGroup, String emailManager) {
+
+        super();
+
+        this.idUnique = idUnique;
         this.idGroup = idGroup;
         this.emailManager = emailManager;
     }
@@ -52,17 +63,21 @@ public class Grupo {
         return memberIDs.size();
     }
 
+    public List<Long> getMemberIDs() {
+        return memberIDs;
+    }
+
     public boolean usuarioParticipa(String email) {
         if(memberIDs.contains(email))
             return true;
         return false;
     }
 
-    public void removeUsuario(String email) {
-        memberIDs.remove(email);
+    public void removeUsuario(Long usrId) {
+        memberIDs.remove(usrId);
     }
 
-    public void addUser(String usrId) throws UserAlreadyExistException {
+    public void addUser(Long usrId) throws UserAlreadyExistException {
         if (memberIDs.contains(usrId))
             throw new UserAlreadyExistException();
         else memberIDs.add(usrId);

@@ -1,5 +1,6 @@
 package br.com.ufcg.back.entities.dtos;
 
+import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Usuario;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class TurmaDTO {
 
     private boolean usuario;
 
-    private List<String> integrantes = new ArrayList<>();
+    private List<UsuarioDTO> integrantes = new ArrayList<>();
     private List<String> groups = new ArrayList<>();
 
     public TurmaDTO(String id, String name, long creationDate, long endDate, String formationStrategy, String endingStrategy, int quantityOfGroupsAvailable, boolean usuario, List<Usuario> integrantes) {
@@ -34,6 +35,7 @@ public class TurmaDTO {
         this.usuario = usuario;
 
         configureIntegrantes(integrantes);
+        //configureGrupos(grupos, integrantes);
     }
 
     public TurmaDTO() {
@@ -104,20 +106,29 @@ public class TurmaDTO {
         this.usuario = usuario;
     }
 
-    public List<String> getIntegrantes() {
+    public List<UsuarioDTO> getIntegrantes() {
         return integrantes;
     }
 
-    public void setIntegrantes(List<String> integrantes) {
+    public void setIntegrantes(List<UsuarioDTO> integrantes) {
         this.integrantes = integrantes;
     }
 
     public int getTotalGroups() {
         return groups.size();
     }
+
     private void configureIntegrantes(List<Usuario> integrantes) {
 
         for(Usuario usuario: integrantes)
-            this.integrantes.add(usuario.getName());
+            this.integrantes.add(new UsuarioDTO(usuario.getIdUser(),usuario.getName()));
     }
+
+    /*private void configureGrupos(List<Grupo> grupos, List<Usuario> integrantes) {
+        for(Grupo grupo : grupos)
+            for(Long id : grupo.getMemberIDs())
+                for(Usuario usuario : integrantes)
+                    if(usuario.getIdUser() == id)
+                        groups.add()
+    }*/
 }

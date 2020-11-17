@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import br.com.ufcg.back.daos.GruposDAO;
 import br.com.ufcg.back.daos.TurmasDAO;
 import br.com.ufcg.back.daos.UsuariosDAO;
 import br.com.ufcg.back.entities.Grupo;
@@ -23,14 +24,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class TurmasService {
 
-    private final TurmasDAO turmasDAO;
-
+    private TurmasDAO turmasDAO;
+    private GruposDAO<Grupo, Long> gruposDAO;
     private UsuariosDAO<Usuario, Long> usuariosDAO;
 
-    public TurmasService(TurmasDAO turmasDAO, UsuariosDAO usuariosDAO) {
+    public TurmasService(TurmasDAO turmasDAO, GruposDAO gruposDAO, UsuariosDAO usuariosDAO) {
 
         super();
         this.turmasDAO = turmasDAO;
+        this.gruposDAO = gruposDAO;
         this.usuariosDAO = usuariosDAO;
     }
 
@@ -122,7 +124,7 @@ public class TurmasService {
                 int quantidadeDegrupos = turma.get().quantidadeGruposNaTurma();
                 if(quantidadeDegrupos < turma.get().getQuantityOfGroups()) {
 
-                    Grupo grupo = new Grupo((quantidadeDegrupos + 1),emailUser);
+                    Grupo grupo = gruposDAO.save(new Grupo((quantidadeDegrupos + 1),emailUser));
                     turma.get().adicionaGrupo(grupo);
                     turma.get().addQGrupo();
                     turmasDAO.save(turma.get());
@@ -142,15 +144,18 @@ public class TurmasService {
         return true;
     }
 
-    public Grupo[] listGroups(String id, String usrEmail) throws TurmaNotFoundException, UserUnauthorizedException {
+    /*public Grupo[] listGroups(String id, String usrEmail) throws TurmaNotFoundException, UserUnauthorizedException {
         return buscaTurma(id, usrEmail).listGroups();
-    }
+    }*/
 
     public String[] listMembers(String id, String usrEmail) throws TurmaNotFoundException, UserUnauthorizedException {
         return buscaTurma(id, usrEmail).listMembers();
     }
 
-    public void removerUsuarioDeTurma(String emailUser, String idTurma) throws TurmaNotFoundException, TurmaManagerException {
+    /*
+    No metodo deve ter o id do usuario no formato long ao inves do email dele."
+     */
+    /*public void removerUsuarioDeTurma(String emailUser, String idTurma) throws TurmaNotFoundException, TurmaManagerException {
 
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
         Optional<Turma> turma = turmasDAO.findById(idTurma);
@@ -169,5 +174,5 @@ public class TurmasService {
             throw new TurmaManagerException("Usuário não pode sair da turma que administra ou não pertence a mesma.");
         }
         throw new TurmaNotFoundException("Turma não encontrada: " + idTurma);
-    }
+    }*/
 }
