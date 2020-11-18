@@ -8,16 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
 public class Grupo {
 
     @Id
-    @GeneratedValue
-    private Long idUnique;
-
     private Long idGroup;
     private String emailManager;
 
@@ -28,16 +24,6 @@ public class Grupo {
 
         super();
 
-        this.idGroup = idGroup;
-        this.emailManager = emailManager;
-    }
-
-    @JsonCreator
-    public Grupo(Long idUnique, Long idGroup, String emailManager) {
-
-        super();
-
-        this.idUnique = idUnique;
         this.idGroup = idGroup;
         this.emailManager = emailManager;
     }

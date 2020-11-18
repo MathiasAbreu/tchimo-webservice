@@ -1,5 +1,6 @@
 package br.com.ufcg.back.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -10,6 +11,9 @@ import br.com.ufcg.back.daos.UsuariosDAO;
 import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
+import br.com.ufcg.back.entities.dtos.GrupoDTO;
+import br.com.ufcg.back.entities.dtos.TurmaDTO;
+import br.com.ufcg.back.entities.dtos.UsuarioDTO;
 import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.turma.TurmaException;
@@ -135,6 +139,64 @@ public class TurmasService {
             throw new UserUnauthorizedException("Usuário não tem permissão para criar grupos.");
         }
         throw new TurmaNotFoundException("Turma não encontrada.");
+    }
+
+    public List<TurmaDTO> buscaTodasAsTurmas(String emailUser) {
+
+        Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
+        List<TurmaDTO> turmas = new ArrayList<>();
+
+        for(Turma turma : usuario.get().getManagedTurma()) {
+            TurmaDTO turmaDTO = new TurmaDTO(turma.getId(), turma.getName(), turma.getCreationDate(), turma.getEndDate(), turma.getFormationStrategy(), turma.getEndingStrategy(), turma.getQuantityOfGroups(), true);
+            turmaDTO.setIntegrantes(configureIntegrantes(turma.getIntegrantes()));
+            turmaDTO.setGroups(configureGrupos(turma.getGroups()));
+            turmas.add(turmaDTO);
+        }
+        for(Turma turma : usuario.get().getMembersTurma()) {
+
+            TurmaDTO turmaDTO = new TurmaDTO(turma.getId(), turma.getName(), turma.getCreationDate(), turma.getEndDate(), turma.getFormationStrategy(), turma.getEndingStrategy(), turma.getQuantityOfGroups(), false);
+            turmaDTO.setIntegrantes(configureIntegrantes(turma.getIntegrantes()));
+            turmaDTO.setGroups(configureGrupos(turma.getGroups()));
+            turmas.add(turmaDTO);
+        }
+
+        return turmas;
+    }
+
+    private List<UsuarioDTO> configureIntegrantes(List<Usuario> integrantes) {
+
+        ArrayList<UsuarioDTO> usuarioDTOS = new ArrayList<>();
+        for(Usuario usuario: integrantes)
+            usuarioDTOS.add(new UsuarioDTO(usuario.getIdUser(),usuario.getName()));
+        return usuarioDTOS;
+    }
+
+    private List<GrupoDTO> configureGrupos(List<Grupo> grupos) {
+
+        ArrayList<GrupoDTO> groups = new ArrayList<>();
+        for(Grupo grupo : grupos) {
+
+            GrupoDTO grupoDTO = new GrupoDTO(grupo.getIdGroup(),recuperaIdUser(grupo.getEmailManager(),usuariosDAO));
+            for(Long idUsers : grupo.getMemberIDs()) {
+
+                Optional<Usuario> usuario = usuariosDAO.findById(idUsers);
+                if(usuario.isPresent()) {
+                    UsuarioDTO usuarioDTO = new UsuarioDTO(idUsers,usuario.get().getName());
+                    grupoDTO.addUserDTO(usuarioDTO);
+                }
+            }
+            groups.add(grupoDTO);
+        }
+        return groups;
+    }
+
+    private Long recuperaIdUser(String emailUser, UsuariosDAO usuariosDAO) {
+
+        Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
+        if(usuario.isPresent())
+            return usuario.get().getIdUser();
+
+        return 0L;
     }
 
     public Boolean removeUserFromGroup(String id, Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException, TurmaNotFoundException, UserUnauthorizedException {

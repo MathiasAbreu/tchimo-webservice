@@ -14,6 +14,7 @@ import javax.persistence.*;
 
 @Entity
 public class Turma {
+
     @Id
     private String id;
     private String name;
@@ -28,7 +29,10 @@ public class Turma {
     @ManyToMany(mappedBy = "membersTurma")
     private List<Usuario> integrantes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "idUnique", fetch = FetchType.LAZY)
+    @ManyToMany
+    @JoinTable(name = "turma_grupos", joinColumns = {
+            @JoinColumn(name = "turma_grupo")}, inverseJoinColumns = {
+            @JoinColumn(name = "grupo_id")})
     private List<Grupo> groups = new ArrayList<>();
 
     private String formationStrategy;
@@ -112,6 +116,10 @@ public class Turma {
     @JsonIgnore
     public List<Usuario> getIntegrantes() {
         return integrantes;
+    }
+
+    public List<Grupo> getGroups() {
+        return groups;
     }
 
     public boolean verificaSeUsuarioJaPertece(String email) {

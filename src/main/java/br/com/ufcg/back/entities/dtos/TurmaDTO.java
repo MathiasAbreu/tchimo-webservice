@@ -1,10 +1,14 @@
 package br.com.ufcg.back.entities.dtos;
 
+import br.com.ufcg.back.daos.UsuariosDAO;
 import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Usuario;
+import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 public class TurmaDTO {
 
     private String id;
@@ -21,9 +25,11 @@ public class TurmaDTO {
     private boolean usuario;
 
     private List<UsuarioDTO> integrantes = new ArrayList<>();
-    private List<String> groups = new ArrayList<>();
+    private List<UsuarioDTO> integrantesSemGrupo = new ArrayList<>();
 
-    public TurmaDTO(String id, String name, long creationDate, long endDate, String formationStrategy, String endingStrategy, int quantityOfGroupsAvailable, boolean usuario, List<Usuario> integrantes) {
+    private List<GrupoDTO> groups = new ArrayList<>();
+
+    public TurmaDTO(String id, String name, long creationDate, long endDate, String formationStrategy, String endingStrategy, int quantityOfGroupsAvailable, boolean usuario) {
 
         this.id = id;
         this.name = name;
@@ -33,9 +39,6 @@ public class TurmaDTO {
         this.endingStrategy = endingStrategy;
         this.quantityOfGroupsAvailable = quantityOfGroupsAvailable;
         this.usuario = usuario;
-
-        configureIntegrantes(integrantes);
-        //configureGrupos(grupos, integrantes);
     }
 
     public TurmaDTO() {
@@ -114,21 +117,16 @@ public class TurmaDTO {
         this.integrantes = integrantes;
     }
 
+    public List<GrupoDTO> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<GrupoDTO> groups) {
+        this.groups = groups;
+    }
+
     public int getTotalGroups() {
         return groups.size();
     }
 
-    private void configureIntegrantes(List<Usuario> integrantes) {
-
-        for(Usuario usuario: integrantes)
-            this.integrantes.add(new UsuarioDTO(usuario.getIdUser(),usuario.getName()));
-    }
-
-    /*private void configureGrupos(List<Grupo> grupos, List<Usuario> integrantes) {
-        for(Grupo grupo : grupos)
-            for(Long id : grupo.getMemberIDs())
-                for(Usuario usuario : integrantes)
-                    if(usuario.getIdUser() == id)
-                        groups.add()
-    }*/
 }

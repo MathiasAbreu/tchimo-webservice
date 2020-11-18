@@ -151,7 +151,7 @@ public class TurmasController {
 
         try {
             if(jwtService.usuarioExiste(header))
-                return new ResponseEntity<List<TurmaDTO>>(usuariosService.buscaTodasAsTurmas(jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
+                return new ResponseEntity<List<TurmaDTO>>(turmasService.buscaTodasAsTurmas(jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
             throw new UserNotFoundException("Usuario não foi encontrado!");
         } catch (UserException userErr) {
             return new ResponseEntity<>(new ArrayList<TurmaDTO>(),HttpStatus.NOT_FOUND);

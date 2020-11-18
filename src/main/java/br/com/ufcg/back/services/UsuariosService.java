@@ -1,9 +1,12 @@
 package br.com.ufcg.back.services;
 
 import br.com.ufcg.back.daos.UsuariosDAO;
+import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
+import br.com.ufcg.back.entities.dtos.GrupoDTO;
 import br.com.ufcg.back.entities.dtos.TurmaDTO;
+import br.com.ufcg.back.entities.dtos.UsuarioDTO;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
@@ -33,19 +36,6 @@ public class UsuariosService {
             usuariosDao.save(usuario);
         else
             throw new UserAlreadyExistException("Usuário já existe: " + usuario.getEmail());
-    }
-
-    public List<TurmaDTO> buscaTodasAsTurmas(String emailUser) {
-
-        Optional<Usuario> usuario = usuariosDao.findByEmail(emailUser);
-        List<TurmaDTO> turmas = new ArrayList<>();
-
-        for(Turma turma : usuario.get().getManagedTurma())
-            turmas.add(new TurmaDTO(turma.getId(),turma.getName(),turma.getCreationDate(),turma.getEndDate(),turma.getFormationStrategy(),turma.getEndingStrategy(),turma.getQuantityOfGroups(),true,turma.getIntegrantes()));
-        for(Turma turma : usuario.get().getMembersTurma())
-            turmas.add(new TurmaDTO(turma.getId(),turma.getName(),turma.getCreationDate(),turma.getEndDate(),turma.getFormationStrategy(),turma.getEndingStrategy(),turma.getQuantityOfGroups(),false,turma.getIntegrantes()));
-
-        return turmas;
     }
 
     /**
