@@ -8,10 +8,7 @@ import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.turma.TurmaException;
 import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
 import br.com.ufcg.back.exceptions.turma.TurmaNotFoundException;
-import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
-import br.com.ufcg.back.exceptions.user.UserException;
-import br.com.ufcg.back.exceptions.user.UserNotFoundException;
-import br.com.ufcg.back.exceptions.user.UserUnauthorizedException;
+import br.com.ufcg.back.exceptions.user.*;
 import br.com.ufcg.back.services.JWTService;
 import br.com.ufcg.back.services.TurmasService;
 import br.com.ufcg.back.services.UsuariosService;
@@ -163,15 +160,35 @@ public class TurmasController {
             @ApiResponse(code = 200, message = "Retorna uma confirmação que o usuário saiu da turma desejada."),
             @ApiResponse(code = 404, message = "Usuário não encontrado.")
     })
-    @RequestMapping(value = "turmas/{id}", method = RequestMethod.DELETE, produces = "application/json")
-    public ResponseEntity<String> sairDeTurma(@ApiParam("Token de verificação do usuário.") @RequestHeader("Authorization") String header, @ApiParam("Id da turma") @PathVariable String idTurma) {
+    @RequestMapping(value = "turmas/{id}/members", method = RequestMethod.DELETE, produces = "application/json")
+    public ResponseEntity<String> sairDeTurma(@ApiParam("Token de verificação do usuário.") @RequestHeader("Authorization") String header, @ApiParam("Id da turma") @PathVariable String id) {
 
         try {
             if (jwtService.usuarioExiste(header))
-                return new ResponseEntity<String>("Operação bem sucedida!", HttpStatus.OK);
+                return new ResponseEntity<String>(turmasService.removeUserFromTurma(id, jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
             throw new UserNotFoundException("Usuário não foi encontrado.");
-        } catch (UserException userErr) {
+        } catch (UserUnauthorizedException | UserTokenBadlyFormattedException | UserTokenExpired err) {
+            return new ResponseEntity<String>(err.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (UserException | TurmaException userErr) {
             return new ResponseEntity<String>(userErr.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @ApiOperation(value = "Permite que um usuário saia de uma turma que administra. Ao sair da turma, a turma deixa de existir automáticamente.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna uma confirmação que o usuario apagou a turma.")
+    })
+    @RequestMapping(value = "turmas/{idTurma}",method = RequestMethod.DELETE, produces = "application/json")
+    public ResponseEntity<String> apagaTurma(@ApiParam("Token de verificação do usuário.") @RequestHeader("Authorization") String header, @ApiParam("Id da turma") @PathVariable String idTurma) {
+
+        try {
+            if(jwtService.usuarioExiste(header))
+                return new ResponseEntity<String>(turmasService.removeTurma(idTurma,jwtService.getUsuarioDoToken(header)),HttpStatus.OK);
+            throw new UserNotFoundException("Usuário não foi encontrado!");
+        } catch (UserUnauthorizedException | UserTokenBadlyFormattedException | UserTokenExpired err) {
+            return new ResponseEntity<String>(err.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (UserException | TurmaException err) {
+            return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 

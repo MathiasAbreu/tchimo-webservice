@@ -88,7 +88,14 @@ public class Usuario {
         for(Turma turma : membersTurma)
             if(turma.getId().equals(idTurma)) {
                 membersTurma.remove(turma);
-                break;
+                return;
+            }
+    }
+    public void removeTurmaManager(String idTurma) {
+        for(Turma turma : managedTurma)
+            if(turma.getId().equals(idTurma)) {
+                managedTurma.remove(turma);
+                return;
             }
     }
 }

@@ -29,7 +29,7 @@ public class Turma {
     @ManyToMany(mappedBy = "membersTurma")
     private List<Usuario> integrantes = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "turma_grupos", joinColumns = {
             @JoinColumn(name = "turma_grupo")}, inverseJoinColumns = {
             @JoinColumn(name = "grupo_id")})
@@ -124,6 +124,7 @@ public class Turma {
 
     public boolean verificaSeUsuarioJaPertece(String email) {
         for(Usuario usuario : integrantes) {
+            System.out.println(usuario.getEmail());
             if(usuario.getEmail().equals(email))
                 return true;
         }
@@ -159,23 +160,35 @@ public class Turma {
         groups.remove(grupoComId(groupID));
     }
 
-    /*public void removeUser(String email) {
+    public Grupo removeUser(String email) {
 
+        long idCapturado = 0L;
         for(Usuario usuario : integrantes)
             if(usuario.getEmail().equals(email)) {
                 integrantes.remove(usuario);
+                idCapturado = usuario.getIdUser();
                 break;
             }
 
         for(Grupo grupo : groups)
             if(grupo.usuarioParticipa(email)) {
-                grupo.removeUsuario(email);
-                break;
+                grupo.removeUsuario(idCapturado);
+                return grupo;
             }
-    }*/
+        return null;
+    }
 
     public void adicionaGrupo(Grupo grupo) {
         groups.add(grupo);
+    }
+
+    public void substituiGrupo(Grupo grupo) {
+        for(Grupo group : groups)
+            if(group.getIdGroup().equals(grupo.getIdGroup())){
+                groups.remove(group);
+                groups.add(grupo);
+                return;
+            }
     }
 
     public void removeUserFromGroup(Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException {
@@ -184,6 +197,14 @@ public class Turma {
         grupo.removeUser(emailUser);
         if (grupo.amountOfMembers() == 0)
             removeGroup(groupID);
+    }
+
+    public void removeGrupo(Long idGroup) {
+        for(Grupo grupo : groups)
+            if(grupo.getIdGroup().equals(idGroup)) {
+                groups.remove(grupo);
+                return;
+            }
     }
 
     public List<Grupo> listGroups() {

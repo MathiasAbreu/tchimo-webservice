@@ -199,11 +199,62 @@ public class TurmasService {
         return 0L;
     }
 
+        public String removeUserFromTurma(String idTurma, String emailUser) throws UserException, TurmaException {
+
+        Optional<Turma> turma = turmasDAO.findById(idTurma);
+        if(turma.isPresent()) {
+
+            if(turma.get().verificaSeUsuarioJaPertece(emailUser)) {
+
+                Grupo grupo = turma.get().removeUser(emailUser);
+                if(grupo != null) {
+                    if(grupo.getEmailManager().equals(emailUser))
+                        turma.get().removeGrupo(grupo.getIdGroup());
+                    else
+                        turma.get().substituiGrupo(grupo);
+                }
+                turmasDAO.save(turma.get());
+                usuariosDAO.findByEmail(emailUser).map(record -> {
+                    record.removeTurma(idTurma);
+                    return usuariosDAO.save(record);
+                });
+                return "Operacão bem sucedida.";
+            }
+            throw new UserNotFoundException("Usuário não pertence a turma!");
+        }
+        throw new TurmaNotFoundException("Turma não encontrada!");
+    }
+
     public Boolean removeUserFromGroup(String id, Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException, TurmaNotFoundException, UserUnauthorizedException {
         Turma t = buscaTurma(id, emailUser);
         t.removeUserFromGroup(groupID, emailUser);
         create(t);
         return true;
+    }
+
+    public String removeTurma(String idturma, String emailUser) throws TurmaException, UserException {
+
+        Optional<Turma> turma = turmasDAO.findById(idturma);
+        if(turma.isPresent()) {
+            if(turma.get().getManager().getEmail().equals(emailUser)) {
+                List<Usuario> integrantes = turma.get().getIntegrantes();
+
+                for (Usuario usuario : integrantes)
+                    usuariosDAO.findById(usuario.getIdUser()).map(record -> {
+                        record.removeTurma(turma.get().getId());
+                        return usuariosDAO.save(record);
+                    });
+                usuariosDAO.findByEmail(emailUser).map(record -> {
+                    record.removeTurmaManager(idturma);
+                    return usuariosDAO.save(record);
+                });
+
+                turmasDAO.delete(turma.get());
+                return "Turma deletada com sucesso.";
+            }
+            throw new UserUnauthorizedException("Usuário não pode apagar uma turma que não é sua.");
+        }
+        throw new TurmaNotFoundException("Turma não encontrada.");
     }
 
     /*public Grupo[] listGroups(String id, String usrEmail) throws TurmaNotFoundException, UserUnauthorizedException {

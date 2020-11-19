@@ -45,6 +45,10 @@ public class TurmaDTO {
 
     }
 
+    public TurmaDTO(String name) {
+        this.name = name;
+    }
+
     public String getId() {
         return id;
     }
