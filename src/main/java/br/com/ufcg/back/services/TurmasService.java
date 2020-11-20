@@ -15,7 +15,6 @@ import br.com.ufcg.back.entities.dtos.GrupoDTO;
 import br.com.ufcg.back.entities.dtos.TurmaDTO;
 import br.com.ufcg.back.entities.dtos.UsuarioDTO;
 import br.com.ufcg.back.exceptions.grupo.GroupException;
-import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.turma.TurmaException;
 import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
@@ -52,7 +51,7 @@ public class TurmasService {
 
             if(turma.get().getManager().getEmail().equals(emailUser) || turma.get().verificaSeUsuarioJaPertece(emailUser)) {
                 TurmaDTO turmaDTO = createTurmaDTO(turma.get(),(turma.get().getManager().getEmail().equals(emailUser)));
-                turmaDTO.setIntegrantes(configureIntegrantes(turma.get().getIntegrantes()));
+                configureIntegrantes(turma.get(),turmaDTO);
                 turmaDTO.setGroups(configureGrupos(turma.get().getGroups()));
                 return turmaDTO;
             }
@@ -128,7 +127,7 @@ public class TurmasService {
         Optional<Turma> turma = turmasDAO.findById(idTurma);
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
         if(turma.isPresent()) {
-            if(turma.get().verificaSeUsuarioJaPertece(emailUser)) {
+            if(turma.get().verificaSeUsuarioJaPertece(emailUser) && !turma.get().verificaSeUsuarioAlocado(usuario.get().getIdUser())) {
 
                 int quantidadeDegrupos = turma.get().quantidadeGruposNaTurma();
                 if(quantidadeDegrupos < turma.get().getQuantityOfGroups()) {
@@ -153,14 +152,14 @@ public class TurmasService {
 
         for(Turma turma : usuario.get().getManagedTurma()) {
             TurmaDTO turmaDTO = createTurmaDTO(turma, true);
-            turmaDTO.setIntegrantes(configureIntegrantes(turma.getIntegrantes()));
+            configureIntegrantes(turma,turmaDTO);
             turmaDTO.setGroups(configureGrupos(turma.getGroups()));
             turmas.add(turmaDTO);
         }
         for(Turma turma : usuario.get().getMembersTurma()) {
 
             TurmaDTO turmaDTO = createTurmaDTO(turma, false);
-            turmaDTO.setIntegrantes(configureIntegrantes(turma.getIntegrantes()));
+            configureIntegrantes(turma,turmaDTO);
             turmaDTO.setGroups(configureGrupos(turma.getGroups()));
             turmas.add(turmaDTO);
         }
@@ -175,17 +174,20 @@ public class TurmasService {
         dto.setEndDate(turma.getEndDate());
         dto.setFormationStrategy(turma.getFormationStrategy());
         dto.setEndingStrategy(turma.getEndingStrategy());
-        dto.setQuantityOfGroupsAvailable(turma.getQuantityOfGroups());
+        dto.setMaxNumberOfGroups(turma.getQuantityOfGroups());
+        dto.setCurrentNumberOfGroups(turma.getTotalNumberOfGroups());
         dto.setUsuario(usuario);
     	return dto;
     }
 
-    private List<UsuarioDTO> configureIntegrantes(List<Usuario> integrantes) {
+    private void configureIntegrantes(Turma turma, TurmaDTO turmaDTO) {
 
-        ArrayList<UsuarioDTO> usuarioDTOS = new ArrayList<>();
-        for(Usuario usuario: integrantes)
-            usuarioDTOS.add(new UsuarioDTO(usuario.getIdUser(),usuario.getName()));
-        return usuarioDTOS;
+        for(Usuario usuario: turma.getIntegrantes()) {
+
+            turmaDTO.addIntegrante(new UsuarioDTO(usuario.getIdUser(), usuario.getName()));
+            if(!turma.verificaSeUsuarioAlocado(usuario.getIdUser()))
+                turmaDTO.addIntegranteSemGrupo(new UsuarioDTO(usuario.getIdUser(), usuario.getName()));
+        }
     }
 
     private List<GrupoDTO> configureGrupos(List<Grupo> grupos) {

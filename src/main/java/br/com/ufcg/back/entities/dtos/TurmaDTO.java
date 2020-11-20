@@ -14,7 +14,8 @@ public class TurmaDTO {
     private String formationStrategy;
     private String endingStrategy;
 
-    private int quantityOfGroupsAvailable;
+    private int maxNumberOfGroups;
+    private int currentNumberOfGroups;
 
     private boolean usuario;
 
@@ -79,12 +80,20 @@ public class TurmaDTO {
         this.endingStrategy = endingStrategy;
     }
 
-    public int getQuantityOfGroupsAvailable() {
-        return quantityOfGroupsAvailable;
+    public int getMaxNumberOfGroups() {
+        return maxNumberOfGroups;
     }
 
-    public void setQuantityOfGroupsAvailable(int quantityOfGroupsAvailable) {
-        this.quantityOfGroupsAvailable = quantityOfGroupsAvailable;
+    public void setMaxNumberOfGroups(int maxNumberOfGroups) {
+        this.maxNumberOfGroups = maxNumberOfGroups;
+    }
+
+    public int getCurrentNumberOfGroups() {
+        return currentNumberOfGroups;
+    }
+
+    public void setCurrentNumberOfGroups(int currentNumberOfGroups) {
+        this.currentNumberOfGroups = currentNumberOfGroups;
     }
 
     public boolean getUsuario() {
@@ -103,6 +112,14 @@ public class TurmaDTO {
         this.integrantes = integrantes;
     }
 
+    public List<UsuarioDTO> getIntegrantesSemGrupo() {
+        return integrantesSemGrupo;
+    }
+
+    public void setIntegrantesSemGrupo(List<UsuarioDTO> integrantesSemGrupo) {
+        this.integrantesSemGrupo = integrantesSemGrupo;
+    }
+
     public List<GrupoDTO> getGroups() {
         return groups;
     }
@@ -113,6 +130,14 @@ public class TurmaDTO {
 
     public int getTotalGroups() {
         return groups.size();
+    }
+
+    public void addIntegrante(UsuarioDTO usuarioDTO) {
+        integrantes.add(usuarioDTO);
+    }
+
+    public void addIntegranteSemGrupo(UsuarioDTO usuarioDTO) {
+        integrantesSemGrupo.add(usuarioDTO);
     }
 
 }

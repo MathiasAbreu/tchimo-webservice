@@ -101,6 +101,10 @@ public class Turma {
         return quantityOfGroups;
     }
 
+    public int getTotalNumberOfGroups() {
+        return totalNumberOfGroups;
+    }
+
     public void setQuantityOfGroups(int quantityOfGroups) {
         this.quantityOfGroups = quantityOfGroups;
     }
@@ -226,25 +230,7 @@ public class Turma {
             }
     }
 
-    public List<Grupo> listGroups() {
-        List<Grupo> grupos = new ArrayList<>();
-        for(Grupo grupo : groups)
-            grupos.add(grupo);
-        return grupos;
-    }
-
-    public String[] listMembers() {
-        List<String> members = new ArrayList<String>();
-
-        members.add(manager.getEmail());
-
-        for (Usuario u : integrantes)
-            members.add(u.getEmail());
-
-        return (String[]) members.toArray();
-    }
-
-    private boolean verificaSeUsuarioAlocado(long idUser) {
+    public boolean verificaSeUsuarioAlocado(long idUser) {
 
         for(Grupo grupo : groups)
             if(grupo.usuarioParticipa(idUser))
