@@ -287,14 +287,6 @@ public class TurmasService {
         throw new TurmaNotFoundException("Turma não encontrada.");
     }
 
-    /*public Grupo[] listGroups(String id, String usrEmail) throws TurmaNotFoundException, UserUnauthorizedException {
-        return buscaTurma(id, usrEmail).listGroups();
-    }*/
-
-    /*public String[] listMembers(String id, String usrEmail) throws TurmaNotFoundException, UserUnauthorizedException {
-        return buscaTurma(id, usrEmail).listMembers();
-    }*/
-
     /*
     No metodo deve ter o id do usuario no formato long ao inves do email dele."
      */
