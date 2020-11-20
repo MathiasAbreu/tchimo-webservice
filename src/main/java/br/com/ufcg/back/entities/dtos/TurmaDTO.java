@@ -1,13 +1,7 @@
 package br.com.ufcg.back.entities.dtos;
 
-import br.com.ufcg.back.daos.UsuariosDAO;
-import br.com.ufcg.back.entities.Grupo;
-import br.com.ufcg.back.entities.Usuario;
-import br.com.ufcg.back.exceptions.user.UserNotFoundException;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class TurmaDTO {
 
@@ -28,19 +22,7 @@ public class TurmaDTO {
     private List<UsuarioDTO> integrantesSemGrupo = new ArrayList<>();
 
     private List<GrupoDTO> groups = new ArrayList<>();
-
-    public TurmaDTO(String id, String name, long creationDate, long endDate, String formationStrategy, String endingStrategy, int quantityOfGroupsAvailable, boolean usuario) {
-
-        this.id = id;
-        this.name = name;
-        this.creationDate = creationDate;
-        this.endDate = endDate;
-        this.formationStrategy = formationStrategy;
-        this.endingStrategy = endingStrategy;
-        this.quantityOfGroupsAvailable = quantityOfGroupsAvailable;
-        this.usuario = usuario;
-    }
-
+    
     public TurmaDTO() {
 
     }
