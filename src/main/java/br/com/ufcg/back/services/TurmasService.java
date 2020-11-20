@@ -45,13 +45,17 @@ public class TurmasService {
         return turmasDAO.save(course);
     }
 
-    public Turma buscaTurma(String idTurma, String emailUser) throws TurmaNotFoundException, UserUnauthorizedException {
+    public TurmaDTO buscaTurma(String idTurma, String emailUser) throws TurmaNotFoundException, UserUnauthorizedException {
 
         Optional<Turma> turma = turmasDAO.findById(idTurma);
         if(turma.isPresent()) {
 
-            if(turma.get().getManager().getEmail().equals(emailUser) || turma.get().verificaSeUsuarioJaPertece(emailUser))
-                return turma.get();
+            if(turma.get().getManager().getEmail().equals(emailUser) || turma.get().verificaSeUsuarioJaPertece(emailUser)) {
+                TurmaDTO turmaDTO = createTurmaDTO(turma.get(),(turma.get().getManager().getEmail().equals(emailUser)));
+                turmaDTO.setIntegrantes(configureIntegrantes(turma.get().getIntegrantes()));
+                turmaDTO.setGroups(configureGrupos(turma.get().getGroups()));
+                return turmaDTO;
+            }
             throw new UserUnauthorizedException("O usuário não possui autorização. ");
         }
         throw new TurmaNotFoundException("Turma não encontrada: " + idTurma);
@@ -189,7 +193,7 @@ public class TurmasService {
         ArrayList<GrupoDTO> groups = new ArrayList<>();
         for(Grupo grupo : grupos) {
 
-            GrupoDTO grupoDTO = new GrupoDTO(grupo.getIdGroup(),recuperaIdUser(grupo.getEmailManager(),usuariosDAO));
+            GrupoDTO grupoDTO = new GrupoDTO(grupo.getIdGroup(),recuperaIdUser(grupo.getEmailManager()));
             for(Long idUsers : grupo.getMemberIDs()) {
 
                 Optional<Usuario> usuario = usuariosDAO.findById(idUsers);
@@ -203,7 +207,7 @@ public class TurmasService {
         return groups;
     }
 
-    private Long recuperaIdUser(String emailUser, UsuariosDAO usuariosDAO) {
+    private Long recuperaIdUser(String emailUser) {
 
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
         if(usuario.isPresent())
@@ -251,12 +255,12 @@ public class TurmasService {
         throw new TurmaNotFoundException("Turma nÃ£o encontrada!");
     }
 
-    public Boolean removeUserFromGroup(String id, Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException, TurmaNotFoundException, UserUnauthorizedException {
+    /*public Boolean removeUserFromGroup(String id, Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException, TurmaNotFoundException, UserUnauthorizedException {
         Turma t = buscaTurma(id, emailUser);
         t.removeUserFromGroup(groupID, emailUser);
         create(t);
         return true;
-    }
+    }*/
 
     public String removeTurma(String idturma, String emailUser) throws TurmaException, UserException {
 
@@ -287,9 +291,9 @@ public class TurmasService {
         return buscaTurma(id, usrEmail).listGroups();
     }*/
 
-    public String[] listMembers(String id, String usrEmail) throws TurmaNotFoundException, UserUnauthorizedException {
+    /*public String[] listMembers(String id, String usrEmail) throws TurmaNotFoundException, UserUnauthorizedException {
         return buscaTurma(id, usrEmail).listMembers();
-    }
+    }*/
 
     /*
     No metodo deve ter o id do usuario no formato long ao inves do email dele."

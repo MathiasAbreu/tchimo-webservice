@@ -1,14 +1,13 @@
 package br.com.ufcg.back.entities.dtos;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class GrupoDTO {
 
     private Long idGroup;
     private Long idUserManager;
 
-    private ArrayList<UsuarioDTO> memberIDs = new ArrayList<>();
+    private ArrayList<UsuarioDTO> members = new ArrayList<>();
 
     public GrupoDTO(Long idGroup, Long idUserManager) {
 
@@ -33,15 +32,15 @@ public class GrupoDTO {
         this.idUserManager = idUserManager;
     }
 
-    public ArrayList<UsuarioDTO> getMemberIDs() {
-        return memberIDs;
+    public ArrayList<UsuarioDTO> getMembers() {
+        return members;
     }
 
-    public void setMemberIDs(ArrayList<UsuarioDTO> memberIDs) {
-        this.memberIDs = memberIDs;
+    public void setMembers(ArrayList<UsuarioDTO> members) {
+        this.members = members;
     }
 
     public void addUserDTO(UsuarioDTO usuarioDTO) {
-        memberIDs.add(usuarioDTO);
+        members.add(usuarioDTO);
     }
 }

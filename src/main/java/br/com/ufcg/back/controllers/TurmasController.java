@@ -65,18 +65,18 @@ public class TurmasController {
             @ApiResponse(code = 404, message = "O usuário não foi encontrado.")
     })
     @RequestMapping(value = "turmas/{id}", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<Turma> buscaTurma(@ApiParam("Token válido.") @RequestHeader("Authorization") String header, @ApiParam("Id da Turma") @PathVariable String id) {
+    public ResponseEntity<TurmaDTO> buscaTurma(@ApiParam("Token válido.") @RequestHeader("Authorization") String header, @ApiParam("Id da Turma") @PathVariable String id) {
 
         try {
 
             if(jwtService.usuarioExiste(header))
-                return new ResponseEntity<Turma>(turmasService.buscaTurma(id,jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
+                return new ResponseEntity<TurmaDTO>(turmasService.buscaTurma(id,jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
             throw new UserNotFoundException("Usuário não encontrado!");
 
         } catch (TurmaNotFoundException errTurma) {
-            return new ResponseEntity<Turma>(new Turma(),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<TurmaDTO>(new TurmaDTO(),HttpStatus.NOT_FOUND);
         } catch (UserException errUser) {
-            return new ResponseEntity<Turma>(new Turma(), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<TurmaDTO>(new TurmaDTO(), HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -138,7 +138,7 @@ public class TurmasController {
         }
     }
 
-    @ApiOperation(value = "Remove um usuário de um grupo de uma turma e remove o grupo caso esteja vazio.")
+    /*@ApiOperation(value = "Remove um usuário de um grupo de uma turma e remove o grupo caso esteja vazio.")
     @RequestMapping(value = "turmas/{id}/remove", method = RequestMethod.DELETE, produces = "application/json", consumes = "application/json")
     public ResponseEntity<Boolean> removeUserFromGroup(
             @ApiParam("Token válido") @RequestHeader("Authorization") String header,
@@ -154,7 +154,7 @@ public class TurmasController {
         } catch (UserException | GroupNotFoundException | TurmaNotFoundException ex) {
             return new ResponseEntity<Boolean>(false, HttpStatus.NOT_FOUND);
         }
-    }
+    }*/
 
     @ApiOperation(value = "Método que retorna todas as turmas que um usuário participa ou administra.", notes = "Busca todas as turmas relacionadas a um usuário.")
     @ApiResponses(value = {
@@ -227,7 +227,7 @@ public class TurmasController {
         }
     }*/
 
-    @ApiOperation(value = "Método que retorna todos os membros de uma turma.")
+    /*@ApiOperation(value = "Método que retorna todos os membros de uma turma.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retorna todos os membros de uma turma.")
     })
@@ -242,5 +242,5 @@ public class TurmasController {
         } catch (TurmaNotFoundException | UserException e) {
             return new ResponseEntity<String[]>(new String[0], HttpStatus.NOT_FOUND);
         }
-    }
+    }*/
 }
