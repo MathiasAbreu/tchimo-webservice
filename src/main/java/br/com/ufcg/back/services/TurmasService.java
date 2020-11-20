@@ -14,6 +14,7 @@ import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.entities.dtos.GrupoDTO;
 import br.com.ufcg.back.entities.dtos.TurmaDTO;
 import br.com.ufcg.back.entities.dtos.UsuarioDTO;
+import br.com.ufcg.back.exceptions.grupo.GroupException;
 import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.turma.TurmaException;
@@ -121,14 +122,14 @@ public class TurmasService {
 
     public Grupo addGrupo(String emailUser, String idTurma) throws TurmaException, UserUnauthorizedException, OverflowNumberOfGroupsException {
         Optional<Turma> turma = turmasDAO.findById(idTurma);
-
+        Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
         if(turma.isPresent()) {
             if(turma.get().verificaSeUsuarioJaPertece(emailUser)) {
 
                 int quantidadeDegrupos = turma.get().quantidadeGruposNaTurma();
                 if(quantidadeDegrupos < turma.get().getQuantityOfGroups()) {
 
-                    Grupo grupo = gruposDAO.save(new Grupo((quantidadeDegrupos + 1),emailUser));
+                    Grupo grupo = gruposDAO.save(new Grupo((quantidadeDegrupos + 1),emailUser,usuario.get().getIdUser()));
                     turma.get().adicionaGrupo(grupo);
                     turma.get().addQGrupo();
                     turmasDAO.save(turma.get());
@@ -237,7 +238,7 @@ public class TurmasService {
         throw new TurmaNotFoundException("Turma não encontrada!");
     }
 
-    public String addUsuarioEmGrupo(String idTurma, Long idGroup, String emailUser) throws TurmaException, UserException {
+    public String addUsuarioEmGrupo(String idTurma, Long idGroup, String emailUser) throws TurmaException, UserException, GroupException {
 
         Optional<Turma> turma = turmasDAO.findById(idTurma);
         if(turma.isPresent()) {

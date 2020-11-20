@@ -3,6 +3,7 @@ package br.com.ufcg.back.controllers;
 import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.dtos.TurmaDTO;
+import br.com.ufcg.back.exceptions.grupo.GroupException;
 import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.turma.TurmaException;
@@ -132,7 +133,7 @@ public class TurmasController {
 
         try {
             return new ResponseEntity<String>(turmasService.addUsuarioEmGrupo(idTurma, idGrupo, emailUser), HttpStatus.OK);
-        } catch (UserException | TurmaException err) {
+        } catch (UserException | TurmaException | GroupException err) {
             return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

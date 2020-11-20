@@ -29,6 +29,16 @@ public class Grupo {
     }
 
     @JsonCreator
+    public Grupo(long idGroup, String emailManager, long idManager) {
+
+        super();
+
+        this.idGroup = idGroup;
+        this.emailManager = emailManager;
+        memberIDs.add(idManager);
+    }
+
+    @JsonCreator
     public Grupo() {
         super();
     }
@@ -53,8 +63,8 @@ public class Grupo {
         return memberIDs;
     }
 
-    public boolean usuarioParticipa(String email) {
-        if(memberIDs.contains(email))
+    public boolean usuarioParticipa(long idUser) {
+        if(memberIDs.contains(idUser))
             return true;
         return false;
     }

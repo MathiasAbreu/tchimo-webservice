@@ -172,7 +172,7 @@ public class Turma {
             }
 
         for(Grupo grupo : groups)
-            if(grupo.usuarioParticipa(email)) {
+            if(grupo.usuarioParticipa(idCapturado)) {
                 grupo.removeUsuario(idCapturado);
                 return grupo;
             }
@@ -192,12 +192,18 @@ public class Turma {
             }
     }
 
-    public void addUserFromGroup(Long idGroup, String emailUser) throws UserAlreadyExistException {
+    public void addUserFromGroup(Long idGroup, String emailUser) throws UserAlreadyExistException, GroupNotFoundException {
         //Aqui ficam as verificações de integrantes permitidos em cada grupo.
         for(Usuario usuario : integrantes) {
             if(usuario.getEmail().equals(emailUser)) {
-                if(verificaSeUsuarioAlocado(usuario.getIdUser())) {
-
+                if(!verificaSeUsuarioAlocado(usuario.getIdUser())) {
+                    for(Grupo grupo : groups) {
+                        if(grupo.getIdGroup().equals(idGroup)) {
+                            grupo.addUser(usuario.getIdUser());
+                            return;
+                        }
+                    }
+                    throw new GroupNotFoundException("O grupo não foi encontrado.");
                 }
                 throw new UserAlreadyExistException("O Usuário já pertence a um grupo.");
             }
@@ -239,7 +245,10 @@ public class Turma {
     }
 
     private boolean verificaSeUsuarioAlocado(long idUser) {
-        return true;
-        //parei de implementar aqui
+
+        for(Grupo grupo : groups)
+            if(grupo.usuarioParticipa(idUser))
+                return true;
+        return false;
     }
 }
