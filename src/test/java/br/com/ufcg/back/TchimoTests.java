@@ -5,12 +5,12 @@ import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -66,7 +66,7 @@ public class TchimoTests {
 			e.printStackTrace();
 		}
 		t2.addUser(usuario1);
-		assertTrue(t2.verificaSeUsuarioJaPertece("g@gmail"));
+		Assertions.assertTrue(t2.verificaSeUsuarioJaPertece("g@gmail"));
 		t2.removeUser("g@gmail");
 
 		assertEquals(0, t2.quantidadeGruposNaTurma());

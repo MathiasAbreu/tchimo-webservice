@@ -225,6 +225,19 @@ public class TurmasService {
         throw new TurmaNotFoundException("Turma não encontrada!");
     }
 
+    public String addUsuarioEmGrupo(String idTurma, Long idGroup, String emailUser) throws TurmaException, UserException {
+
+        Optional<Turma> turma = turmasDAO.findById(idTurma);
+        if(turma.isPresent()) {
+
+            if(turma.get().verificaSeUsuarioJaPertece(emailUser)) {
+                turma.get().addUserFromGroup(idGroup,emailUser);
+            }
+            throw new UserNotFoundException("Usuário não pertence a turma!");
+        }
+        throw new TurmaNotFoundException("Turma não encontrada!");
+    }
+
     public Boolean removeUserFromGroup(String id, Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException, TurmaNotFoundException, UserUnauthorizedException {
         Turma t = buscaTurma(id, emailUser);
         t.removeUserFromGroup(groupID, emailUser);

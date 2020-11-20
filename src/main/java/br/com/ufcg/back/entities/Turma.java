@@ -1,6 +1,7 @@
 package br.com.ufcg.back.entities;
 
 import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
+import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -191,6 +192,18 @@ public class Turma {
             }
     }
 
+    public void addUserFromGroup(Long idGroup, String emailUser) throws UserAlreadyExistException {
+        //Aqui ficam as verificações de integrantes permitidos em cada grupo.
+        for(Usuario usuario : integrantes) {
+            if(usuario.getEmail().equals(emailUser)) {
+                if(verificaSeUsuarioAlocado(usuario.getIdUser())) {
+
+                }
+                throw new UserAlreadyExistException("O Usuário já pertence a um grupo.");
+            }
+        }
+    }
+
     public void removeUserFromGroup(Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException {
         Grupo grupo = grupoComId(groupID);
 
@@ -223,5 +236,10 @@ public class Turma {
             members.add(u.getEmail());
 
         return (String[]) members.toArray();
+    }
+
+    private boolean verificaSeUsuarioAlocado(long idUser) {
+        return true;
+        //parei de implementar aqui
     }
 }

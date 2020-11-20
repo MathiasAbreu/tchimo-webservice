@@ -104,6 +104,12 @@ public class TurmasController {
     }
 
     @ApiOperation(value = "Cria um novo grupo.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Grupo adicionado com sucesso."),
+            @ApiResponse(code = 401, message = "Usuário não autorizado."),
+            @ApiResponse(code = 404, message = "Usuário não encontrado."),
+            @ApiResponse(code = 409, message = "Quantidade limite de grupos atingida.")
+    })
     @RequestMapping(value = "turmas/{id}/grupos", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<Grupo> adicionaGrupo(@ApiParam("Token válido") @RequestHeader("Authorization") String header, @ApiParam("Id da Turma") @PathVariable String id) {
 
@@ -118,6 +124,16 @@ public class TurmasController {
             return new ResponseEntity<Grupo>(new Grupo(), HttpStatus.NOT_FOUND);
         } catch (OverflowNumberOfGroupsException errOver) {
             return new ResponseEntity<Grupo>(new Grupo(), HttpStatus.CONFLICT);
+        }
+    }
+
+    @RequestMapping(value = "turmas/{idTurma}/{idGrupo}/{emailUser}", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<String> adicionaUserFromGrupo(@PathVariable String idTurma, @PathVariable Long idGrupo, @PathVariable String emailUser) {
+
+        try {
+            return new ResponseEntity<String>(turmasService.addUsuarioEmGrupo(idTurma, idGrupo, emailUser), HttpStatus.OK);
+        } catch (UserException | TurmaException err) {
+            return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
