@@ -22,7 +22,7 @@ public class TchimoTests {
 	public void testaGetsESetsEntidades() {
 		Usuario usuario1 = new Usuario(1L, "g@gmail", "123", "Gilmar");
 		Turma t1 = new Turma("T01", "FS", "ES", 3, 10, 2);
-		Grupo grupo1 = new Grupo(1, "g@gmail");
+		Grupo grupo1 = new Grupo(1, "g@gmail",1L);
 
 		t1.addUser(usuario1);
 		usuario1.addTurma(t1);
@@ -54,7 +54,7 @@ public class TchimoTests {
 	public void testaMetodosEntidades() {
 		Usuario usuario1 = new Usuario(1L, "g@gmail", "123", "Gilmar");
 		Turma t2 = new Turma("T01", "FS", "ES", 3, 10, 2);
-		Grupo grupo1 = new Grupo(1L, "g@gmail");
+		Grupo grupo1 = new Grupo(1L, "g@gmail",1L);
 
 		t2.adicionaGrupo(grupo1);
 

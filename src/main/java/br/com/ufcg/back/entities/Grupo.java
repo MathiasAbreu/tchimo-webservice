@@ -20,15 +20,6 @@ public class Grupo {
     private ArrayList<Long> memberIDs = new ArrayList<>();
 
     @JsonCreator
-    public Grupo(long idGroup, String emailManager) {
-
-        super();
-
-        this.idGroup = idGroup;
-        this.emailManager = emailManager;
-    }
-
-    @JsonCreator
     public Grupo(long idGroup, String emailManager, long idManager) {
 
         super();
