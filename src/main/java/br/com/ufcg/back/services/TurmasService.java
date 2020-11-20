@@ -51,9 +51,9 @@ public class TurmasService {
 
             if(turma.get().getManager().getEmail().equals(emailUser) || turma.get().verificaSeUsuarioJaPertece(emailUser))
                 return turma.get();
-            throw new UserUnauthorizedException("O usu√°rio n√£o possui autoriza√ß√£o. ");
+            throw new UserUnauthorizedException("O usu·rio n„o possui autorizaÁ„o. ");
         }
-        throw new TurmaNotFoundException("Turma n√£o encontrada: " + idTurma);
+        throw new TurmaNotFoundException("Turma n„o encontrada: " + idTurma);
     }
 
     public List<Turma> findAll() {
@@ -71,7 +71,7 @@ public class TurmasService {
             turmasDAO.save(turma);
             return turma.getId();
         }
-        throw new UserNotFoundException("Usu√°rio n√£o encontrado.");
+        throw new UserNotFoundException("Usu·rio n„o encontrado.");
     }
 
     private String gerarId() {
@@ -102,10 +102,10 @@ public class TurmasService {
         if (turma.isPresent()) {
 
             if (turma.get().getManager().getEmail().equals(emailUser))
-                throw new TurmaManagerException("Usu√°rio n√£o pode entrar na turma pois √© o manager dela!");
+                throw new TurmaManagerException("Usu·rio n„o pode entrar na turma pois È o manager dela!");
 
             if (turma.get().verificaSeUsuarioJaPertece(emailUser))
-                throw new UserAlreadyExistException("Usu√°rio j√° pertence a turma.");
+                throw new UserAlreadyExistException("Usu·rio j· pertence a turma.");
 
             usuariosDAO.findByEmail(emailUser).map(record -> {
                 record.addTurma(turma.get());
@@ -134,11 +134,11 @@ public class TurmasService {
                     turmasDAO.save(turma.get());
                     return grupo;
                 }
-                throw new OverflowNumberOfGroupsException("A turma j√° atingiu o n√∫mero permitido de grupos.");
+                throw new OverflowNumberOfGroupsException("A turma j· atingiu o n˙mero permitido de grupos.");
             }
-            throw new UserUnauthorizedException("Usu√°rio n√£o tem permiss√£o para criar grupos.");
+            throw new UserUnauthorizedException("Usu·rio n„o tem permiss„o para criar grupos.");
         }
-        throw new TurmaNotFoundException("Turma n√£o encontrada.");
+        throw new TurmaNotFoundException("Turma n„o encontrada.");
     }
 
     public List<TurmaDTO> buscaTodasAsTurmas(String emailUser) {
@@ -147,20 +147,32 @@ public class TurmasService {
         List<TurmaDTO> turmas = new ArrayList<>();
 
         for(Turma turma : usuario.get().getManagedTurma()) {
-            TurmaDTO turmaDTO = new TurmaDTO(turma.getId(), turma.getName(), turma.getCreationDate(), turma.getEndDate(), turma.getFormationStrategy(), turma.getEndingStrategy(), turma.getQuantityOfGroups(), true);
+            TurmaDTO turmaDTO = createTurmaDTO(turma, true);
             turmaDTO.setIntegrantes(configureIntegrantes(turma.getIntegrantes()));
             turmaDTO.setGroups(configureGrupos(turma.getGroups()));
             turmas.add(turmaDTO);
         }
         for(Turma turma : usuario.get().getMembersTurma()) {
 
-            TurmaDTO turmaDTO = new TurmaDTO(turma.getId(), turma.getName(), turma.getCreationDate(), turma.getEndDate(), turma.getFormationStrategy(), turma.getEndingStrategy(), turma.getQuantityOfGroups(), false);
+            TurmaDTO turmaDTO = createTurmaDTO(turma, false);
             turmaDTO.setIntegrantes(configureIntegrantes(turma.getIntegrantes()));
             turmaDTO.setGroups(configureGrupos(turma.getGroups()));
             turmas.add(turmaDTO);
         }
 
         return turmas;
+    }
+    private TurmaDTO createTurmaDTO(Turma turma, boolean usuario) {
+    	TurmaDTO dto = new TurmaDTO();
+    	dto.setId(turma.getId());
+        dto.setName(turma.getName());
+        dto.setCreationDate(turma.getCreationDate());
+        dto.setEndDate(turma.getEndDate());
+        dto.setFormationStrategy(turma.getFormationStrategy());
+        dto.setEndingStrategy(turma.getEndingStrategy());
+        dto.setQuantityOfGroupsAvailable(turma.getQuantityOfGroups());
+        dto.setUsuario(usuario);
+    	return dto;
     }
 
     private List<UsuarioDTO> configureIntegrantes(List<Usuario> integrantes) {
@@ -218,11 +230,11 @@ public class TurmasService {
                     record.removeTurma(idTurma);
                     return usuariosDAO.save(record);
                 });
-                return "Operac√£o bem sucedida.";
+                return "Operac„o bem sucedida.";
             }
-            throw new UserNotFoundException("Usu√°rio n√£o pertence a turma!");
+            throw new UserNotFoundException("Usu·rio n„o pertence a turma!");
         }
-        throw new TurmaNotFoundException("Turma n√£o encontrada!");
+        throw new TurmaNotFoundException("Turma n„o encontrada!");
     }
 
     public Boolean removeUserFromGroup(String id, Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException, TurmaNotFoundException, UserUnauthorizedException {
@@ -252,9 +264,9 @@ public class TurmasService {
                 turmasDAO.delete(turma.get());
                 return "Turma deletada com sucesso.";
             }
-            throw new UserUnauthorizedException("Usu√°rio n√£o pode apagar uma turma que n√£o √© sua.");
+            throw new UserUnauthorizedException("Usu·rio n„o pode apagar uma turma que n„o È sua.");
         }
-        throw new TurmaNotFoundException("Turma n√£o encontrada.");
+        throw new TurmaNotFoundException("Turma n„o encontrada.");
     }
 
     /*public Grupo[] listGroups(String id, String usrEmail) throws TurmaNotFoundException, UserUnauthorizedException {
@@ -284,8 +296,8 @@ public class TurmasService {
                    return usuariosDAO.save(record);
                 });
             }
-            throw new TurmaManagerException("Usu√°rio n√£o pode sair da turma que administra ou n√£o pertence a mesma.");
+            throw new TurmaManagerException("Usu·rio n„o pode sair da turma que administra ou n„o pertence a mesma.");
         }
-        throw new TurmaNotFoundException("Turma n√£o encontrada: " + idTurma);
+        throw new TurmaNotFoundException("Turma n„o encontrada: " + idTurma);
     }*/
 }
