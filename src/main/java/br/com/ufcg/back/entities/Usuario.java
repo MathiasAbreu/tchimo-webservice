@@ -62,6 +62,7 @@ public class Usuario {
         this.email = email;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -103,5 +104,9 @@ public class Usuario {
                 managedTurma.remove(turma);
                 return;
             }
+    }
+
+    public void addNotification(Notifications notification) {
+        notifications.add(notification);
     }
 }

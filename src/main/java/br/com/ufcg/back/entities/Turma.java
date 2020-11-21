@@ -1,5 +1,6 @@
 package br.com.ufcg.back.entities;
 
+import br.com.ufcg.back.exceptions.grupo.GroupException;
 import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
@@ -236,5 +237,27 @@ public class Turma {
             if(grupo.usuarioParticipa(idUser))
                 return true;
         return false;
+    }
+
+    public boolean verificaGrupo(long idUser) {
+
+        for(Grupo grupo : groups)
+            if(grupo.getIdGroup().equals(idUser))
+                return true;
+        return false;
+    }
+
+    public boolean verificaGrupoAloca(long idUser) {
+        for(Grupo grupo : groups)
+            if(grupo.getIdGroup().equals(idUser) && (grupo.getNumberFoMembersPermitted() == 0 || grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted()))
+                return true;
+        return false;
+    }
+
+    public String returnIdManagerGroup(Long idGroup) throws GroupException {
+        for(Grupo grupo : groups)
+            if(grupo.getIdGroup().equals(idGroup))
+                return grupo.getEmailManager();
+        throw new GroupNotFoundException("Grupo não foi encontrado!");
     }
 }

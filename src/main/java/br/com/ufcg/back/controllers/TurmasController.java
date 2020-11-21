@@ -220,7 +220,7 @@ public class TurmasController {
             if(jwtService.usuarioExiste(header))
                 return new ResponseEntity<String>(turmasService.solicitaEntradaEmGrupo(notification,jwtService.getUsuarioDoToken(header)), HttpStatus.CREATED);
             throw new UserNotFoundException("Usuário não encontrado!");
-        } catch (UserException err) {
+        } catch (UserException | GroupException err) {
             return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

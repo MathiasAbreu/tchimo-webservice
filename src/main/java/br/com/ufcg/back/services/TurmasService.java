@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import br.com.ufcg.back.daos.GruposDAO;
+import br.com.ufcg.back.daos.NotificationDAO;
 import br.com.ufcg.back.daos.TurmasDAO;
 import br.com.ufcg.back.daos.UsuariosDAO;
 import br.com.ufcg.back.entities.Grupo;
@@ -16,6 +17,7 @@ import br.com.ufcg.back.entities.dtos.GrupoDTO;
 import br.com.ufcg.back.entities.dtos.TurmaDTO;
 import br.com.ufcg.back.entities.dtos.UsuarioDTO;
 import br.com.ufcg.back.exceptions.grupo.GroupException;
+import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.turma.TurmaException;
 import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
@@ -29,16 +31,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class TurmasService {
 
-    private TurmasDAO turmasDAO;
     private GruposDAO<Grupo, Long> gruposDAO;
+    private TurmasDAO<Turma, String> turmasDAO;
     private UsuariosDAO<Usuario, Long> usuariosDAO;
+    private NotificationDAO<Notifications, Long> notificationDAO;
 
-    public TurmasService(TurmasDAO turmasDAO, GruposDAO gruposDAO, UsuariosDAO usuariosDAO) {
+    public TurmasService(TurmasDAO turmasDAO, GruposDAO gruposDAO, UsuariosDAO usuariosDAO, NotificationDAO notificationDAO) {
 
         super();
         this.turmasDAO = turmasDAO;
         this.gruposDAO = gruposDAO;
         this.usuariosDAO = usuariosDAO;
+        this.notificationDAO = notificationDAO;
     }
 
     public Turma create(Turma course) {
@@ -290,12 +294,27 @@ public class TurmasService {
         throw new TurmaNotFoundException("Turma não encontrada.");
     }
 
-    public String solicitaEntradaEmGrupo(Notifications notification, String emailUser) throws UserException {
+    public String solicitaEntradaEmGrupo(Notifications notification, String emailUser) throws UserException, GroupException {
 
         Optional<Turma> turma = turmasDAO.findById(notification.getId_turma());
+
+        Optional<Usuario> usuarioManager;
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
+
         if(usuario.isPresent()) {
-            //parei aqui
+            if(turma.get().verificaGrupoAloca(notification.getId_group())) {
+                String emailManager = turma.get().returnIdManagerGroup(notification.getId_group());
+                usuarioManager = usuariosDAO.findByEmail(emailManager);
+
+                notification.setId_user(usuarioManager.get().getIdUser());
+                notification.addAlvo(usuario.get().getIdUser());
+
+                usuariosDAO.findByEmail(emailManager).map(record -> {
+                   record.addNotification(notificationDAO.save(notification));
+                   return usuariosDAO.save(record);
+                });
+            }
+            throw new GroupNotFoundException("Grupo não encontrado!");
         }
         throw new UserNotFoundException("Usuário não encontrado!");
     }

@@ -19,6 +19,8 @@ public class Grupo {
 
     private ArrayList<Long> memberIDs = new ArrayList<>();
 
+    private int numberFoMembersPermitted = 0;
+
     @JsonCreator
     public Grupo(long idGroup, String emailManager, long idManager) {
 
@@ -52,6 +54,18 @@ public class Grupo {
 
     public List<Long> getMemberIDs() {
         return memberIDs;
+    }
+
+    public int getNumberFoMembersPermitted() {
+        return numberFoMembersPermitted;
+    }
+
+    public void setNumberFoMembersPermitted(int numberFoMembersPermitted) {
+        this.numberFoMembersPermitted = numberFoMembersPermitted;
+    }
+
+    public int getNumberOfMembers() {
+        return memberIDs.size();
     }
 
     public boolean usuarioParticipa(long idUser) {
