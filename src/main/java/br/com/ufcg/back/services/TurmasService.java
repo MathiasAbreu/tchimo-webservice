@@ -253,6 +253,7 @@ public class TurmasService {
 
             if(turma.get().verificaSeUsuarioJaPertece(emailUser)) {
                 turma.get().addUserFromGroup(idGroup,emailUser);
+                return "Usuário adicionado com sucesso!";
             }
             throw new UserNotFoundException("Usuário não pertence a turma!");
         }
@@ -327,7 +328,7 @@ public class TurmasService {
         if(notification.get().getId_user().equals(usuario.get().getIdUser())) {
             if(resposta.isProcedure()) {
 
-                Optional<Usuario> usuarioParaGrupo = usuariosDAO.findById(notification.get().getId_user());
+                Optional<Usuario> usuarioParaGrupo = usuariosDAO.findById((notification.get().getAlvos()).get(0));
                 if(usuarioParaGrupo.isPresent()) {
                     addUsuarioEmGrupo(notification.get().getId_turma(), notification.get().getId_group(), usuarioParaGrupo.get().getEmail());
                 }

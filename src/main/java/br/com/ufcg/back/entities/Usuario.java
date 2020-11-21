@@ -62,7 +62,6 @@ public class Usuario {
         this.email = email;
     }
 
-    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -85,6 +84,10 @@ public class Usuario {
 
     public List<Turma> getMembersTurma() {
         return membersTurma;
+    }
+
+    public List<Notification> getNotifications() {
+        return notifications;
     }
 
     public void addTurma(Turma turma) {
