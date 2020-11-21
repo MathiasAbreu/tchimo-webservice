@@ -10,7 +10,7 @@ import br.com.ufcg.back.daos.NotificationDAO;
 import br.com.ufcg.back.daos.TurmasDAO;
 import br.com.ufcg.back.daos.UsuariosDAO;
 import br.com.ufcg.back.entities.Grupo;
-import br.com.ufcg.back.entities.Notifications;
+import br.com.ufcg.back.entities.Notification;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.entities.dtos.GrupoDTO;
@@ -34,7 +34,7 @@ public class TurmasService {
     private GruposDAO<Grupo, Long> gruposDAO;
     private TurmasDAO<Turma, String> turmasDAO;
     private UsuariosDAO<Usuario, Long> usuariosDAO;
-    private NotificationDAO<Notifications, Long> notificationDAO;
+    private NotificationDAO<Notification, Long> notificationDAO;
 
     public TurmasService(TurmasDAO turmasDAO, GruposDAO gruposDAO, UsuariosDAO usuariosDAO, NotificationDAO notificationDAO) {
 
@@ -294,7 +294,7 @@ public class TurmasService {
         throw new TurmaNotFoundException("Turma não encontrada.");
     }
 
-    public String solicitaEntradaEmGrupo(Notifications notification, String emailUser) throws UserException, GroupException {
+    public String solicitaEntradaEmGrupo(Notification notification, String emailUser) throws UserException, GroupException {
 
         Optional<Turma> turma = turmasDAO.findById(notification.getId_turma());
 
@@ -308,6 +308,7 @@ public class TurmasService {
 
                 notification.setId_user(usuarioManager.get().getIdUser());
                 notification.addAlvo(usuario.get().getIdUser());
+                notification.setType("SOLICITATION - ENTRY - GROUP");
 
                 usuariosDAO.findByEmail(emailManager).map(record -> {
                    record.addNotification(notificationDAO.save(notification));

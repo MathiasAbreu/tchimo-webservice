@@ -2,13 +2,8 @@ package br.com.ufcg.back.services;
 
 import br.com.ufcg.back.daos.NotificationDAO;
 import br.com.ufcg.back.daos.UsuariosDAO;
-import br.com.ufcg.back.entities.Grupo;
-import br.com.ufcg.back.entities.Notifications;
-import br.com.ufcg.back.entities.Turma;
+import br.com.ufcg.back.entities.Notification;
 import br.com.ufcg.back.entities.Usuario;
-import br.com.ufcg.back.entities.dtos.GrupoDTO;
-import br.com.ufcg.back.entities.dtos.TurmaDTO;
-import br.com.ufcg.back.entities.dtos.UsuarioDTO;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
@@ -21,9 +16,9 @@ import java.util.*;
 public class UsuariosService {
 
     private UsuariosDAO<Usuario, String> usuariosDao;
-    private NotificationDAO<Notifications, Long> notificationDAO;
+    private NotificationDAO<Notification, Long> notificationDAO;
 
-    public UsuariosService(UsuariosDAO<Usuario, String> usuariosDao, NotificationDAO<Notifications, Long> notificationDAO) {
+    public UsuariosService(UsuariosDAO<Usuario, String> usuariosDao, NotificationDAO<Notification, Long> notificationDAO) {
 
         super();
         this.usuariosDao = usuariosDao;
@@ -59,11 +54,11 @@ public class UsuariosService {
         throw new UserNotFoundException("Usuário não encontrado: " + email);
     }
 
-    public List<Notifications> retornaNotificacoesUser(String emailUser) throws UserException {
+    public List<Notification> retornaNotificacoesUser(String emailUser) throws UserException {
 
         Optional<Usuario> usuario = usuariosDao.findByEmail(emailUser);
         if(usuario.isPresent()) {
-            List<Notifications> notifications = notificationDAO.findByIdUser(usuario.get().getIdUser());
+            List<Notification> notifications = notificationDAO.findByIdUser(usuario.get().getIdUser());
             Collections.sort(notifications, new ComparatorNotificationsByDate());
             return notifications;
         }

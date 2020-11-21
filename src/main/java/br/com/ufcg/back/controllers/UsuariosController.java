@@ -1,9 +1,7 @@
 package br.com.ufcg.back.controllers;
 
-import br.com.ufcg.back.entities.Notifications;
-import br.com.ufcg.back.entities.Turma;
+import br.com.ufcg.back.entities.Notification;
 import br.com.ufcg.back.entities.Usuario;
-import br.com.ufcg.back.entities.dtos.TurmaDTO;
 import br.com.ufcg.back.exceptions.user.UserException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 import br.com.ufcg.back.services.JWTService;
@@ -79,15 +77,15 @@ public class UsuariosController {
             @ApiResponse(code = 200, message = "Retorna todas as notificações de um usuário, e seu contexto.")
     })
     @RequestMapping(value = "usuarios/notify", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<List<Notifications>> retornaNotificações(@ApiParam(value = "Token de Usuário.") @RequestHeader("Authorization") String header) {
+    public ResponseEntity<List<Notification>> retornaNotificações(@ApiParam(value = "Token de Usuário.") @RequestHeader("Authorization") String header) {
 
         try {
             if(jwtService.usuarioExiste(header)) {
-                return new ResponseEntity<List<Notifications>>(usuariosService.retornaNotificacoesUser(jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
+                return new ResponseEntity<List<Notification>>(usuariosService.retornaNotificacoesUser(jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
             }
             throw new UserNotFoundException("Usuário não encontrado!");
         } catch (UserException err) {
-            return new ResponseEntity<List<Notifications>>(new ArrayList<Notifications>(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<List<Notification>>(new ArrayList<Notification>(), HttpStatus.NOT_FOUND);
         }
     }
 }

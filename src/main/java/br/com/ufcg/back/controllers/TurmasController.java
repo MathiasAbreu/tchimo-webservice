@@ -1,11 +1,10 @@
 package br.com.ufcg.back.controllers;
 
 import br.com.ufcg.back.entities.Grupo;
-import br.com.ufcg.back.entities.Notifications;
+import br.com.ufcg.back.entities.Notification;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.dtos.TurmaDTO;
 import br.com.ufcg.back.exceptions.grupo.GroupException;
-import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.turma.TurmaException;
 import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
@@ -215,7 +214,7 @@ public class TurmasController {
             @ApiResponse(code = 200, message = "Retorna que uma solicitação foi feita.")
     })
     @RequestMapping(value = "turmas/notifications", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-    public ResponseEntity<String> solicitaEntradaEmGrupo(@ApiParam("Token do Usuário.") @RequestHeader("Authorization") String header, @ApiParam("Notificação pré construida no JSON.") @RequestBody Notifications notification) {
+    public ResponseEntity<String> solicitaEntradaEmGrupo(@ApiParam("Token do Usuário.") @RequestHeader("Authorization") String header, @ApiParam("Notificação pré construida no JSON.") @RequestBody Notification notification) {
         try {
             if(jwtService.usuarioExiste(header))
                 return new ResponseEntity<String>(turmasService.solicitaEntradaEmGrupo(notification,jwtService.getUsuarioDoToken(header)), HttpStatus.CREATED);

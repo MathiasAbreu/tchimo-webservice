@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-public class Notifications {
+public class Notification {
 
     @Id
     @GeneratedValue
@@ -27,12 +27,12 @@ public class Notifications {
     private ArrayList<Long> alvos = new ArrayList<>();
 
     @JsonCreator
-    public Notifications() {
+    public Notification() {
         super();
     }
 
     @JsonCreator
-    public Notifications(String id_turma, Long id_group) {
+    public Notification(String id_turma, Long id_group) {
         super();
         this.id_turma = id_turma;
         this.id_group = id_group;

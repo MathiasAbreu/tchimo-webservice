@@ -31,7 +31,7 @@ public class Usuario {
     @JoinTable(name = "user_notifications", joinColumns = {
             @JoinColumn(name = "user_notification")}, inverseJoinColumns = {
             @JoinColumn(name = "grupo_id")})
-    private List<Notifications> notifications = new ArrayList<>();
+    private List<Notification> notifications = new ArrayList<>();
 
     @JsonCreator
     public Usuario(long idUser, String email, String password, String name) {
@@ -106,7 +106,7 @@ public class Usuario {
             }
     }
 
-    public void addNotification(Notifications notification) {
+    public void addNotification(Notification notification) {
         notifications.add(notification);
     }
 }
