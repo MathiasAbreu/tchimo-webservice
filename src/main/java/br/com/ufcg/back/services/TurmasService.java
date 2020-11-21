@@ -9,10 +9,7 @@ import br.com.ufcg.back.daos.GruposDAO;
 import br.com.ufcg.back.daos.NotificationDAO;
 import br.com.ufcg.back.daos.TurmasDAO;
 import br.com.ufcg.back.daos.UsuariosDAO;
-import br.com.ufcg.back.entities.Grupo;
-import br.com.ufcg.back.entities.Notification;
-import br.com.ufcg.back.entities.Turma;
-import br.com.ufcg.back.entities.Usuario;
+import br.com.ufcg.back.entities.*;
 import br.com.ufcg.back.entities.dtos.GrupoDTO;
 import br.com.ufcg.back.entities.dtos.TurmaDTO;
 import br.com.ufcg.back.entities.dtos.UsuarioDTO;
@@ -257,9 +254,9 @@ public class TurmasService {
             if(turma.get().verificaSeUsuarioJaPertece(emailUser)) {
                 turma.get().addUserFromGroup(idGroup,emailUser);
             }
-            throw new UserNotFoundException("Usu√°rio n√£o pertence a turma!");
+            throw new UserNotFoundException("Usu·rio n„o pertence a turma!");
         }
-        throw new TurmaNotFoundException("Turma n√£o encontrada!");
+        throw new TurmaNotFoundException("Turma n„o encontrada!");
     }
 
     /*public Boolean removeUserFromGroup(String id, Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException, TurmaNotFoundException, UserUnauthorizedException {
@@ -314,10 +311,42 @@ public class TurmasService {
                    record.addNotification(notificationDAO.save(notification));
                    return usuariosDAO.save(record);
                 });
+
+                return "SolicitaÁ„o para entrar no grupo criada!";
             }
             throw new GroupNotFoundException("Grupo n„o encontrado!");
         }
         throw new UserNotFoundException("Usu·rio n„o encontrado!");
+    }
+
+    public String processaResposta(Response resposta, String emailUser) throws UserException, TurmaException, GroupException {
+
+        Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
+        Optional<Notification> notification = notificationDAO.findById(resposta.getId_notification());
+
+        if(notification.get().getId_user().equals(usuario.get().getIdUser())) {
+            if(resposta.isProcedure()) {
+
+                Optional<Usuario> usuarioParaGrupo = usuariosDAO.findById(notification.get().getId_user());
+                if(usuarioParaGrupo.isPresent()) {
+                    addUsuarioEmGrupo(notification.get().getId_turma(), notification.get().getId_group(), usuarioParaGrupo.get().getEmail());
+                }
+                else
+                    throw new UserNotFoundException("Usu·rio que requisitou entrada no grupo n„o foi encontrado!");
+            }
+            removeSolicitacao(notification.get());
+            return "SolicitaÁ„o respondida com sucesso!";
+        }
+        throw new UserUnauthorizedException("O usu·rio n„o pode responder uma solicitaÁ„o que n„o lhe pertence.");
+    }
+
+    private void removeSolicitacao(Notification notification) {
+
+        usuariosDAO.findById(notification.getId_user()).map(record -> {
+           record.removeNotification(notification);
+           return usuariosDAO.save(record);
+        });
+        notificationDAO.delete(notification);
     }
 
     /*

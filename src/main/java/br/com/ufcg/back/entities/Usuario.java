@@ -109,4 +109,8 @@ public class Usuario {
     public void addNotification(Notification notification) {
         notifications.add(notification);
     }
+
+    public void removeNotification(Notification notification) {
+        notifications.remove(notification);
+    }
 }

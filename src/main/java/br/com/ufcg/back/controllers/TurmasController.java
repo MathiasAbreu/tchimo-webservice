@@ -2,6 +2,7 @@ package br.com.ufcg.back.controllers;
 
 import br.com.ufcg.back.entities.Grupo;
 import br.com.ufcg.back.entities.Notification;
+import br.com.ufcg.back.entities.Response;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.dtos.TurmaDTO;
 import br.com.ufcg.back.exceptions.grupo.GroupException;
@@ -224,4 +225,19 @@ public class TurmasController {
         }
     }
 
+    @ApiOperation(value = "Recece uma resposta de uma solicitação feita. Somente solicitações com procedimentos podem gerar respoastas no frontend.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna uma confirmação que o backend aceitou a resposta.")
+    })
+    @RequestMapping(value = "turmas/response", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    public ResponseEntity<String> recebeRespostaDeSolicitacao(@ApiParam("Token de Usuário.") @RequestHeader("Authorization") String header, @ApiParam("Resposta") @RequestBody Response resposta) {
+
+        try {
+            if(jwtService.usuarioExiste(header))
+                return new ResponseEntity<String>(turmasService.processaResposta(resposta, jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
+            throw new UserNotFoundException("Usuário não encontrado!");
+        } catch (UserException | TurmaException | GroupException err) {
+            return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }
