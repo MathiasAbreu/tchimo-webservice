@@ -260,12 +260,16 @@ public class TurmasService {
         throw new TurmaNotFoundException("Turma não encontrada!");
     }
 
-    /*public Boolean removeUserFromGroup(String id, Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException, TurmaNotFoundException, UserUnauthorizedException {
-        Turma t = buscaTurma(id, emailUser);
-        t.removeUserFromGroup(groupID, emailUser);
-        create(t);
-        return true;
-    }*/
+    public String removeUserFromGroup(String id, Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException, TurmaNotFoundException, UserUnauthorizedException {
+
+        Optional<Turma> turma = turmasDAO.findById(id);
+        if(turma.isPresent()) {
+            turma.get().removeUserFromGroup(groupID,emailUser);
+            turmasDAO.save(turma.get());
+            return "Usuário removido com sucesso!";
+        }
+        throw new TurmaNotFoundException("Turma não encontrada!");
+    }
 
     public String removeTurma(String idturma, String emailUser) throws TurmaException, UserException {
 

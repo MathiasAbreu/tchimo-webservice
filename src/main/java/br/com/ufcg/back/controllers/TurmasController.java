@@ -6,6 +6,7 @@ import br.com.ufcg.back.entities.Response;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.dtos.TurmaDTO;
 import br.com.ufcg.back.exceptions.grupo.GroupException;
+import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.turma.TurmaException;
 import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
@@ -129,23 +130,23 @@ public class TurmasController {
         }
     }
 
-    /*@ApiOperation(value = "Remove um usuário de um grupo de uma turma e remove o grupo caso esteja vazio.")
-    @RequestMapping(value = "turmas/{id}/remove", method = RequestMethod.DELETE, produces = "application/json", consumes = "application/json")
-    public ResponseEntity<Boolean> removeUserFromGroup(
+    @ApiOperation(value = "Remove um usuário de um grupo de uma turma e remove o grupo caso esteja vazio.")
+    @RequestMapping(value = "turmas/{id}/grupos", method = RequestMethod.DELETE, produces = "application/json", consumes = "application/json")
+    public ResponseEntity<String> removeUserFromGroup(
             @ApiParam("Token válido") @RequestHeader("Authorization") String header,
             @ApiParam("Id da Turma") @PathVariable String id,
             @RequestParam(name="groupId", required=true, defaultValue="") Long groupId) {
         try
         {
             if (jwtService.usuarioExiste(header))
-                return new ResponseEntity<Boolean>(turmasService.removeUserFromGroup(id, groupId, jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
+                return new ResponseEntity<String>(turmasService.removeUserFromGroup(id, groupId, jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
             throw new UserNotFoundException("Usuário não encontrado.");
         } catch (UserUnauthorizedException userUna) {
-            return new ResponseEntity<Boolean>(false, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<String>(userUna.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch (UserException | GroupNotFoundException | TurmaNotFoundException ex) {
-            return new ResponseEntity<Boolean>(false, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.NOT_FOUND);
         }
-    }*/
+    }
 
     @ApiOperation(value = "Método que retorna todas as turmas que um usuário participa ou administra.", notes = "Busca todas as turmas relacionadas a um usuário.")
     @ApiResponses(value = {
