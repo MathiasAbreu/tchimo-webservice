@@ -84,7 +84,7 @@ public class Grupo {
         else memberIDs.add(usrId);
     }
 
-    public void removeUser(String usrId) throws UserNotFoundException {
+    public void removeUser(Long usrId) throws UserNotFoundException {
         if (memberIDs.contains(usrId))
             memberIDs.remove(usrId);
         else throw new UserNotFoundException();

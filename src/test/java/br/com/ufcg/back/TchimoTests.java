@@ -170,7 +170,7 @@ public class TchimoTests {
 		t2.adicionaGrupo(grupo1);
 
 		try {
-			t2.removeUserFromGroup(1L,"g@gmail");
+			t2.removeUserFromGroup(1L,1L,"g@gmail");
 		} catch (UserNotFoundException e) {
 			e.printStackTrace();
 		} catch (GroupNotFoundException e) {

@@ -214,11 +214,11 @@ public class Turma {
         }
     }
 
-    public void removeUserFromGroup(Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException {
+    public void removeUserFromGroup(Long groupID, Long idUser, String emailUser) throws UserNotFoundException, GroupNotFoundException {
         Grupo grupo = grupoComId(groupID);
 
-        grupo.removeUser(emailUser);
-        if (grupo.amountOfMembers() == 0)
+        grupo.removeUser(idUser);
+        if (grupo.amountOfMembers() == 0 || grupo.getEmailManager().equals(emailUser))
             removeGroup(groupID);
     }
 
