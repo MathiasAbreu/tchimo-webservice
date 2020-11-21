@@ -351,12 +351,24 @@ public class TurmasService {
         throw new UserUnauthorizedException("O usuário não pode responder uma solicitação que não lhe pertence.");
     }
 
-    public String criarConviteParaGrupo(Notification notification, String emailUser) {
+    public String criarConviteParaGrupo(Notification notification, String emailUser) throws TurmaException, UserException {
 
         Optional<Turma> turma = turmasDAO.findById(notification.getId_turma());
         Optional<Usuario> usuario = usuariosDAO.findById(notification.getId_user());
+        Optional<Usuario> usuarioAlvo = usuariosDAO.findByEmail(emailUser);
 
-        return "";
+        if(turma.isPresent()) {
+            if(usuario.isPresent() && usuarioAlvo.isPresent()) {
+                notification.setTargetUser(usuarioAlvo.get().getIdUser());
+                usuariosDAO.findById(usuario.get().getIdUser()).map(record -> {
+                   record.addNotification(notificationDAO.save(notification));
+                   return usuariosDAO.save(record);
+                });
+                return "Convite enviado!";
+            }
+            throw new UserNotFoundException("Usuario não foi encontrado!");
+        }
+        throw new TurmaNotFoundException("A Turma não foi encontrada!");
     }
 
     private void removeSolicitacao(Notification notification) {
