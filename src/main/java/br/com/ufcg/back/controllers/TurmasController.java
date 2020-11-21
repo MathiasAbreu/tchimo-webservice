@@ -87,7 +87,7 @@ public class TurmasController {
             @ApiResponse(code = 409, message = "Usuário já pertence a turma, ou é o proprietário da mesma."),
             @ApiResponse(code = 401, message = "Usuario não autorizado pelo token.")
     })
-    @RequestMapping(value = "turmas/{id}", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "turmas/{id}/membership", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<String> entrarEmUmTurma(@ApiParam("Token Válido") @RequestHeader("Authorization") String header, @ApiParam("Turma") @PathVariable String id) {
 
         try {
@@ -177,7 +177,7 @@ public class TurmasController {
             @ApiResponse(code = 200, message = "Retorna uma confirmação que o usuário saiu da turma desejada."),
             @ApiResponse(code = 404, message = "Usuário não encontrado.")
     })
-    @RequestMapping(value = "turmas/{id}/members", method = RequestMethod.DELETE, produces = "application/json")
+    @RequestMapping(value = "turmas/{id}/membership", method = RequestMethod.DELETE, produces = "application/json")
     public ResponseEntity<String> sairDeTurma(@ApiParam("Token de verificação do usuário.") @RequestHeader("Authorization") String header, @ApiParam("Id da turma") @PathVariable String id) {
 
         try {
@@ -195,12 +195,12 @@ public class TurmasController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retorna uma confirmação que o usuario apagou a turma.")
     })
-    @RequestMapping(value = "turmas/{idTurma}/all",method = RequestMethod.DELETE, produces = "application/json")
-    public ResponseEntity<String> apagaTurma(@ApiParam("Token de verificação do usuário.") @RequestHeader("Authorization") String header, @ApiParam("Id da turma") @PathVariable String idTurma) {
+    @RequestMapping(value = "turmas/{id}",method = RequestMethod.DELETE, produces = "application/json")
+    public ResponseEntity<String> apagaTurma(@ApiParam("Token de verificação do usuário.") @RequestHeader("Authorization") String header, @ApiParam("Id da turma") @PathVariable String id) {
 
         try {
             if(jwtService.usuarioExiste(header))
-                return new ResponseEntity<String>(turmasService.removeTurma(idTurma,jwtService.getUsuarioDoToken(header)),HttpStatus.OK);
+                return new ResponseEntity<String>(turmasService.removeTurma(id,jwtService.getUsuarioDoToken(header)),HttpStatus.OK);
             throw new UserNotFoundException("Usuário não foi encontrado!");
         } catch (UserUnauthorizedException | UserTokenBadlyFormattedException | UserTokenExpired err) {
             return new ResponseEntity<String>(err.getMessage(), HttpStatus.UNAUTHORIZED);
