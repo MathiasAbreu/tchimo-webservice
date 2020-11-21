@@ -9,6 +9,7 @@ import br.com.ufcg.back.daos.GruposDAO;
 import br.com.ufcg.back.daos.TurmasDAO;
 import br.com.ufcg.back.daos.UsuariosDAO;
 import br.com.ufcg.back.entities.Grupo;
+import br.com.ufcg.back.entities.Notifications;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.entities.dtos.GrupoDTO;
@@ -287,6 +288,16 @@ public class TurmasService {
             throw new UserUnauthorizedException("Usuário não pode apagar uma turma que não é sua.");
         }
         throw new TurmaNotFoundException("Turma não encontrada.");
+    }
+
+    public String solicitaEntradaEmGrupo(Notifications notification, String emailUser) throws UserException {
+
+        Optional<Turma> turma = turmasDAO.findById(notification.getId_turma());
+        Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
+        if(usuario.isPresent()) {
+            //parei aqui
+        }
+        throw new UserNotFoundException("Usuário não encontrado!");
     }
 
     /*

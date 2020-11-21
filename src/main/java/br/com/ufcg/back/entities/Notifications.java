@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Notifications {
@@ -19,9 +22,20 @@ public class Notifications {
     private String id_turma;
     private String type;
 
+    private Long creationDate = ((new Date()).getTime() / 1000L);
+
+    private ArrayList<Long> alvos = new ArrayList<>();
+
     @JsonCreator
     public Notifications() {
         super();
+    }
+
+    @JsonCreator
+    public Notifications(String id_turma, Long id_group) {
+        super();
+        this.id_turma = id_turma;
+        this.id_group = id_group;
     }
 
     public Long getId() {
@@ -62,5 +76,17 @@ public class Notifications {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Long getCreationDate() {
+        return creationDate;
+    }
+
+    public List<Long> getAlvos() {
+        return alvos;
+    }
+
+    public void addAlvo(Long idAlvo) {
+        alvos.add(idAlvo);
     }
 }

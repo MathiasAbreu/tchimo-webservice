@@ -1,6 +1,7 @@
 package br.com.ufcg.back.controllers;
 
 import br.com.ufcg.back.entities.Grupo;
+import br.com.ufcg.back.entities.Notifications;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.dtos.TurmaDTO;
 import br.com.ufcg.back.exceptions.grupo.GroupException;
@@ -208,4 +209,20 @@ public class TurmasController {
             return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
+    @ApiOperation(value = "Permite que um usuário solicite sua entrada em um grupo.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna que uma solicitação foi feita.")
+    })
+    @RequestMapping(value = "turmas/notifications", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    public ResponseEntity<String> solicitaEntradaEmGrupo(@ApiParam("Token do Usuário.") @RequestHeader("Authorization") String header, @ApiParam("Notificação pré construida no JSON.") @RequestBody Notifications notification) {
+        try {
+            if(jwtService.usuarioExiste(header))
+                return new ResponseEntity<String>(turmasService.solicitaEntradaEmGrupo(notification,jwtService.getUsuarioDoToken(header)), HttpStatus.CREATED);
+            throw new UserNotFoundException("Usuário não encontrado!");
+        } catch (UserException err) {
+            return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
