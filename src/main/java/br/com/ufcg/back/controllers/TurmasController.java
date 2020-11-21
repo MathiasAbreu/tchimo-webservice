@@ -191,11 +191,11 @@ public class TurmasController {
         }
     }
 
-    @ApiOperation(value = "Permite que um usuário saia de uma turma que administra. Ao sair da turma, a turma deixa de existir automáticamente.")
+    @ApiOperation(value = "Permite que um usuário remova uma turma que administra.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retorna uma confirmação que o usuario apagou a turma.")
     })
-    @RequestMapping(value = "turmas/{idTurma}",method = RequestMethod.DELETE, produces = "application/json")
+    @RequestMapping(value = "turmas/{idTurma}/all",method = RequestMethod.DELETE, produces = "application/json")
     public ResponseEntity<String> apagaTurma(@ApiParam("Token de verificação do usuário.") @RequestHeader("Authorization") String header, @ApiParam("Id da turma") @PathVariable String idTurma) {
 
         try {

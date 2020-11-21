@@ -47,7 +47,6 @@ public class LoginController {
 
         Date date = new Date();
         long unixTime = date.getTime() / 1000L;
-        System.out.println(unixTime);
 
         long timeToken = 3600;
         try {
@@ -59,10 +58,10 @@ public class LoginController {
                 throw new UserPasswordIncorrectException("Usuario ou senha incorretos.");
 
             String token = Jwts.builder().setSubject(authUsuario.get().getEmail()).signWith(SignatureAlgorithm.HS512, TOKEN_KEY).setExpiration(new Date(System.currentTimeMillis() + (timeToken * 1000))).compact();
-            return new ResponseEntity<>(new LoginResponse(token,unixTime + timeToken, usuario.getEmail()),HttpStatus.OK);
+            return new ResponseEntity<>(new LoginResponse(token,unixTime + timeToken, authUsuario.get().getIdUser()),HttpStatus.OK);
         } catch (UserException err) {
 
-            return new ResponseEntity<>(new LoginResponse("Usuário não encontrado!",0), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new LoginResponse("Usuário não encontrado!",0,0), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -70,12 +69,12 @@ public class LoginController {
 
         public String token;
         public long expires_in;
-        public String email;
+        public long idUser;
 
-        public LoginResponse(String token, long expires_in, String email) {
+        public LoginResponse(String token, long expires_in, long idUser) {
             this.token = token;
             this.expires_in = expires_in;
-            this.email = email;
+            this.idUser = idUser;
         }
 
         public LoginResponse(String token, long expires_in) {

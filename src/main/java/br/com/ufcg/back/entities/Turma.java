@@ -129,7 +129,6 @@ public class Turma {
 
     public boolean verificaSeUsuarioJaPertece(String email) {
         for(Usuario usuario : integrantes) {
-            System.out.println(usuario.getEmail());
             if(usuario.getEmail().equals(email))
                 return true;
         }
@@ -226,6 +225,7 @@ public class Turma {
         for(Grupo grupo : groups)
             if(grupo.getIdGroup().equals(idGroup)) {
                 groups.remove(grupo);
+                this.totalNumberOfGroups -= 1;
                 return;
             }
     }
