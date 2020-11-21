@@ -4,6 +4,8 @@ import br.com.ufcg.back.daos.NotificationDAO;
 import br.com.ufcg.back.daos.UsuariosDAO;
 import br.com.ufcg.back.entities.Notification;
 import br.com.ufcg.back.entities.Usuario;
+import br.com.ufcg.back.entities.dtos.NotificationDTO;
+import br.com.ufcg.back.entities.dtos.UsuarioDTO;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
@@ -54,14 +56,44 @@ public class UsuariosService {
         throw new UserNotFoundException("Usuário não encontrado: " + email);
     }
 
-    public List<Notification> retornaNotificacoesUser(String emailUser) throws UserException {
+    public List<NotificationDTO> retornaNotificacoesUser(String emailUser) throws UserException {
 
         Optional<Usuario> usuario = usuariosDao.findByEmail(emailUser);
         if(usuario.isPresent()) {
             List<Notification> notifications = notificationDAO.findByIdUser(usuario.get().getIdUser());
             Collections.sort(notifications, new ComparatorNotificationsByDate());
-            return notifications;
+
+            List<NotificationDTO> notificationDTOS = new ArrayList<>();
+            for(Notification notification : notifications) {
+                notificationDTOS.add(createNotificationDTO(notification));
+            }
+            return notificationDTOS;
         }
         throw new UserNotFoundException("Usuário não encontrado!");
+    }
+
+    private NotificationDTO createNotificationDTO(Notification notification) {
+
+        NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setId(notification.getId());
+        notificationDTO.setId_user(notification.getId_user());
+        notificationDTO.setId_turma(notification.getId_turma());
+        notificationDTO.setCreationDate(notification.getCreationDate());
+        notificationDTO.setId_group(notification.getId_group());
+        notificationDTO.setType(notification.getType());
+        notificationDTO.setTargetUsers(configureTargetUsersDTO(notification));
+        return notificationDTO;
+    }
+
+    private List<UsuarioDTO> configureTargetUsersDTO(Notification notification) {
+
+        List<UsuarioDTO> usuarioDTOS = new ArrayList<>();
+        for(Long id_user : notification.getAlvos()) {
+
+            Optional<Usuario> usuario = usuariosDao.findById(id_user);
+            if(usuario.isPresent())
+                usuarioDTOS.add(new UsuarioDTO(id_user,usuario.get().getName()));
+        }
+        return usuarioDTOS;
     }
 }

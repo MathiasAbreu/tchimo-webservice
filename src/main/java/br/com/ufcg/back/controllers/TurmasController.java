@@ -129,16 +129,6 @@ public class TurmasController {
         }
     }
 
-    @RequestMapping(value = "turmas/{idTurma}/{idGrupo}/{emailUser}", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<String> adicionaUserFromGrupo(@PathVariable String idTurma, @PathVariable Long idGrupo, @PathVariable String emailUser) {
-
-        try {
-            return new ResponseEntity<String>(turmasService.addUsuarioEmGrupo(idTurma, idGrupo, emailUser), HttpStatus.OK);
-        } catch (UserException | TurmaException | GroupException err) {
-            return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
     /*@ApiOperation(value = "Remove um usuário de um grupo de uma turma e remove o grupo caso esteja vazio.")
     @RequestMapping(value = "turmas/{id}/remove", method = RequestMethod.DELETE, produces = "application/json", consumes = "application/json")
     public ResponseEntity<Boolean> removeUserFromGroup(
@@ -214,7 +204,7 @@ public class TurmasController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retorna que uma solicitação foi feita.")
     })
-    @RequestMapping(value = "turmas/notifications", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "turmas/solicitations", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     public ResponseEntity<String> solicitaEntradaEmGrupo(@ApiParam("Token do Usuário.") @RequestHeader("Authorization") String header, @ApiParam("Notificação pré construida no JSON.") @RequestBody Notification notification) {
         try {
             if(jwtService.usuarioExiste(header))
