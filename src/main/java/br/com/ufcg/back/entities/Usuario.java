@@ -76,7 +76,7 @@ public class Usuario {
     }
 
     public void setName(String firstName) {
-        this.name = name;
+        this.name = firstName;
     }
 
     public List<Turma> getManagedTurma() {
