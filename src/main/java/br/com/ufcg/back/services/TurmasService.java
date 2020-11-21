@@ -25,6 +25,8 @@ import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 import br.com.ufcg.back.exceptions.user.UserUnauthorizedException;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
+
 @Service
 public class TurmasService {
 
@@ -315,7 +317,7 @@ public class TurmasService {
 
                 notification.setId_user(usuarioManager.get().getIdUser());
                 notification.addAlvo(usuario.get().getIdUser());
-                notification.setType("SOLICITATION - ENTRY - GROUP");
+                notification.setType("ENTRY - GROUP");
 
                 usuariosDAO.findByEmail(emailManager).map(record -> {
                    record.addNotification(notificationDAO.save(notification));
@@ -348,6 +350,14 @@ public class TurmasService {
             return "Solicitação respondida com sucesso!";
         }
         throw new UserUnauthorizedException("O usuário não pode responder uma solicitação que não lhe pertence.");
+    }
+
+    public String criarConviteParaGrupo(Notification notification, String emailUser) {
+
+        Optional<Turma> turma = turmasDAO.findById(notification.getId_turma());
+        Optional<Usuario> usuario = usuariosDAO.findById(notification.getId_user());
+
+        return "";
     }
 
     private void removeSolicitacao(Notification notification) {

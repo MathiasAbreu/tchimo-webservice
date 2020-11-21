@@ -38,6 +38,14 @@ public class Notification {
         this.id_group = id_group;
     }
 
+    /*@JsonCreator
+    public Notification(Long id_user, Long id_group, String id_turma) {
+        super();
+        this.id_user = id_user;
+        this.id_group = id_group;
+        this.id_turma = id_turma;
+    }*/
+
     public Long getId() {
         return id;
     }

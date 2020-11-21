@@ -231,4 +231,19 @@ public class TurmasController {
             return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
+    @ApiOperation(value = "Permite que o usuário 'gerente' de um grupo convide outros integrantes sem grupo.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Convite enviado com sucesso.")
+    })
+    @RequestMapping(value = "turmas/invite", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<String> enviarConviteParaEntrarGrupo(@ApiParam("Token de Usuário.") @RequestHeader("Authorization") String header, @ApiParam("Solicitação na forma de convite.") Notification notification) {
+        try {
+            if(jwtService.usuarioExiste(header))
+                return new ResponseEntity<String>(turmasService.criarConviteParaGrupo(notification,jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
+            throw new UserNotFoundException("Usuário não foi encontrado.");
+        } catch (UserException err) {
+            return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }

@@ -60,7 +60,7 @@ public class UsuariosService {
 
         Optional<Usuario> usuario = usuariosDao.findByEmail(emailUser);
         if(usuario.isPresent()) {
-            List<Notification> notifications = notificationDAO.findByIdUser(usuario.get().getIdUser());
+            List<Notification> notifications = usuario.get().getNotifications();
             Collections.sort(notifications, new ComparatorNotificationsByDate());
 
             List<NotificationDTO> notificationDTOS = new ArrayList<>();
