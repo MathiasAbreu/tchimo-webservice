@@ -316,8 +316,7 @@ public class TurmasService {
                 usuarioManager = usuariosDAO.findByEmail(emailManager);
 
                 notification.setId_user(usuarioManager.get().getIdUser());
-                notification.addAlvo(usuario.get().getIdUser());
-                notification.setType("ENTRY - GROUP");
+                notification.setTargetUser(usuario.get().getIdUser());
 
                 usuariosDAO.findByEmail(emailManager).map(record -> {
                    record.addNotification(notificationDAO.save(notification));
@@ -339,7 +338,7 @@ public class TurmasService {
         if(notification.get().getId_user().equals(usuario.get().getIdUser())) {
             if(resposta.isProcedure()) {
 
-                Optional<Usuario> usuarioParaGrupo = usuariosDAO.findById((notification.get().getAlvos()).get(0));
+                Optional<Usuario> usuarioParaGrupo = usuariosDAO.findById((notification.get().getTargetUser()));
                 if(usuarioParaGrupo.isPresent()) {
                     addUsuarioEmGrupo(notification.get().getId_turma(), notification.get().getId_group(), usuarioParaGrupo.get().getEmail());
                 }

@@ -24,7 +24,7 @@ public class Notification {
 
     private Long creationDate = ((new Date()).getTime() / 1000L);
 
-    private ArrayList<Long> alvos = new ArrayList<>();
+    private Long targetUser;
 
     @JsonCreator
     public Notification() {
@@ -37,14 +37,6 @@ public class Notification {
         this.id_turma = id_turma;
         this.id_group = id_group;
     }
-
-    /*@JsonCreator
-    public Notification(Long id_user, Long id_group, String id_turma) {
-        super();
-        this.id_user = id_user;
-        this.id_group = id_group;
-        this.id_turma = id_turma;
-    }*/
 
     public Long getId() {
         return id;
@@ -90,11 +82,11 @@ public class Notification {
         return creationDate;
     }
 
-    public List<Long> getAlvos() {
-        return alvos;
+    public Long getTargetUser() {
+        return targetUser;
     }
 
-    public void addAlvo(Long idAlvo) {
-        alvos.add(idAlvo);
+    public void setTargetUser(Long targetUser) {
+        this.targetUser = targetUser;
     }
 }

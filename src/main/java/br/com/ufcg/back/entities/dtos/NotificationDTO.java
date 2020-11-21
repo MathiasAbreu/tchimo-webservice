@@ -1,21 +1,20 @@
 package br.com.ufcg.back.entities.dtos;
 
-import java.util.ArrayList;
-import java.util.List;
+import br.com.ufcg.back.entities.Usuario;
 
 public class NotificationDTO {
 
     private Long id;
 
-    private Long id_user;
+    private UsuarioDTO user;
     private Long id_group;
 
     private String id_turma;
+    private String name_turma;
+
     private String type;
 
     private Long creationDate;
-
-    private List<UsuarioDTO> targetUsers = new ArrayList<>();
 
     public NotificationDTO() {
         super();
@@ -29,12 +28,12 @@ public class NotificationDTO {
         this.id = id;
     }
 
-    public Long getId_user() {
-        return id_user;
+    public UsuarioDTO getUser() {
+        return user;
     }
 
-    public void setId_user(Long id_user) {
-        this.id_user = id_user;
+    public void setUser(UsuarioDTO user) {
+        this.user = user;
     }
 
     public Long getId_group() {
@@ -53,6 +52,14 @@ public class NotificationDTO {
         this.id_turma = id_turma;
     }
 
+    public String getName_turma() {
+        return name_turma;
+    }
+
+    public void setName_turma(String name_turma) {
+        this.name_turma = name_turma;
+    }
+
     public String getType() {
         return type;
     }
@@ -69,15 +76,4 @@ public class NotificationDTO {
         this.creationDate = creationDate;
     }
 
-    public List<UsuarioDTO> getTargetUsers() {
-        return targetUsers;
-    }
-
-    public void setTargetUsers(List<UsuarioDTO> targetUsers) {
-        this.targetUsers = targetUsers;
-    }
-
-    public void addTargetUser(UsuarioDTO usuarioDTO) {
-        targetUsers.add(usuarioDTO);
-    }
 }
