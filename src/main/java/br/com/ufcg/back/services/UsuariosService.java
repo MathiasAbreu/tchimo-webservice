@@ -78,10 +78,20 @@ public class UsuariosService {
 
     private NotificationDTO createNotificationDTO(Notification notification) {
 
-        Optional<Usuario> usuario = usuariosDao.findById(notification.getTargetUser());
+        NotificationDTO notificationDTO = new NotificationDTO();
+        Optional<Usuario> usuario;
+
+        if (notification.getTargetUser() == null) {
+            usuario = usuariosDao.findById(notification.getId_user());
+            notificationDTO.setUser(new UsuarioDTO(notification.getId_user(),usuario.get().getName()));
+        }
+        else {
+            usuario = usuariosDao.findById(notification.getTargetUser());
+            notificationDTO.setUser(new UsuarioDTO(notification.getTargetUser(),usuario.get().getName()));
+        }
+
         Optional<Turma> turma = turmasDAO.findById(notification.getId_turma());
 
-        NotificationDTO notificationDTO = new NotificationDTO();
         notificationDTO.setId(notification.getId());
         notificationDTO.setUser(new UsuarioDTO(notification.getTargetUser(),usuario.get().getName()));
         notificationDTO.setId_turma(notification.getId_turma());
