@@ -9,6 +9,7 @@ import br.com.ufcg.back.exceptions.grupo.GroupException;
 import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.turma.TurmaException;
+import br.com.ufcg.back.exceptions.turma.TurmaLockedException;
 import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
 import br.com.ufcg.back.exceptions.turma.TurmaNotFoundException;
 import br.com.ufcg.back.exceptions.user.*;
@@ -117,8 +118,8 @@ public class TurmasController {
             return new ResponseEntity<String>(turmaErr.getMessage(), HttpStatus.CONFLICT);
         } catch (TurmaNotFoundException errTurma) {
             return new ResponseEntity<String>("Turma não encontrada.",HttpStatus.NOT_FOUND);
-        } catch (UserException errUser) {
-            return new ResponseEntity<String>("Sem autorização.", HttpStatus.UNAUTHORIZED);
+        } catch (UserException | TurmaLockedException errUser) {
+            return new ResponseEntity<String>(errUser.getMessage(), HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -157,7 +158,7 @@ public class TurmasController {
             if (jwtService.usuarioExiste(header))
                 return new ResponseEntity<String>(turmasService.removeUserFromGroup(id, groupId, jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
             throw new UserNotFoundException("Usuário não encontrado.");
-        } catch (UserUnauthorizedException userUna) {
+        } catch (UserUnauthorizedException | TurmaLockedException userUna) {
             return new ResponseEntity<String>(userUna.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch (UserException | GroupNotFoundException | TurmaNotFoundException ex) {
             return new ResponseEntity<String>(ex.getMessage(), HttpStatus.NOT_FOUND);
@@ -227,7 +228,7 @@ public class TurmasController {
             if(jwtService.usuarioExiste(header))
                 return new ResponseEntity<String>(turmasService.solicitaEntradaEmGrupo(notification,jwtService.getUsuarioDoToken(header)), HttpStatus.CREATED);
             throw new UserNotFoundException("Usuário não encontrado!");
-        } catch (UserException | GroupException err) {
+        } catch (UserException | GroupException | TurmaException err) {
             return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -262,4 +263,6 @@ public class TurmasController {
             return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
+    //@ApiOperation()
 }

@@ -14,6 +14,7 @@ import br.com.ufcg.back.exceptions.grupo.GroupException;
 import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.turma.TurmaException;
+import br.com.ufcg.back.exceptions.turma.TurmaLockedException;
 import br.com.ufcg.back.exceptions.turma.TurmaManagerException;
 import br.com.ufcg.back.exceptions.turma.TurmaNotFoundException;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
@@ -101,11 +102,14 @@ public class TurmasService {
             return retorno;
     }
 
-    public String addUsuarioEmTurma(String idTurma, String emailUser) throws TurmaManagerException, TurmaNotFoundException, UserException {
+    public String addUsuarioEmTurma(String idTurma, String emailUser) throws TurmaManagerException, TurmaNotFoundException, UserException, TurmaLockedException {
 
         Optional<Turma> turma = turmasDAO.findById(idTurma);
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
         if (turma.isPresent()) {
+
+            if(turma.get().getLocked())
+                throw new TurmaLockedException("Usuário não podem entrar em uma turma já trancada!");
 
             if (turma.get().getManager().getEmail().equals(emailUser))
                 throw new TurmaManagerException("Usuário não pode entrar na turma pois é o manager dela!");
@@ -130,6 +134,9 @@ public class TurmasService {
         Optional<Turma> turma = turmasDAO.findById(idTurma);
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
         if(turma.isPresent()) {
+            if(turma.get().getLocked())
+                throw new TurmaLockedException("Um grupo não pode ser criado em uma turma trancada.");
+
             if(turma.get().verificaSeUsuarioJaPertece(emailUser) && !turma.get().verificaSeUsuarioAlocado(usuario.get().getIdUser())) {
 
                 int quantidadeDegrupos = turma.get().quantidadeGruposNaTurma();
@@ -229,6 +236,9 @@ public class TurmasService {
         Optional<Turma> turma = turmasDAO.findById(idTurma);
         if(turma.isPresent()) {
 
+            if(turma.get().getLocked())
+                throw new TurmaLockedException("Não é possivel sair de uma turma já fechada!");
+
             if(turma.get().verificaSeUsuarioJaPertece(emailUser)) {
 
                 Grupo grupo = turma.get().removeUser(emailUser);
@@ -265,12 +275,16 @@ public class TurmasService {
         throw new TurmaNotFoundException("Turma não encontrada!");
     }
 
-    public String removeUserFromGroup(String id, Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException, TurmaNotFoundException, UserUnauthorizedException {
+    public String removeUserFromGroup(String id, Long groupID, String emailUser) throws UserNotFoundException, GroupNotFoundException, TurmaNotFoundException, TurmaLockedException {
 
         Optional<Turma> turma = turmasDAO.findById(id);
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
 
         if(turma.isPresent()) {
+
+            if(turma.get().getLocked())
+                throw new TurmaLockedException("Não é possível sair de um grupo após o fechamento da turma.");
+
             if(usuario.isPresent()) {
                 turma.get().removeUserFromGroup(groupID, usuario.get().getIdUser(), emailUser);
                 turmasDAO.save(turma.get());
@@ -306,7 +320,7 @@ public class TurmasService {
         throw new TurmaNotFoundException("Turma não encontrada.");
     }
 
-    public String solicitaEntradaEmGrupo(Notification notification, String emailUser) throws UserException, GroupException {
+    public String solicitaEntradaEmGrupo(Notification notification, String emailUser) throws UserException, GroupException, TurmaLockedException {
 
         Optional<Turma> turma = turmasDAO.findById(notification.getId_turma());
 
@@ -314,6 +328,9 @@ public class TurmasService {
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
 
         if(usuario.isPresent()) {
+            if(turma.get().getLocked())
+                throw new TurmaLockedException("Solicitação para entrar em grupo não podem ocorrer em uma turma fechada!");
+
             if(turma.get().verificaGrupoAloca(notification.getId_group())) {
                 String emailManager = turma.get().returnIdManagerGroup(notification.getId_group());
                 usuarioManager = usuariosDAO.findByEmail(emailManager);
@@ -337,6 +354,9 @@ public class TurmasService {
 
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
         Optional<Notification> notification = notificationDAO.findById(resposta.getId_notification());
+        Optional<Turma> turma = turmasDAO.findById(notification.get().getId_turma());
+        if(turma.get().getLocked())
+            resposta.setProcedure(false);
 
         if(notification.get().getType().equals("ENTRY-GROUP"))
             return processaEntradaGrupo(notification.get(), resposta, usuario.get());
@@ -381,6 +401,9 @@ public class TurmasService {
         Optional<Usuario> usuarioAlvo = usuariosDAO.findByEmail(emailUser);
 
         if(turma.isPresent()) {
+            if(turma.get().getLocked())
+                throw new TurmaLockedException("Convites para entrada em grupo não sãoa aceitos após o fechamento da turma.");
+
             if(usuario.isPresent() && usuarioAlvo.isPresent()) {
                 notification.setTargetUser(usuarioAlvo.get().getIdUser());
                 usuariosDAO.findById(usuario.get().getIdUser()).map(record -> {
