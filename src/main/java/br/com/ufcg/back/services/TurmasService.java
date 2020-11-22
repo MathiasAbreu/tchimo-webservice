@@ -338,8 +338,7 @@ public class TurmasService {
         if(notification.get().getType().equals("ENTRY-GROUP"))
             return processaEntradaGrupo(notification.get(), resposta, usuario.get());
         else
-            //return processaConviteGrupo(notification.get(), resposta, usuario.get());
-        return "Não implementado.";
+            return processaConviteGrupo(notification.get(), resposta, usuario.get());
     }
 
     public String processaEntradaGrupo(Notification notification, Response resposta, Usuario usuario) throws UserException, GroupException, TurmaException {
@@ -349,6 +348,7 @@ public class TurmasService {
                 Optional<Usuario> usuarioParaGrupo = usuariosDAO.findById((notification.getTargetUser()));
                 if(usuarioParaGrupo.isPresent()) {
                     addUsuarioEmGrupo(notification.getId_turma(), notification.getId_group(), usuarioParaGrupo.get().getEmail());
+                    adicionaNotificacaoDeConfirmacao(notification,usuario);
                 }
                 else
                     throw new UserNotFoundException("Usuário que requisitou entrada no grupo não foi encontrado!");
@@ -357,6 +357,17 @@ public class TurmasService {
             return "Solicitação respondida com sucesso!";
         }
         throw new UserUnauthorizedException("O usuário não pode responder uma solicitação que não lhe pertence.");
+    }
+
+    public String processaConviteGrupo(Notification notification, Response resposta, Usuario usuario) throws UserException, GroupException, TurmaException {
+        if(notification.getId_user().equals(usuario.getIdUser())) {
+            if(resposta.isProcedure()) {
+                addUsuarioEmGrupo(notification.getId_turma(), notification.getId_group(), usuario.getEmail());
+                adicionaNotificacaoDeConfirmacao(notification,usuario);
+            }
+            return "Resposta enviada com sucesso.";
+        }
+        throw new UserUnauthorizedException("O usuário não pode responder um convite que não lhe pertence.");
     }
 
     public String criarConviteParaGrupo(Notification notification, String emailUser) throws TurmaException, UserException {
@@ -386,6 +397,15 @@ public class TurmasService {
            return usuariosDAO.save(record);
         });
         notificationDAO.delete(notification);
+    }
+
+    private void adicionaNotificacaoDeConfirmacao(Notification notification, Usuario usuario) {
+
+        Notification newNotification = notificationDAO.save(new Notification(notification.getId_user(),notification.getId_turma(),notification.getId_group(),"REPLY-CONFIRMATION"));
+        usuariosDAO.findById(usuario.getIdUser()).map(record -> {
+            record.addNotification(newNotification);
+            return usuariosDAO.save(record);
+        });
     }
 
     /*
