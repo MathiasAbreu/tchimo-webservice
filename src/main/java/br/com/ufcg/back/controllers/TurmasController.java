@@ -237,7 +237,7 @@ public class TurmasController {
             @ApiResponse(code = 200, message = "Convite enviado com sucesso.")
     })
     @RequestMapping(value = "turmas/invite", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<String> enviarConviteParaEntrarGrupo(@ApiParam("Token de Usuário.") @RequestHeader("Authorization") String header, @ApiParam("Solicitação na forma de convite.") Notification notification) {
+    public ResponseEntity<String> enviarConviteParaEntrarGrupo(@ApiParam("Token de Usuário.") @RequestHeader("Authorization") String header, @ApiParam("Solicitação na forma de convite.") @RequestBody Notification notification) {
         try {
             if(jwtService.usuarioExiste(header))
                 return new ResponseEntity<String>(turmasService.criarConviteParaGrupo(notification,jwtService.getUsuarioDoToken(header)), HttpStatus.OK);

@@ -32,10 +32,12 @@ public class Notification {
     }
 
     @JsonCreator
-    public Notification(String id_turma, Long id_group) {
+    public Notification(Long id_user, String id_turma, Long id_group, String type) {
         super();
+        this.id_user = id_user;
         this.id_turma = id_turma;
         this.id_group = id_group;
+        this.type = type;
     }
 
     public Long getId() {

@@ -335,17 +335,25 @@ public class TurmasService {
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
         Optional<Notification> notification = notificationDAO.findById(resposta.getId_notification());
 
-        if(notification.get().getId_user().equals(usuario.get().getIdUser())) {
+        if(notification.get().getType().equals("ENTRY-GROUP"))
+            return processaEntradaGrupo(notification.get(), resposta, usuario.get());
+        else
+            //return processaConviteGrupo(notification.get(), resposta, usuario.get());
+        return "Não implementado.";
+    }
+
+    public String processaEntradaGrupo(Notification notification, Response resposta, Usuario usuario) throws UserException, GroupException, TurmaException {
+        if(notification.getId_user().equals(usuario.getIdUser())) {
             if(resposta.isProcedure()) {
 
-                Optional<Usuario> usuarioParaGrupo = usuariosDAO.findById((notification.get().getTargetUser()));
+                Optional<Usuario> usuarioParaGrupo = usuariosDAO.findById((notification.getTargetUser()));
                 if(usuarioParaGrupo.isPresent()) {
-                    addUsuarioEmGrupo(notification.get().getId_turma(), notification.get().getId_group(), usuarioParaGrupo.get().getEmail());
+                    addUsuarioEmGrupo(notification.getId_turma(), notification.getId_group(), usuarioParaGrupo.get().getEmail());
                 }
                 else
                     throw new UserNotFoundException("Usuário que requisitou entrada no grupo não foi encontrado!");
             }
-            removeSolicitacao(notification.get());
+            removeSolicitacao(notification);
             return "Solicitação respondida com sucesso!";
         }
         throw new UserUnauthorizedException("O usuário não pode responder uma solicitação que não lhe pertence.");
