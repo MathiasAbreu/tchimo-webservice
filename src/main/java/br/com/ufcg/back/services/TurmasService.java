@@ -130,7 +130,7 @@ public class TurmasService {
         throw new TurmaNotFoundException();
     }
 
-    public Grupo addGrupo(String emailUser, String idTurma) throws TurmaException, UserUnauthorizedException, OverflowNumberOfGroupsException {
+    public Grupo addGrupo(String emailUser, String idTurma) throws TurmaException, UserUnauthorizedException, OverflowNumberOfGroupsException, UserNotFoundException {
         Optional<Turma> turma = turmasDAO.findById(idTurma);
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
         if(turma.isPresent()) {
@@ -458,12 +458,10 @@ public class TurmasService {
     /*
         Método que faz o balanceamento de integrantes por grupo caso a turma tenha estrategia de formação 'UNIFORME'.
      */
-    private void configureGroups(Turma turma) {
+    private void configureGroups(Turma turma) throws UserNotFoundException {
 
-        if(turma.getFormationStrategy().equals("UNIFORME"))
+        if(!turma.getFormationStrategy().equals("UNIFORME"))
             return;
-
-        turma.verificaSeGruposConsistem();
 
         int numberIntegrantes = turma.getIntegrantes().size();
         int numberOfGrupos = turma.getQuantityOfGroups();
@@ -484,6 +482,9 @@ public class TurmasService {
         }
 
         turma.configureGroups(integrantesPorGrupo);
+
+        if(!turma.verificaSeGruposConsistem())
+            configureGroups(turma);
     }
 
     private Turma verifyTurmaLocked(Turma turma) {
@@ -498,7 +499,7 @@ public class TurmasService {
         return turma;
     }
 
-    private void alocaUserInGroups(Turma turma) throws UserAlreadyExistException {
+    private void alocaUserInGroups(Turma turma) throws UserAlreadyExistException, UserNotFoundException {
 
         if(turma.getFormationStrategy().equals("UNIFORME")) {
 
@@ -515,7 +516,7 @@ public class TurmasService {
         turmasDAO.save(turma);
     }
 
-    public String configureIntegrantesSemGrupo(String idTurma, String emailUser) throws TurmaNotFoundException, UserUnauthorizedException, TurmaLockedException, UserAlreadyExistException {
+    public String configureIntegrantesSemGrupo(String idTurma, String emailUser) throws TurmaNotFoundException, UserUnauthorizedException, TurmaLockedException, UserAlreadyExistException, UserNotFoundException {
 
         Optional<Turma> turma = turmasDAO.findById(idTurma);
         Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);

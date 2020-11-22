@@ -298,5 +298,13 @@ public class Turma {
         }
     }
 
-    
+    public boolean verificaSeGruposConsistem() throws UserNotFoundException {
+        for(Grupo grupo : groups) {
+            if(grupo.getNumberFoMembersPermitted() < grupo.getNumberOfMembers()) {
+                grupo.removeUser(grupo.getMemberIDs().get(1));
+                return false;
+            }
+        }
+        return true;
+    }
 }
