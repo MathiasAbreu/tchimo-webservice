@@ -365,6 +365,7 @@ public class TurmasService {
                 addUsuarioEmGrupo(notification.getId_turma(), notification.getId_group(), usuario.getEmail());
                 adicionaNotificacaoDeConfirmacao(notification,usuario);
             }
+            removeSolicitacao(notification);
             return "Resposta enviada com sucesso.";
         }
         throw new UserUnauthorizedException("O usuário não pode responder um convite que não lhe pertence.");
