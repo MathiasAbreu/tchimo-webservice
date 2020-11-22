@@ -287,7 +287,7 @@ public class Turma {
         return integrantesSemGrupo;
     }
 
-    public void alocaUsersInGroups() throws UserAlreadyExistException {
+    public void alocaUsersInGroups(boolean typeDistribuiton) throws UserAlreadyExistException {
 
         ArrayList<Usuario> integrantesSemGrupo = new ArrayList<>();
         for(Usuario usuario : integrantes)
@@ -299,10 +299,22 @@ public class Turma {
         for(int i = 0; i < sorteio.length; i++)
             sorteio[i] = new Random().nextInt(integrantesSemGrupo.size());
 
-        int index = 0;
-        for(Grupo grupo : groups) {
-            while(grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted()) {
-                grupo.addUser(integrantesSemGrupo.get(sorteio[index]).getIdUser());
+        if(typeDistribuiton) {
+            int index = 0;
+            for (Grupo grupo : groups) {
+                while (grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted()) {
+                    grupo.addUser(integrantesSemGrupo.get(sorteio[index]).getIdUser());
+                    index += 1;
+                }
+            }
+        }
+        else {
+            int index = 0;
+            for(int i = 0; i < sorteio.length; i++) {
+                if(index >= groups.size())
+                    index = 0;
+
+                groups.get(index).addUser(integrantesSemGrupo.get(sorteio[index]).getIdUser());
                 index += 1;
             }
         }
