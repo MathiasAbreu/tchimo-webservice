@@ -121,6 +121,7 @@ public class TurmasService {
             });
 
             turma.get().addUser(usuario.get());
+            configureGroups(turma.get());
             turmasDAO.save(turma.get());
             return turma.get().getId();
         }
@@ -139,6 +140,7 @@ public class TurmasService {
                     Grupo grupo = gruposDAO.save(new Grupo((quantidadeDegrupos + 1),emailUser,usuario.get().getIdUser()));
                     turma.get().adicionaGrupo(grupo);
                     turma.get().addQGrupo();
+                    configureGroups(turma.get());
                     turmasDAO.save(turma.get());
                     return grupo;
                 }
@@ -181,6 +183,7 @@ public class TurmasService {
         dto.setMaxNumberOfGroups(turma.getQuantityOfGroups());
         dto.setCurrentNumberOfGroups(turma.getTotalNumberOfGroups());
         dto.setUsuario(usuario);
+        dto.setLocked(turma.getLocked());
     	return dto;
     }
 
@@ -236,6 +239,7 @@ public class TurmasService {
                     else
                         turma.get().substituiGrupo(grupo);
                 }
+                configureGroups(turma.get());
                 turmasDAO.save(turma.get());
                 usuariosDAO.findByEmail(emailUser).map(record -> {
                     record.removeTurma(idTurma);
@@ -409,27 +413,51 @@ public class TurmasService {
         });
     }
 
-    /*
-    No metodo deve ter o id do usuario no formato long ao inves do email dele."
-     */
-    /*public void removerUsuarioDeTurma(String emailUser, String idTurma) throws TurmaNotFoundException, TurmaManagerException {
+    public String fecharTurma(String idTurma, String emailUser) throws TurmaException, UserException {
 
-        Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
         Optional<Turma> turma = turmasDAO.findById(idTurma);
-
         if(turma.isPresent()) {
-
-            if(turma.get().verificaSeUsuarioJaPertece(emailUser)) {
-                turma.get().removeUser(emailUser);
-                turmasDAO.save(turma.get());
-
-                usuariosDAO.findByEmail(emailUser).map(record -> {
-                   record.removeTurma(idTurma);
-                   return usuariosDAO.save(record);
-                });
+            if(turma.get().getManager().getEmail().equals(emailUser)) {
+                if(turma.get().getEndingStrategy().equals("MANUAL")) {
+                    turmasDAO.findById(idTurma).map(record -> {
+                        record.setLocked(true);
+                        return turmasDAO.save(record);
+                    });
+                    return "Turma encerrada!";
+                }
+                throw new TurmaManagerException("O gerente não pode encerrar manualmente uma turma do tipo 'CRONOMETRO'");
             }
-            throw new TurmaManagerException("Usuário não pode sair da turma que administra ou não pertence a mesma.");
+            throw new UserUnauthorizedException("Somente o gerente da turma pode encerrar ela!");
         }
-        throw new TurmaNotFoundException("Turma não encontrada: " + idTurma);
-    }*/
+        throw new TurmaNotFoundException("Turma não encontrada!");
+    }
+
+    /*
+        Método que faz o balanceamento de integrantes por grupo caso a turma tenha estrategia de formação 'UNIFORME'.
+     */
+    private void configureGroups(Turma turma) {
+
+        if(turma.getFormationStrategy().equals("UNIFORME"))
+            return;
+
+        int numberIntegrantes = turma.getIntegrantes().size();
+        int numberOfGrupos = turma.getQuantityOfGroups();
+
+        if(numberIntegrantes == 0 || turma.getTotalNumberOfGroups() == 0)
+            return;
+
+        int[] integrantesPorGrupo = new int[numberOfGrupos];
+        int index = 0;
+        int auxiliar = 1;
+        while(auxiliar <= numberIntegrantes) {
+            if(index == integrantesPorGrupo.length)
+                index = 0;
+
+            integrantesPorGrupo[index] += 1;
+            index += 1;
+            auxiliar += 1;
+        }
+
+        turma.configureGroups(integrantesPorGrupo);
+    }
 }

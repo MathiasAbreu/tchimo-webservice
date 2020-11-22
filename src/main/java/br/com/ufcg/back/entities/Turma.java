@@ -43,6 +43,8 @@ public class Turma {
     private int quantityOfGroups;
     private int totalNumberOfGroups;
 
+    private boolean locked = false;
+
     @JsonCreator
     public Turma(String name, String formationStrategy, String endingStrategy, int quantityOfGroups, int endTime, int minutes) {
 
@@ -128,6 +130,14 @@ public class Turma {
         return groups;
     }
 
+    public boolean getLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
     public boolean verificaSeUsuarioJaPertece(String email) {
         for(Usuario usuario : integrantes) {
             if(usuario.getEmail().equals(email))
@@ -149,16 +159,10 @@ public class Turma {
     }
 
     private Grupo grupoComId(Long groupID) throws GroupNotFoundException {
-        Grupo grupo = null;
-
-        for (Grupo g : groups)
-            if (g.getIdGroup().equals(groupID))
-                grupo = g;
-
-        if (grupo == null)
-            throw new GroupNotFoundException("Grupo não encontrado.");
-
-        return grupo;
+        for(Grupo grupo : groups)
+            if(grupo.getIdGroup().equals(groupID))
+                return grupo;
+        throw new GroupNotFoundException("Grupo não encontrado!");
     }
 
     private void removeGroup(Long groupID) throws GroupNotFoundException {
@@ -260,4 +264,11 @@ public class Turma {
                 return grupo.getEmailManager();
         throw new GroupNotFoundException("Grupo não foi encontrado!");
     }
+
+    public void configureGroups(int[] integrantesPorGrupo) {
+        for(int i = 0; i < groups.size(); i++) {
+            groups.get(i).setNumberFoMembersPermitted(integrantesPorGrupo[i]);
+        }
+    }
+
 }

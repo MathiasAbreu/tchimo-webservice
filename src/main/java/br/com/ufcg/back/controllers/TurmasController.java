@@ -82,6 +82,22 @@ public class TurmasController {
         }
     }
 
+    @ApiOperation(value = "Metodo que permite ao gerente da turma fechar a mesma. Após isso, várias operações deixam de ser permitidas.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna que a turma foi trancada com sucesso."),
+            @ApiResponse(code = 404, message = " A turma não foi encontrada.")
+    })
+    @RequestMapping(value = "turmas/{id}", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<String> fecharTurma(@ApiParam("Token do usuario") @RequestHeader("Authorization") String header, @ApiParam("Id da turma") @PathVariable String id) {
+        try {
+            if(jwtService.usuarioExiste(header))
+                return new ResponseEntity<String>(turmasService.fecharTurma(id,jwtService.getUsuarioDoToken(header)),HttpStatus.OK);
+            throw new UserNotFoundException("Usuário não encontrado!");
+        } catch (UserException | TurmaException err) {
+            return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
     @ApiOperation(value = "Operação que permite que um usuário entre em uma turma através do Id dela.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Usuario adicionado."),
@@ -131,11 +147,11 @@ public class TurmasController {
     }
 
     @ApiOperation(value = "Remove um usuário de um grupo de uma turma e remove o grupo caso esteja vazio.")
-    @RequestMapping(value = "turmas/{id}/grupos", method = RequestMethod.DELETE, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "turmas/{id}/grupos/{groupId}", method = RequestMethod.DELETE, produces = "application/json", consumes = "application/json")
     public ResponseEntity<String> removeUserFromGroup(
             @ApiParam("Token válido") @RequestHeader("Authorization") String header,
             @ApiParam("Id da Turma") @PathVariable String id,
-            @RequestParam(name="groupId", required=true, defaultValue="") Long groupId) {
+            @ApiParam("Id do grupo.") @PathVariable Long groupId) {
         try
         {
             if (jwtService.usuarioExiste(header))
