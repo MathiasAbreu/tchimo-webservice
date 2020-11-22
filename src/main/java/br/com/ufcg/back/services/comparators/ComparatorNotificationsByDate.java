@@ -1,13 +1,13 @@
 package br.com.ufcg.back.services.comparators;
 
-import br.com.ufcg.back.entities.Notifications;
+import br.com.ufcg.back.entities.Notification;
 
 import java.util.Comparator;
 
-public class ComparatorNotificationsByDate implements Comparator<Notifications> {
+public class ComparatorNotificationsByDate implements Comparator<Notification> {
 
     @Override
-    public int compare(Notifications notification01, Notifications notification02) {
-        return (notification01.getCreationDate().compareTo(notification02.getCreationDate()));
+    public int compare(Notification notification01, Notification notification02) {
+        return ((notification01.getCreationDate().compareTo(notification02.getCreationDate())) * -1);
     }
 }

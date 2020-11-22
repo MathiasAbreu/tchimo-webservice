@@ -1,13 +1,12 @@
 package br.com.ufcg.back.services;
 
 import br.com.ufcg.back.daos.NotificationDAO;
+import br.com.ufcg.back.daos.TurmasDAO;
 import br.com.ufcg.back.daos.UsuariosDAO;
-import br.com.ufcg.back.entities.Grupo;
-import br.com.ufcg.back.entities.Notifications;
+import br.com.ufcg.back.entities.Notification;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
-import br.com.ufcg.back.entities.dtos.GrupoDTO;
-import br.com.ufcg.back.entities.dtos.TurmaDTO;
+import br.com.ufcg.back.entities.dtos.NotificationDTO;
 import br.com.ufcg.back.entities.dtos.UsuarioDTO;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserException;
@@ -21,13 +20,13 @@ import java.util.*;
 public class UsuariosService {
 
     private UsuariosDAO<Usuario, String> usuariosDao;
-    private NotificationDAO<Notifications, Long> notificationDAO;
+    private TurmasDAO<Turma, String> turmasDAO;
 
-    public UsuariosService(UsuariosDAO<Usuario, String> usuariosDao, NotificationDAO<Notifications, Long> notificationDAO) {
+    public UsuariosService(UsuariosDAO<Usuario, String> usuariosDao, TurmasDAO turmasDAO) {
 
         super();
         this.usuariosDao = usuariosDao;
-        this.notificationDAO = notificationDAO;
+        this.turmasDAO = turmasDAO;
     }
 
     public void adicionaUsuario(Usuario usuario) throws UserAlreadyExistException {
@@ -59,14 +58,45 @@ public class UsuariosService {
         throw new UserNotFoundException("Usuário não encontrado: " + email);
     }
 
-    public List<Notifications> retornaNotificacoesUser(String emailUser) throws UserException {
+    public List<NotificationDTO> retornaNotificacoesUser(String emailUser) throws UserException {
 
         Optional<Usuario> usuario = usuariosDao.findByEmail(emailUser);
         if(usuario.isPresent()) {
-            List<Notifications> notifications = notificationDAO.findByIdUser(usuario.get().getIdUser());
+            List<Notification> notifications = usuario.get().getNotifications();
             Collections.sort(notifications, new ComparatorNotificationsByDate());
-            return notifications;
+
+            List<NotificationDTO> notificationDTOS = new ArrayList<>();
+            for(Notification notification : notifications) {
+                notificationDTOS.add(createNotificationDTO(notification));
+            }
+            return notificationDTOS;
         }
         throw new UserNotFoundException("Usuário não encontrado!");
+    }
+
+    private NotificationDTO createNotificationDTO(Notification notification) {
+
+        NotificationDTO notificationDTO = new NotificationDTO();
+        Optional<Usuario> usuario;
+
+        if (notification.getTargetUser() == null) {
+            usuario = usuariosDao.findById(notification.getId_user());
+            notificationDTO.setUser(new UsuarioDTO(notification.getId_user(),usuario.get().getName()));
+        }
+        else {
+            usuario = usuariosDao.findById(notification.getTargetUser());
+            notificationDTO.setUser(new UsuarioDTO(notification.getTargetUser(),usuario.get().getName()));
+        }
+
+        Optional<Turma> turma = turmasDAO.findById(notification.getId_turma());
+
+        notificationDTO.setId(notification.getId());
+        notificationDTO.setUser(new UsuarioDTO(notification.getTargetUser(),usuario.get().getName()));
+        notificationDTO.setId_turma(notification.getId_turma());
+        notificationDTO.setName_turma(turma.get().getName());
+        notificationDTO.setCreationDate(notification.getCreationDate());
+        notificationDTO.setId_group(notification.getId_group());
+        notificationDTO.setType(notification.getType());
+        return notificationDTO;
     }
 }

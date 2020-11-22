@@ -20,6 +20,8 @@ public class Grupo {
 
     private ArrayList<Long> memberIDs = new ArrayList<>();
 
+    private int numberFoMembersPermitted = 0;
+
     @JsonCreator
     public Grupo(long idGroup, String emailManager, long idManager) {
 
@@ -69,6 +71,17 @@ public class Grupo {
     public int hashCode() {
         return Objects.hash(idGroup);
     }
+    public int getNumberFoMembersPermitted() {
+        return numberFoMembersPermitted;
+    }
+
+    public void setNumberFoMembersPermitted(int numberFoMembersPermitted) {
+        this.numberFoMembersPermitted = numberFoMembersPermitted;
+    }
+
+    public int getNumberOfMembers() {
+        return memberIDs.size();
+    }
 
     public boolean usuarioParticipa(long idUser) {
         if(memberIDs.contains(idUser))
@@ -82,13 +95,14 @@ public class Grupo {
 
     public void addUser(Long usrId) throws UserAlreadyExistException {
         if (memberIDs.contains(usrId))
-            throw new UserAlreadyExistException();
+            throw new UserAlreadyExistException("Usuario já pertence ao grupo!");
         else memberIDs.add(usrId);
     }
 
-    public void removeUser(String usrId) throws UserNotFoundException {
+    public void removeUser(Long usrId) throws UserNotFoundException {
+        System.out.println("chegou até class grupo");
         if (memberIDs.contains(usrId))
             memberIDs.remove(usrId);
-        else throw new UserNotFoundException();
+        else throw new UserNotFoundException("Usuario não foi encontrado na turma!");
     }
 }

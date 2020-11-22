@@ -1,6 +1,6 @@
 package br.com.ufcg.back.daos;
 
-import br.com.ufcg.back.entities.Notifications;
+import br.com.ufcg.back.entities.Notification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,8 +10,8 @@ import java.io.Serializable;
 import java.util.List;
 
 @Repository
-public interface NotificationDAO<T, ID extends Serializable> extends JpaRepository<Notifications, Long> {
+public interface NotificationDAO<T, ID extends Serializable> extends JpaRepository<Notification, Long> {
 
     @Query(value = "Select p.* from Notifications p where p.id_user =:plogin",nativeQuery = true)
-    List<Notifications> findByIdUser(@Param("plogin") Long id_user);
+    List<Notification> findByIdUser(@Param("plogin") Long id_user);
 }

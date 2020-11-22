@@ -32,7 +32,7 @@ public class Usuario {
     @JoinTable(name = "user_notifications", joinColumns = {
             @JoinColumn(name = "user_notification")}, inverseJoinColumns = {
             @JoinColumn(name = "grupo_id")})
-    private List<Notifications> notifications = new ArrayList<>();
+    private List<Notification> notifications = new ArrayList<>();
 
     @JsonCreator
     public Usuario(long idUser, String email, String password, String name) {
@@ -87,6 +87,10 @@ public class Usuario {
         return membersTurma;
     }
 
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
     public void addTurma(Turma turma) {
         membersTurma.add(turma);
     }
@@ -106,6 +110,7 @@ public class Usuario {
             }
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -118,5 +123,12 @@ public class Usuario {
     @Override
     public int hashCode() {
         return Objects.hash(email);
+    }
+    public void addNotification(Notification notification) {
+        notifications.add(notification);
+    }
+
+    public void removeNotification(Notification notification) {
+        notifications.remove(notification);
     }
 }

@@ -117,7 +117,7 @@ public class TchimoTests {
 		assertEquals(3, grupoEmTeste.amountOfMembers());
 	}
 
-	@Test
+/**	@Test
 	public void testaAtributosDasNotificacoes() {
 		//Assert para objeto vazio
 		Notifications notificacoesNulo = new Notifications();
@@ -126,7 +126,7 @@ public class TchimoTests {
 		assertEquals(null, 	notificacoesNulo.getId_turma());
 		assertEquals(null, 	notificacoesNulo.getCreationDate());
 
-	}
+	}**/
 
 	@Test
 	public void testaCadastrarUsuario() {

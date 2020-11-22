@@ -23,7 +23,7 @@ import java.util.Optional;
 @RestController
 public class LoginController {
 
-    private final String TOKEN_KEY = "DefaultUserLogin";
+    private static final String TOKEN_KEY = "DefaultUserLogin";
 
     private UsuariosService usuariosService;
     private JWTService jwtService;
@@ -75,11 +75,6 @@ public class LoginController {
             this.token = token;
             this.expires_in = expires_in;
             this.idUser = idUser;
-        }
-
-        public LoginResponse(String token, long expires_in) {
-            this.token = token;
-            this.expires_in = expires_in;
         }
     }
 }

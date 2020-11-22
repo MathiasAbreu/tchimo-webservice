@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-public class Notifications {
+public class Notification {
 
     @Id
     @GeneratedValue
@@ -24,18 +24,20 @@ public class Notifications {
 
     private Long creationDate = ((new Date()).getTime() / 1000L);
 
-    private ArrayList<Long> alvos = new ArrayList<>();
+    private Long targetUser;
 
     @JsonCreator
-    public Notifications() {
+    public Notification() {
         super();
     }
 
     @JsonCreator
-    public Notifications(String id_turma, Long id_group) {
+    public Notification(Long id_user, String id_turma, Long id_group, String type) {
         super();
+        this.id_user = id_user;
         this.id_turma = id_turma;
         this.id_group = id_group;
+        this.type = type;
     }
 
     public Long getId() {
@@ -82,11 +84,11 @@ public class Notifications {
         return creationDate;
     }
 
-    public List<Long> getAlvos() {
-        return alvos;
+    public Long getTargetUser() {
+        return targetUser;
     }
 
-    public void addAlvo(Long idAlvo) {
-        alvos.add(idAlvo);
+    public void setTargetUser(Long targetUser) {
+        this.targetUser = targetUser;
     }
 }

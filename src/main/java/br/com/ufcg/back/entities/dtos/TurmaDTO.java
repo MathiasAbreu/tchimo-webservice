@@ -19,6 +19,8 @@ public class TurmaDTO {
 
     private boolean usuario;
 
+    private boolean locked;
+
     private List<UsuarioDTO> integrantes = new ArrayList<>();
     private List<UsuarioDTO> integrantesSemGrupo = new ArrayList<>();
 
@@ -102,6 +104,14 @@ public class TurmaDTO {
 
     public void setUsuario(boolean usuario) {
         this.usuario = usuario;
+    }
+
+    public boolean getLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     public List<UsuarioDTO> getIntegrantes() {
