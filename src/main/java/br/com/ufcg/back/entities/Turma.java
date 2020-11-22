@@ -209,7 +209,7 @@ public class Turma {
                 if(!verificaSeUsuarioAlocado(usuario.getIdUser())) {
                     for(Grupo grupo : groups) {
 
-                        if(grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted()) {
+                        if(grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted() && formationStrategy.equals("UNIFORME")) {
                             if (grupo.getIdGroup().equals(idGroup)) {
                                 if (grupo.addUser(usuario.getIdUser()))
                                     return;
