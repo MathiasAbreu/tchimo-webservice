@@ -348,7 +348,7 @@ public class TurmasService {
                 Optional<Usuario> usuarioParaGrupo = usuariosDAO.findById((notification.getTargetUser()));
                 if(usuarioParaGrupo.isPresent()) {
                     addUsuarioEmGrupo(notification.getId_turma(), notification.getId_group(), usuarioParaGrupo.get().getEmail());
-                    adicionaNotificacaoDeConfirmacao(notification,usuario);
+                    adicionaNotificacaoDeConfirmacao(notification,usuario.getIdUser(), "ACK-SOLICITATION");
                 }
                 else
                     throw new UserNotFoundException("Usuário que requisitou entrada no grupo não foi encontrado!");
@@ -363,7 +363,7 @@ public class TurmasService {
         if(notification.getId_user().equals(usuario.getIdUser())) {
             if(resposta.isProcedure()) {
                 addUsuarioEmGrupo(notification.getId_turma(), notification.getId_group(), usuario.getEmail());
-                adicionaNotificacaoDeConfirmacao(notification,usuario);
+                adicionaNotificacaoDeConfirmacao(notification,notification.getTargetUser(), "ACK-INVITATION");
             }
             removeSolicitacao(notification);
             return "Resposta enviada com sucesso.";
@@ -400,10 +400,10 @@ public class TurmasService {
         notificationDAO.delete(notification);
     }
 
-    private void adicionaNotificacaoDeConfirmacao(Notification notification, Usuario usuario) {
+    private void adicionaNotificacaoDeConfirmacao(Notification notification, Long idUser, String message) {
 
-        Notification newNotification = notificationDAO.save(new Notification(notification.getId_user(),notification.getId_turma(),notification.getId_group(),"REPLY-CONFIRMATION"));
-        usuariosDAO.findById(usuario.getIdUser()).map(record -> {
+        Notification newNotification = notificationDAO.save(new Notification(notification.getId_user(),notification.getId_turma(),notification.getId_group(),message));
+        usuariosDAO.findById(idUser).map(record -> {
             record.addNotification(newNotification);
             return usuariosDAO.save(record);
         });
