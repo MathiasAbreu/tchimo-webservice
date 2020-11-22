@@ -2,6 +2,7 @@ package br.com.ufcg.back.entities;
 
 import br.com.ufcg.back.exceptions.grupo.GroupException;
 import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
+import br.com.ufcg.back.exceptions.grupo.OverflowNumberOfGroupsException;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -201,16 +202,22 @@ public class Turma {
             }
     }
 
-    public void addUserFromGroup(Long idGroup, String emailUser) throws UserAlreadyExistException, GroupNotFoundException {
-        //Aqui ficam as verificações de integrantes permitidos em cada grupo.
+    public void addUserFromGroup(Long idGroup, String emailUser) throws UserAlreadyExistException, GroupNotFoundException, OverflowNumberOfGroupsException {
+
         for(Usuario usuario : integrantes) {
             if(usuario.getEmail().equals(emailUser)) {
                 if(!verificaSeUsuarioAlocado(usuario.getIdUser())) {
                     for(Grupo grupo : groups) {
-                        if(grupo.getIdGroup().equals(idGroup)) {
-                            grupo.addUser(usuario.getIdUser());
-                            return;
+
+                        if(grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted()) {
+                            if (grupo.getIdGroup().equals(idGroup)) {
+                                if (grupo.addUser(usuario.getIdUser()))
+                                    return;
+                                else
+                                    throw new UserAlreadyExistException("Usuário já pertence ao grupo!");
+                            }
                         }
+                        throw new OverflowNumberOfGroupsException("O grupo não aceita mais integrantes!");
                     }
                     throw new GroupNotFoundException("O grupo não foi encontrado.");
                 }
