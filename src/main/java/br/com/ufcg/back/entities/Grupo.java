@@ -78,11 +78,10 @@ public class Grupo {
         memberIDs.remove(usrId);
     }
 
-    public boolean addUser(Long usrId) throws UserAlreadyExistException {
+    public void addUser(Long usrId) throws UserAlreadyExistException {
         if (memberIDs.contains(usrId))
-            return false;
+            throw new UserAlreadyExistException("Usuario já pertence ao grupo!");
         else memberIDs.add(usrId);
-        return true;
     }
 
     public void removeUser(Long usrId) throws UserNotFoundException {

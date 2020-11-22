@@ -204,26 +204,26 @@ public class Turma {
 
     public void addUserFromGroup(Long idGroup, String emailUser) throws UserAlreadyExistException, GroupNotFoundException, OverflowNumberOfGroupsException {
 
-        for(Usuario usuario : integrantes) {
-            if(usuario.getEmail().equals(emailUser)) {
-                if(!verificaSeUsuarioAlocado(usuario.getIdUser())) {
-                    for(Grupo grupo : groups) {
+        Usuario usuario = getUsuarioParaAdicionar(emailUser);
 
-                        if(grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted() && formationStrategy.equals("UNIFORME")) {
-                            if (grupo.getIdGroup().equals(idGroup)) {
-                                if (grupo.addUser(usuario.getIdUser()))
-                                    return;
-                                else
-                                    throw new UserAlreadyExistException("Usuário já pertence ao grupo!");
-                            }
-                        }
-                        throw new OverflowNumberOfGroupsException("O grupo não aceita mais integrantes!");
-                    }
-                    throw new GroupNotFoundException("O grupo não foi encontrado.");
-                }
-                throw new UserAlreadyExistException("O Usuário já pertence a um grupo.");
+        for(Grupo grupo : groups) {
+
+            if(grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted() && formationStrategy.equals("UNIFORME")) {
+                if (grupo.getIdGroup().equals(idGroup))
+                    grupo.addUser(usuario.getIdUser());
+
             }
+            throw new OverflowNumberOfGroupsException("O grupo não aceita mais integrantes!");
         }
+        throw new GroupNotFoundException("O grupo não foi encontrado.");
+
+    }
+
+    private Usuario getUsuarioParaAdicionar(String emailUser) throws UserAlreadyExistException {
+        for(Usuario usuario : integrantes)
+            if(usuario.getEmail().equals(emailUser) && verificaSeUsuarioAlocado(usuario.getIdUser()))
+                return usuario;
+        throw new UserAlreadyExistException("O usuário já pertence a um grupo.");
     }
 
     public void removeUserFromGroup(Long groupID, Long idUser, String emailUser) throws UserNotFoundException, GroupNotFoundException {
