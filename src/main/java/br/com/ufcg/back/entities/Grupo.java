@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -52,6 +53,21 @@ public class Grupo {
 
     public List<Long> getMemberIDs() {
         return memberIDs;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Grupo grupo = (Grupo) o;
+        return idGroup.equals(grupo.idGroup) &&
+                emailManager.equals(grupo.emailManager) &&
+                memberIDs.equals(grupo.memberIDs);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idGroup);
     }
 
     public boolean usuarioParticipa(long idUser) {

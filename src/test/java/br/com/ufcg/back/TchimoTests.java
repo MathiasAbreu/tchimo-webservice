@@ -1,8 +1,9 @@
 package br.com.ufcg.back;
 
-import br.com.ufcg.back.entities.Grupo;
-import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Usuario;
+import br.com.ufcg.back.entities.Turma;
+import br.com.ufcg.back.entities.Grupo;
+import br.com.ufcg.back.entities.Notifications;
 import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TchimoTests {
 
 	@Test
-	public void testaAtributosUsuarios() {
+	public void testaAtributosDoUsuarios() {
 		//Assert para objeto vazio
 		Usuario usuarioNulo = new Usuario();
 		assertEquals(null, usuarioNulo.getEmail());
@@ -43,15 +44,9 @@ public class TchimoTests {
 		assertEquals("654321", 				usuarioEmTeste.getPassword());
 		assertEquals("Gilmar", 				usuarioEmTeste.getName());
 
-		// Asserts para métedos de addTurma e removeTurma
-		Turma turmaEmTeste = new Turma("T01", "FS", "ES", 3, 10, 2);
-		usuarioEmTeste.addTurma(turmaEmTeste);
-		boolean contemTurma = usuarioEmTeste.getMembersTurma().contains(turmaEmTeste);
-		assertTrue(contemTurma);
-
 	}
 	@Test
-	public void testaAtributosTurma() {
+	public void testaAtributosDaTurma() {
 		//Assert para objeto vazio
 		Turma turmaNula = new Turma();
 		assertEquals(null, 	turmaNula.getName());
@@ -91,7 +86,7 @@ public class TchimoTests {
 	}
 
 	@Test
-	public void testaAtributosGrupo() {
+	public void testaAtributosDoGrupo() {
 		//Assert para objeto vazio
 		Grupo grupoNulo = new Grupo();
 		assertEquals(null, 	grupoNulo.getIdGroup());
@@ -123,68 +118,129 @@ public class TchimoTests {
 	}
 
 	@Test
-	public void testaFuncionalidadesTurma() {
-		// Asserts para métedos de addTurma e removeTurma
-		Turma turmaEmTeste = new Turma("T01", "FS", "ES", 3, 10, 2);
+	public void testaAtributosDasNotificacoes() {
+		//Assert para objeto vazio
+		Notifications notificacoesNulo = new Notifications();
+		assertEquals(null, 	notificacoesNulo.getId());
+		assertEquals(null, 	notificacoesNulo.getId_user());
+		assertEquals(null, 	notificacoesNulo.getId_turma());
+		assertEquals(null, 	notificacoesNulo.getCreationDate());
 
 	}
 
 	@Test
-	public void testaGetsESetsEntidades() {
-		Usuario usuario1 = new Usuario(1L, "g@gmail", "123", "Gilmar");
-		Turma t1 = new Turma("T01", "FS", "ES", 3, 10, 2);
-		Grupo grupo1 = new Grupo(1, "g@gmail",1L);
+	public void testaCadastrarUsuario() {
+		Usuario usuario1 = new Usuario(1L, "aluno1@ccc.ufcg.edu.br", "123456", "Anne");
+		Usuario usuario2 = new Usuario(1L, "aluno1@ccc.ufcg.edu.br", "654321", "Gilmar");
+		Usuario usuario3 = new Usuario(2L, "aluno3@ccc.ufcg.edu.br", "654321", "Gilmar");
 
-		t1.addUser(usuario1);
-		usuario1.addTurma(t1);
-
-		t1.setId("test");
-		assertEquals("test", t1.getId());
-		t1.setManager(usuario1);
-		assertEquals(usuario1, t1.getManager());
-		assertEquals("T01", t1.getName());
-		t1.setName(" ");
-		assertEquals(" ", t1.getName());
-		assertEquals("FS", t1.getFormationStrategy());
-
-		assertEquals("ES", t1.getEndingStrategy());
-		assertEquals(1, t1.getIntegrantes().size());
-		assertEquals(3, t1.getQuantityOfGroups());
-		assertEquals(((new Date()).getTime() / 1000L) + ((10 * 3600) + (2 * 60)), t1.getEndDate());
-
-		assertEquals(1L, usuario1.getIdUser());
-		assertEquals(1, usuario1.getMembersTurma().size());
+		// Assert para usuario com mesmo email
+		assertTrue(usuario1.equals(usuario2));
+		assertFalse(usuario1.equals(usuario3));
 	}
+
 	@Test
-	public void testaContrutorVazioEntidades() {
-		Usuario usuarioVazio = new Usuario();
-		Turma tVazia = new Turma();
-		Grupo grupoVazio = new Grupo();
+	public void testaCadastrarTurma() {
+		Turma turma1 = new Turma("T01", "FS", "ES", 3, 10, 2);
+		turma1.setId("T01");
+
+		Turma turma2 = new Turma("T01", "FS", "ES", 3, 10, 2);
+		turma2.setId("T01");
+
+		Turma turma3 = new Turma("T01", "FS", "ES", 3, 10, 2);
+		turma3.setId("T03");
+
+		// Assert para turmas com mesmo parametros de construcao
+		assertTrue(turma1.equals(turma2));
+		assertFalse(turma1.equals(turma3));
+
+		Usuario usuario1 = new Usuario(1L, "aluno1@ccc.ufcg.edu.br", "123456", "Anne");
+		Usuario usuario2 = new Usuario(2L, "aluno2@ccc.ufcg.edu.br", "654321", "Gilmar");
+
+		// Fluxo de cadastro de turma para usuario1
+		usuario1.addTurma(turma1);
+		usuario1.addTurma(turma2);
+
+		turma1.setManager(usuario1);
+
+		assertFalse(turma1.verificaSeUsuarioJaPertece("aluno1@ccc.ufcg.edu.br"));
+		assertFalse(turma2.verificaSeUsuarioJaPertece("aluno1@ccc.ufcg.edu.br"));
+		turma1.addUser(usuario1);
+		turma2.addUser(usuario1);
+		assertTrue(turma1.verificaSeUsuarioJaPertece("aluno1@ccc.ufcg.edu.br"));
+		assertTrue(turma2.verificaSeUsuarioJaPertece("aluno1@ccc.ufcg.edu.br"));
+
+		// Fluxo de cadastro de turma para usuario1
+		turma1.addUser(usuario2);
+		turma2.addUser(usuario2);
+		assertTrue(turma1.verificaSeUsuarioJaPertece("aluno2@ccc.ufcg.edu.br"));
+		assertTrue(turma2.verificaSeUsuarioJaPertece("aluno2@ccc.ufcg.edu.br"));
+
 	}
+
 	@Test
-	public void testaMetodosEntidades() {
-		Usuario usuario1 = new Usuario(1L, "g@gmail", "123", "Gilmar");
-		Turma t2 = new Turma("T01", "FS", "ES", 3, 10, 2);
-		Grupo grupo1 = new Grupo(1L, "g@gmail",1L);
+	public void testaCadastrarGrupo() {
+		Grupo grupo1 = new Grupo(1, "aluno1@ccc.ufcg.edu.br",1L);
+		Grupo grupo2 = new Grupo(1, "aluno1@ccc.ufcg.edu.br",1L);
+		Grupo grupo3 = new Grupo(3, "aluno3@ccc.ufcg.edu.br",3L);
 
-		t2.adicionaGrupo(grupo1);
+		// Assert para grupos como mesmos parametros de construcao
+		assertTrue(grupo1.equals(grupo2));
+		assertFalse(grupo1.equals(grupo3));
 
-		try {
-			t2.removeUserFromGroup(1L,"g@gmail");
-		} catch (UserNotFoundException e) {
-			e.printStackTrace();
-		} catch (GroupNotFoundException e) {
-			e.printStackTrace();
-		}
-		t2.addUser(usuario1);
-		Assertions.assertTrue(t2.verificaSeUsuarioJaPertece("g@gmail"));
-		t2.removeUser("g@gmail");
+	}
 
-		assertEquals(0, t2.quantidadeGruposNaTurma());
-		t2.addQGrupo();
-		assertEquals(1, t2.quantidadeGruposNaTurma());
-		assertFalse(t2.verificaSeUsuarioJaPertece("ggmail"));
+	@Test
+	public void testaAcessarDadosTurma() {
+	}
 
+	@Test
+	public void testaAcessarDadosGrupo() {
+	}
+
+	@Test
+	public void testaSairDeTurma() {
+		Turma turma1 = new Turma("T01", "FS", "ES", 3, 10, 2);
+		Turma turma2 = new Turma("T01", "FS", "ES", 3, 10, 2);
+
+		Usuario usuario1 = new Usuario(1L, "aluno1@ccc.ufcg.edu.br", "123456", "Anne");
+		Usuario usuario2 = new Usuario(2L, "aluno2@ccc.ufcg.edu.br", "654321", "Gilmar");
+
+		// Fluxo de cadastro de turma para usuario1
+		usuario1.addTurma(turma1);
+		usuario1.addTurma(turma2);
+
+		assertFalse(turma1.verificaSeUsuarioJaPertece("aluno1@ccc.ufcg.edu.br"));
+		assertFalse(turma2.verificaSeUsuarioJaPertece("aluno1@ccc.ufcg.edu.br"));
+		assertEquals(null, turma1.removeUser("aluno1@ccc.ufcg.edu.br"));
+		assertEquals(null, turma2.removeUser("aluno1@ccc.ufcg.edu.br"));
+
+		// Fluxo de cadastro de turma para usuario1
+		turma1.addUser(usuario2);
+		turma2.addUser(usuario2);
+		assertTrue(turma1.verificaSeUsuarioJaPertece("aluno2@ccc.ufcg.edu.br"));
+		assertTrue(turma2.verificaSeUsuarioJaPertece("aluno2@ccc.ufcg.edu.br"));
+
+		turma1.removeUser("aluno2@ccc.ufcg.edu.br");
+		turma2.removeUser("aluno2@ccc.ufcg.edu.br");
+		assertFalse(turma1.verificaSeUsuarioJaPertece("aluno2@ccc.ufcg.edu.br"));
+		assertFalse(turma2.verificaSeUsuarioJaPertece("aluno2@ccc.ufcg.edu.br"));
+	}
+
+	@Test
+	public void testaSairDeGrupo() {
+	}
+
+	@Test
+	public void testaJuntarGrupos() {
+	}
+
+	@Test
+	public void testaDistribuirUsuariosEmGruposManual() {
+	}
+
+	@Test
+	public void testaDistribuirUsuariosEmGruposTimer() {
 	}
 }
 
