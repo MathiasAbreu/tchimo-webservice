@@ -287,6 +287,7 @@ public class TurmasService {
 
             if(usuario.isPresent()) {
                 turma.get().removeUserFromGroup(groupID, usuario.get().getIdUser(), emailUser);
+                configureGroups(turma.get());
                 turmasDAO.save(turma.get());
                 return "Usuário removido com sucesso!";
             }
@@ -462,6 +463,8 @@ public class TurmasService {
         if(turma.getFormationStrategy().equals("UNIFORME"))
             return;
 
+        turma.verificaSeGruposConsistem();
+
         int numberIntegrantes = turma.getIntegrantes().size();
         int numberOfGrupos = turma.getQuantityOfGroups();
 
@@ -512,8 +515,21 @@ public class TurmasService {
         turmasDAO.save(turma);
     }
 
-    public String configureIntegrantesSemGrupo(String idTurma, String emailUser) {
+    public String configureIntegrantesSemGrupo(String idTurma, String emailUser) throws TurmaNotFoundException, UserUnauthorizedException, TurmaLockedException, UserAlreadyExistException {
 
-        return "";
+        Optional<Turma> turma = turmasDAO.findById(idTurma);
+        Optional<Usuario> usuario = usuariosDAO.findByEmail(emailUser);
+
+        if(turma.isPresent()) {
+            if(usuario.isPresent() && turma.get().getManager().getEmail().equals(emailUser)) {
+                if(turma.get().getLocked()){
+                    alocaUserInGroups(turma.get());
+                    return "A distribuição foi realizada!";
+                }
+                throw new TurmaLockedException("A turma não está encerrada!");
+            }
+            throw new UserUnauthorizedException("Somente o usuário gerente da turma pode acionar a distribuição.");
+        }
+        throw new TurmaNotFoundException("Turma não foi encontrada!");
     }
 }

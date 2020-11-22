@@ -275,7 +275,7 @@ public class TurmasController {
             if(jwtService.usuarioExiste(header))
                 return new ResponseEntity<String>(turmasService.configureIntegrantesSemGrupo(id, jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
             throw new UserNotFoundException("Usuário não encontrado.");
-        } catch (UserException err) {
+        } catch (UserException | TurmaNotFoundException | TurmaLockedException err) {
             return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
