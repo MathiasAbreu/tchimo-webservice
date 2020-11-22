@@ -87,7 +87,7 @@ public class TurmasController {
             @ApiResponse(code = 200, message = "Retorna que a turma foi trancada com sucesso."),
             @ApiResponse(code = 404, message = " A turma não foi encontrada.")
     })
-    @RequestMapping(value = "turmas/{id}", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "turmas/{id}", method = RequestMethod.PUT, produces = "application/json")
     public ResponseEntity<String> fecharTurma(@ApiParam("Token do usuario") @RequestHeader("Authorization") String header, @ApiParam("Id da turma") @PathVariable String id) {
         try {
             if(jwtService.usuarioExiste(header))

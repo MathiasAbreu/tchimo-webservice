@@ -51,9 +51,10 @@ public class TurmasService {
         if(turma.isPresent()) {
 
             if(turma.get().getManager().getEmail().equals(emailUser) || turma.get().verificaSeUsuarioJaPertece(emailUser)) {
-                TurmaDTO turmaDTO = createTurmaDTO(turma.get(),(turma.get().getManager().getEmail().equals(emailUser)));
-                configureIntegrantes(turma.get(),turmaDTO);
-                turmaDTO.setGroups(configureGrupos(turma.get().getGroups()));
+                Turma turmaVerificada = verifyTurmaLocked(turma.get());
+                TurmaDTO turmaDTO = createTurmaDTO(turmaVerificada,(turmaVerificada.getManager().getEmail().equals(emailUser)));
+                configureIntegrantes(turmaVerificada,turmaDTO);
+                turmaDTO.setGroups(configureGrupos(turmaVerificada.getGroups()));
                 return turmaDTO;
             }
             throw new UserUnauthorizedException("O usuário não possui autorização. ");
@@ -154,13 +155,14 @@ public class TurmasService {
         List<TurmaDTO> turmas = new ArrayList<>();
 
         for(Turma turma : usuario.get().getManagedTurma()) {
+            turma = verifyTurmaLocked(turma);
             TurmaDTO turmaDTO = createTurmaDTO(turma, true);
             configureIntegrantes(turma,turmaDTO);
             turmaDTO.setGroups(configureGrupos(turma.getGroups()));
             turmas.add(turmaDTO);
         }
         for(Turma turma : usuario.get().getMembersTurma()) {
-
+        turma = verifyTurmaLocked(turma);
             TurmaDTO turmaDTO = createTurmaDTO(turma, false);
             configureIntegrantes(turma,turmaDTO);
             turmaDTO.setGroups(configureGrupos(turma.getGroups()));
@@ -458,11 +460,15 @@ public class TurmasService {
         turma.configureGroups(integrantesPorGrupo);
     }
 
-    private void verifyTurmaLocked(Turma turma) {
+    private Turma verifyTurmaLocked(Turma turma) {
 
         long timestampAtual = ((new Date()).getTime() / 1000L);
         if(timestampAtual >= turma.getEndDate()) {
-
+            return turmasDAO.findById(turma.getId()).map(record -> {
+                record.setLocked(true);
+                return turmasDAO.save(record);
+            }).get();
         }
+        return turma;
     }
 }
