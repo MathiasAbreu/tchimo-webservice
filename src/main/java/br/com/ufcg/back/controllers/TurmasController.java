@@ -147,7 +147,7 @@ public class TurmasController {
     }
 
     @ApiOperation(value = "Remove um usuário de um grupo de uma turma e remove o grupo caso esteja vazio.")
-    @RequestMapping(value = "turmas/{id}/grupos/{groupId}", method = RequestMethod.DELETE, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "turmas/{id}/grupos/{groupId}", method = RequestMethod.DELETE, produces = "application/json")
     public ResponseEntity<String> removeUserFromGroup(
             @ApiParam("Token válido") @RequestHeader("Authorization") String header,
             @ApiParam("Id da Turma") @PathVariable String id,

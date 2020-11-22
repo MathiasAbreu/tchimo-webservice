@@ -1,9 +1,6 @@
 package br.com.ufcg.back.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import br.com.ufcg.back.daos.GruposDAO;
 import br.com.ufcg.back.daos.NotificationDAO;
@@ -459,5 +456,13 @@ public class TurmasService {
         }
 
         turma.configureGroups(integrantesPorGrupo);
+    }
+
+    private void verifyTurmaLocked(Turma turma) {
+
+        long timestampAtual = ((new Date()).getTime() / 1000L);
+        if(timestampAtual >= turma.getEndDate()) {
+
+        }
     }
 }
