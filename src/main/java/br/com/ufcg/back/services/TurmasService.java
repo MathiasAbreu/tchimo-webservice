@@ -507,7 +507,7 @@ public class TurmasService {
             while (turma.quantidadeGruposNaTurma() < turma.getQuantityOfGroups()) {
                 turma.adicionaGrupo(new Grupo(turma.quantidadeGruposNaTurma() + 1, integrantesSemGrupo.get(0).getEmail(), integrantesSemGrupo.get(0).getIdUser()));
                 turma.addQGrupo();
-                integrantesSemGrupo.remove(0);
+                integrantesSemGrupo.remove(1);
                 configureGroups(turma);
             }
         }

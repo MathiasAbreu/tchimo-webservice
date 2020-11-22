@@ -268,7 +268,7 @@ public class TurmasController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Distribuição efetuada com sucesso!")
     })
-    @RequestMapping(value = "turmas/{id}/distribution")
+    @RequestMapping(value = "turmas/{id}/distribution", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<String> distribuirIntegrantesNaSala(@ApiParam("Token de Usuário.") @RequestHeader("Authorization") String header, @ApiParam("Id da turma") @PathVariable String id) {
 
         try {

@@ -239,7 +239,7 @@ public class Turma {
     public boolean verificaSeUsuarioAlocado(long idUser) {
 
         for(Grupo grupo : groups)
-            if(grupo.usuarioParticipa(idUser))
+            if(grupo.usuarioParticipa(idUser) || grupo.getEmailManager().equals(manager.getEmail()))
                 return true;
         return false;
     }
@@ -284,8 +284,9 @@ public class Turma {
 
         ArrayList<Usuario> integrantesSemGrupo = new ArrayList<>();
         for(Usuario usuario : integrantes)
-            if(!verificaSeUsuarioAlocado(usuario.getIdUser()))
+            if(!verificaSeUsuarioAlocado(usuario.getIdUser())) {
                 integrantesSemGrupo.add(usuario);
+            }
 
         int[] sorteio = new int[integrantesSemGrupo.size()];
         for(int i = 0; i < sorteio.length; i++)
@@ -293,8 +294,10 @@ public class Turma {
 
         int index = 0;
         for(Grupo grupo : groups) {
-            while(grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted())
+            while(grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted()) {
                 grupo.addUser(integrantesSemGrupo.get(sorteio[index]).getIdUser());
+                index += 1;
+            }
         }
     }
 
