@@ -21,14 +21,12 @@ public class UsuariosService {
 
     private UsuariosDAO<Usuario, String> usuariosDao;
     private TurmasDAO<Turma, String> turmasDAO;
-    private NotificationDAO<Notification, Long> notificationDAO;
 
-    public UsuariosService(UsuariosDAO<Usuario, String> usuariosDao, TurmasDAO turmasDAO, NotificationDAO<Notification, Long> notificationDAO) {
+    public UsuariosService(UsuariosDAO<Usuario, String> usuariosDao, TurmasDAO turmasDAO) {
 
         super();
         this.usuariosDao = usuariosDao;
         this.turmasDAO = turmasDAO;
-        this.notificationDAO = notificationDAO;
     }
 
     public void adicionaUsuario(Usuario usuario) throws UserAlreadyExistException {
