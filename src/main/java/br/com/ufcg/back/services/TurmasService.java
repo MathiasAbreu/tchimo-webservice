@@ -348,7 +348,7 @@ public class TurmasService {
                 Optional<Usuario> usuarioParaGrupo = usuariosDAO.findById((notification.getTargetUser()));
                 if(usuarioParaGrupo.isPresent()) {
                     addUsuarioEmGrupo(notification.getId_turma(), notification.getId_group(), usuarioParaGrupo.get().getEmail());
-                    adicionaNotificacaoDeConfirmacao(notification,usuario.getIdUser(), "ACK-SOLICITATION");
+                    adicionaNotificacaoDeConfirmacao(notification,notification.getTargetUser(), "ACK-SOLICITATION");
                 }
                 else
                     throw new UserNotFoundException("Usuário que requisitou entrada no grupo não foi encontrado!");
