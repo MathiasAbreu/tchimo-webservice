@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.persistence.*;
 
@@ -268,6 +269,32 @@ public class Turma {
     public void configureGroups(int[] integrantesPorGrupo) {
         for(int i = 0; i < groups.size(); i++) {
             groups.get(i).setNumberFoMembersPermitted(integrantesPorGrupo[i]);
+        }
+    }
+
+    public List<Usuario> retornaIntegrantesSemGrupo() {
+        ArrayList<Usuario> integrantesSemGrupo = new ArrayList<>();
+        for(Usuario usuario : integrantes)
+            if(!verificaSeUsuarioAlocado(usuario.getIdUser()))
+                integrantesSemGrupo.add(usuario);
+        return integrantesSemGrupo;
+    }
+
+    public void alocaUsersInGroups() throws UserAlreadyExistException {
+
+        ArrayList<Usuario> integrantesSemGrupo = new ArrayList<>();
+        for(Usuario usuario : integrantes)
+            if(!verificaSeUsuarioAlocado(usuario.getIdUser()))
+                integrantesSemGrupo.add(usuario);
+
+        int[] sorteio = new int[integrantesSemGrupo.size()];
+        for(int i = 0; i < sorteio.length; i++)
+            sorteio[i] = new Random().nextInt(integrantesSemGrupo.size());
+
+        int index = 0;
+        for(Grupo grupo : groups) {
+            while(grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted())
+                grupo.addUser(integrantesSemGrupo.get(sorteio[index]).getIdUser());
         }
     }
 

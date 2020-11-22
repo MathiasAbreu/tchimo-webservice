@@ -486,12 +486,34 @@ public class TurmasService {
     private Turma verifyTurmaLocked(Turma turma) {
 
         long timestampAtual = ((new Date()).getTime() / 1000L);
-        if(timestampAtual >= turma.getEndDate()) {
+        if(timestampAtual >= turma.getEndDate() && turma.getEndingStrategy().equals("CRONOMETRO")) {
             return turmasDAO.findById(turma.getId()).map(record -> {
                 record.setLocked(true);
                 return turmasDAO.save(record);
             }).get();
         }
         return turma;
+    }
+
+    private void alocaUserInGroups(Turma turma) throws UserAlreadyExistException {
+
+        if(turma.getFormationStrategy().equals("UNIFORME")) {
+
+            List<Usuario> integrantesSemGrupo = turma.retornaIntegrantesSemGrupo();
+            while (turma.quantidadeGruposNaTurma() < turma.getQuantityOfGroups()) {
+                turma.adicionaGrupo(new Grupo(turma.quantidadeGruposNaTurma() + 1, integrantesSemGrupo.get(0).getEmail(), integrantesSemGrupo.get(0).getIdUser()));
+                turma.addQGrupo();
+                integrantesSemGrupo.remove(0);
+                configureGroups(turma);
+            }
+        }
+
+        turma.alocaUsersInGroups();
+        turmasDAO.save(turma);
+    }
+
+    public String configureIntegrantesSemGrupo(String idTurma, String emailUser) {
+
+        return "";
     }
 }

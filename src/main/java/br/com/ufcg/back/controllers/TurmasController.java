@@ -264,5 +264,19 @@ public class TurmasController {
         }
     }
 
-    //@ApiOperation()
+    @ApiOperation(value = "Permite que o gerente da turma realiza a distribuição dos integrantes que não entraram em nenhum grupo ainda.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Distribuição efetuada com sucesso!")
+    })
+    @RequestMapping(value = "turmas/{id}/distribution")
+    public ResponseEntity<String> distribuirIntegrantesNaSala(@ApiParam("Token de Usuário.") @RequestHeader("Authorization") String header, @ApiParam("Id da turma") @PathVariable String id) {
+
+        try {
+            if(jwtService.usuarioExiste(header))
+                return new ResponseEntity<String>(turmasService.configureIntegrantesSemGrupo(id, jwtService.getUsuarioDoToken(header)), HttpStatus.OK);
+            throw new UserNotFoundException("Usuário não encontrado.");
+        } catch (UserException err) {
+            return new ResponseEntity<String>(err.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }
