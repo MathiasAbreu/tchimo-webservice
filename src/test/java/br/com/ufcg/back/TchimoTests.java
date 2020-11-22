@@ -3,7 +3,7 @@ package br.com.ufcg.back;
 import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Grupo;
-import br.com.ufcg.back.entities.Notifications;
+import br.com.ufcg.back.entities.Notification;
 import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;

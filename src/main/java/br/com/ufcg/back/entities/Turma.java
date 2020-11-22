@@ -340,7 +340,7 @@ public class Turma {
     public boolean verificaSeGruposConsistem() throws UserNotFoundException {
         for(Grupo grupo : groups) {
             if(grupo.getNumberFoMembersPermitted() < grupo.getNumberOfMembers()) {
-                grupo.removeUser(grupo.getMemberIDs().get(1));
+                grupo.removeUser(grupo.getMemberIDs().get((grupo.getMemberIDs().size() - 1)));
                 return false;
             }
         }
