@@ -142,7 +142,7 @@ public class TurmasService {
                 int quantidadeDegrupos = turma.get().quantidadeGruposNaTurma();
                 if(quantidadeDegrupos < turma.get().getQuantityOfGroups()) {
 
-                    Grupo grupo = gruposDAO.save(new Grupo((quantidadeDegrupos + 1),emailUser,usuario.get().getIdUser()));
+                    Grupo grupo = gruposDAO.save(new Grupo(emailUser,usuario.get().getIdUser()));
                     turma.get().adicionaGrupo(grupo);
                     turma.get().addQGrupo();
                     configureGroups(turma.get());
@@ -508,7 +508,7 @@ public class TurmasService {
 
             typeDistribution = true;
             while (turma.quantidadeGruposNaTurma() < turma.getQuantityOfGroups()) {
-                turma.adicionaGrupo(new Grupo(turma.quantidadeGruposNaTurma() + 1, integrantesSemGrupo.get(0).getEmail(), integrantesSemGrupo.get(0).getIdUser()));
+                turma.adicionaGrupo(new Grupo(integrantesSemGrupo.get(0).getEmail(), integrantesSemGrupo.get(0).getIdUser()));
                 turma.addQGrupo();
                 integrantesSemGrupo.remove(0);
                 configureGroups(turma);
@@ -516,7 +516,7 @@ public class TurmasService {
         }
 
         if(turma.getFormationStrategy().equals("VARIAVEL") && turma.getGroups().size() <= 0) {
-            turma.adicionaGrupo(new Grupo(1,integrantesSemGrupo.get(0).getEmail(), integrantesSemGrupo.get(0).getIdUser()));
+            turma.adicionaGrupo(new Grupo(integrantesSemGrupo.get(0).getEmail(), integrantesSemGrupo.get(0).getIdUser()));
             turma.addQGrupo();
             integrantesSemGrupo.remove(0);
         }

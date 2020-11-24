@@ -9,13 +9,16 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
 public class Grupo {
 
     @Id
+    @GeneratedValue
     private Long idGroup;
+
     private String emailManager;
 
     private ArrayList<Long> memberIDs = new ArrayList<>();
@@ -23,11 +26,10 @@ public class Grupo {
     private int numberFoMembersPermitted = 0;
 
     @JsonCreator
-    public Grupo(long idGroup, String emailManager, long idManager) {
+    public Grupo(String emailManager, long idManager) {
 
         super();
 
-        this.idGroup = idGroup;
         this.emailManager = emailManager;
         memberIDs.add(idManager);
     }

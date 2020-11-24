@@ -94,7 +94,7 @@ public class TchimoTests {
 		assertEquals(0, 	grupoNulo.amountOfMembers());
 
 		Usuario aluno1 = new Usuario(1L, "aluno1@ccc.ufcg.edu.br", "123456", "Aluno 1");
-		Grupo grupoEmTeste = new Grupo(1, "aluno1@ccc.ufcg.edu.br",1L);
+		Grupo grupoEmTeste = new Grupo( "aluno1@ccc.ufcg.edu.br",1L);
 		// Assert para @idGroup e @emailManager
 		assertEquals(1, 						grupoEmTeste.getIdGroup());
 		assertEquals("aluno1@ccc.ufcg.edu.br", 	grupoEmTeste.getEmailManager());
@@ -180,9 +180,9 @@ public class TchimoTests {
 
 	@Test
 	public void testaCadastrarGrupo() {
-		Grupo grupo1 = new Grupo(1, "aluno1@ccc.ufcg.edu.br",1L);
-		Grupo grupo2 = new Grupo(1, "aluno1@ccc.ufcg.edu.br",1L);
-		Grupo grupo3 = new Grupo(3, "aluno3@ccc.ufcg.edu.br",3L);
+		Grupo grupo1 = new Grupo( "aluno1@ccc.ufcg.edu.br",1L);
+		Grupo grupo2 = new Grupo( "aluno1@ccc.ufcg.edu.br",1L);
+		Grupo grupo3 = new Grupo( "aluno3@ccc.ufcg.edu.br",3L);
 
 		// Assert para grupos como mesmos parametros de construcao
 		assertTrue(grupo1.equals(grupo2));
