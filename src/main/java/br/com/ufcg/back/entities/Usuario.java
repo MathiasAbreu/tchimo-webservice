@@ -28,7 +28,10 @@ public class Usuario {
     @JoinTable(name = "integrantes_turma", joinColumns = @JoinColumn(name = "id_user"), inverseJoinColumns = @JoinColumn(name = "turma_id"))
     private List<Turma> membersTurma = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id_user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "user_notifications",joinColumns = {
+            @JoinColumn(name = "user_notification")}, inverseJoinColumns = {
+            @JoinColumn(name = "notification_id")})
     private List<Notification> notifications = new ArrayList<>();
 
     @JsonCreator

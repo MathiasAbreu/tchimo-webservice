@@ -30,14 +30,17 @@ public class Turma {
     private long endDate;
 
     @ApiModelProperty(value = "Usuario que criou a turma.")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "idUser")
     private Usuario manager;
 
     @ManyToMany(mappedBy = "membersTurma")
     private List<Usuario> integrantes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "idGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "turmas_grupos", joinColumns = {
+            @JoinColumn(name = "turma_grupo")}, inverseJoinColumns = {
+            @JoinColumn(name = "group_id")})
     private List<Grupo> groups = new ArrayList<>();
 
     private String formationStrategy;
