@@ -235,7 +235,7 @@ public class Turma {
 
     private Usuario getUsuarioParaAdicionar(String emailUser) throws UserAlreadyExistException {
         for(Usuario usuario : integrantes)
-            if(usuario.getEmail().equals(emailUser) && verificaSeUsuarioAlocado(usuario.getIdUser()))
+            if(usuario.getEmail().equals(emailUser) && verificaSeUsuarioAlocado(usuario.getIdUser(),usuario.getEmail()))
                 return usuario;
         throw new UserAlreadyExistException("O usuário já pertence a um grupo.");
     }
@@ -257,12 +257,12 @@ public class Turma {
             }
     }
 
-    public boolean verificaSeUsuarioAlocado(long idUser) {
+    public boolean verificaSeUsuarioAlocado(long idUser, String emailUser) {
 
         for(Grupo grupo : groups)
-            if(grupo.usuarioParticipa(idUser) || grupo.getEmailManager().equals(manager.getEmail()))
-                return true;
-        return false;
+            if(grupo.usuarioParticipa(idUser) || grupo.getEmailManager().equals(emailUser))
+                return false;
+        return true;
     }
 
     public boolean verificaGrupo(long idUser) {
@@ -296,7 +296,7 @@ public class Turma {
     public List<Usuario> retornaIntegrantesSemGrupo() {
         ArrayList<Usuario> integrantesSemGrupo = new ArrayList<>();
         for(Usuario usuario : integrantes)
-            if(!verificaSeUsuarioAlocado(usuario.getIdUser()))
+            if(verificaSeUsuarioAlocado(usuario.getIdUser(), usuario.getEmail()))
                 integrantesSemGrupo.add(usuario);
         return integrantesSemGrupo;
     }
@@ -305,7 +305,7 @@ public class Turma {
 
         ArrayList<Usuario> integrantesSemGrupo = new ArrayList<>();
         for(Usuario usuario : integrantes)
-            if(!verificaSeUsuarioAlocado(usuario.getIdUser())) {
+            if(verificaSeUsuarioAlocado(usuario.getIdUser(), usuario.getEmail())) {
                 integrantesSemGrupo.add(usuario);
             }
 
