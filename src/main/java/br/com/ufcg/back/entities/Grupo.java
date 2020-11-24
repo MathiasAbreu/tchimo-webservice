@@ -102,7 +102,6 @@ public class Grupo {
     }
 
     public void removeUser(Long usrId) throws UserNotFoundException {
-        System.out.println("chegou até class grupo");
         if (memberIDs.contains(usrId))
             memberIDs.remove(usrId);
         else throw new UserNotFoundException("Usuario não foi encontrado na turma!");

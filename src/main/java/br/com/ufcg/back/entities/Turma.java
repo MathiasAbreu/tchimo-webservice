@@ -184,10 +184,6 @@ public class Turma {
         throw new GroupNotFoundException("Grupo não encontrado!");
     }
 
-    private void removeGroup(Long groupID) throws GroupNotFoundException {
-        groups.remove(grupoComId(groupID));
-    }
-
     public Grupo removeUser(String email) {
 
         long idCapturado = 0L;
@@ -248,7 +244,7 @@ public class Turma {
 
         grupo.removeUser(idUser);
         if (grupo.amountOfMembers() == 0 || grupo.getEmailManager().equals(emailUser))
-            removeGroup(groupID);
+            removeGrupo(groupID);
     }
 
     public void removeGrupo(Long idGroup) {
