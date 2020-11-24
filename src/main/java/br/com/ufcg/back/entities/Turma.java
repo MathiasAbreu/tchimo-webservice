@@ -221,10 +221,11 @@ public class Turma {
 
         for(Grupo grupo : groups) {
 
-            if(grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted() && formationStrategy.equals("UNIFORME")) {
-                if (grupo.getIdGroup().equals(idGroup))
+            if((grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted() && formationStrategy.equals("UNIFORME")) || formationStrategy.equals("VARIAVEL")) {
+                if (grupo.getIdGroup().equals(idGroup)) {
                     grupo.addUser(usuario.getIdUser());
-
+                    return;
+                }
             }
             throw new OverflowNumberOfGroupsException("O grupo não aceita mais integrantes!");
         }
