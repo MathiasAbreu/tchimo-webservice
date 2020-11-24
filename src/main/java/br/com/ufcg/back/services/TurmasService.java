@@ -502,10 +502,11 @@ public class TurmasService {
     private void alocaUserInGroups(Turma turma) throws UserAlreadyExistException, UserNotFoundException {
 
         boolean typeDistribution = false;
+        List<Usuario> integrantesSemGrupo = turma.retornaIntegrantesSemGrupo();
+
         if(turma.getFormationStrategy().equals("UNIFORME")) {
 
             typeDistribution = true;
-            List<Usuario> integrantesSemGrupo = turma.retornaIntegrantesSemGrupo();
             while (turma.quantidadeGruposNaTurma() < turma.getQuantityOfGroups()) {
                 turma.adicionaGrupo(new Grupo(turma.quantidadeGruposNaTurma() + 1, integrantesSemGrupo.get(0).getEmail(), integrantesSemGrupo.get(0).getIdUser()));
                 turma.addQGrupo();
@@ -514,6 +515,11 @@ public class TurmasService {
             }
         }
 
+        if(turma.getFormationStrategy().equals("VARIAVEL") && turma.getGroups().size() <= 0) {
+            turma.adicionaGrupo(new Grupo(1,integrantesSemGrupo.get(0).getEmail(), integrantesSemGrupo.get(0).getIdUser()));
+            turma.addQGrupo();
+            integrantesSemGrupo.remove(0);
+        }
         turma.alocaUsersInGroups(typeDistribution);
         turmasDAO.save(turma);
     }

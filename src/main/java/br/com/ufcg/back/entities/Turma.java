@@ -37,10 +37,7 @@ public class Turma {
     @ManyToMany(mappedBy = "membersTurma")
     private List<Usuario> integrantes = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "turma_grupos", joinColumns = {
-            @JoinColumn(name = "turma_grupo")}, inverseJoinColumns = {
-            @JoinColumn(name = "grupo_id")})
+    @OneToMany(mappedBy = "idGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Grupo> groups = new ArrayList<>();
 
     private String formationStrategy;
