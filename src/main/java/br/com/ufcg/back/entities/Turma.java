@@ -301,6 +301,13 @@ public class Turma {
         return integrantesSemGrupo;
     }
 
+    private boolean numeroPertence(int[] numeros, int numero) {
+        for(int num : numeros)
+            if(num == numero)
+                return true;
+        return false;
+    }
+
     public void alocaUsersInGroups(boolean typeDistribuiton) throws UserAlreadyExistException {
 
         ArrayList<Usuario> integrantesSemGrupo = new ArrayList<>();
@@ -310,8 +317,13 @@ public class Turma {
             }
 
         int[] sorteio = new int[integrantesSemGrupo.size()];
-        for(int i = 0; i < sorteio.length; i++)
-            sorteio[i] = new Random().nextInt(integrantesSemGrupo.size());
+        for(int i = 0; i < sorteio.length; i++) {
+            int number = new Random().nextInt(integrantesSemGrupo.size());
+            while(numeroPertence(sorteio,number))
+                number = new Random().nextInt(integrantesSemGrupo.size());
+
+            sorteio[i] = number;
+        }
 
         if(typeDistribuiton) {
             int index = 0;
