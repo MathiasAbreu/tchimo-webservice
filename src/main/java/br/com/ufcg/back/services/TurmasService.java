@@ -137,7 +137,7 @@ public class TurmasService {
             if(turma.get().getLocked())
                 throw new TurmaLockedException("Um grupo não pode ser criado em uma turma trancada.");
 
-            if(turma.get().verificaSeUsuarioJaPertece(emailUser) && !turma.get().verificaSeUsuarioAlocado(usuario.get().getIdUser(),usuario.get().getEmail())) {
+            if(turma.get().verificaSeUsuarioJaPertece(emailUser) && turma.get().verificaSeUsuarioAlocado(usuario.get().getIdUser(),usuario.get().getEmail())) {
 
                 int quantidadeDegrupos = turma.get().quantidadeGruposNaTurma();
                 if(quantidadeDegrupos < turma.get().getQuantityOfGroups()) {
