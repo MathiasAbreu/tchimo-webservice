@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -94,9 +95,8 @@ public class TchimoTests {
 		assertEquals(0, 	grupoNulo.amountOfMembers());
 
 		Usuario aluno1 = new Usuario(1L, "aluno1@ccc.ufcg.edu.br", "123456", "Aluno 1");
-		Grupo grupoEmTeste = new Grupo( "aluno1@ccc.ufcg.edu.br",1L);
+		Grupo grupoEmTeste = new Grupo("aluno1@ccc.ufcg.edu.br",1L);
 		// Assert para @idGroup e @emailManager
-		assertEquals(1, 						grupoEmTeste.getIdGroup());
 		assertEquals("aluno1@ccc.ufcg.edu.br", 	grupoEmTeste.getEmailManager());
 		assertEquals(1, 						grupoEmTeste.amountOfMembers());
 
@@ -181,9 +181,9 @@ public class TchimoTests {
 
 	@Test
 	public void testaCadastrarGrupo() {
-		Grupo grupo1 = new Grupo( "aluno1@ccc.ufcg.edu.br",1L);
-		Grupo grupo2 = new Grupo( "aluno1@ccc.ufcg.edu.br",1L);
-		Grupo grupo3 = new Grupo( "aluno3@ccc.ufcg.edu.br",3L);
+		Grupo grupo1 = new Grupo("aluno1@ccc.ufcg.edu.br",1L);
+		Grupo grupo2 = new Grupo("aluno1@ccc.ufcg.edu.br",1L);
+		Grupo grupo3 = new Grupo("aluno3@ccc.ufcg.edu.br",3L);
 
 		// Assert para grupos como mesmos parametros de construcao
 		assertTrue(grupo1.equals(grupo2));
@@ -193,10 +193,33 @@ public class TchimoTests {
 
 	@Test
 	public void testaAcessarDadosTurma() {
+		Turma turmaEmTeste = new Turma("T01", "FS", "ES", 3, 10, 2);
+
+		Usuario usuario1 = new Usuario(1L, "aluno1@ccc.ufcg.edu.br", "123456", "Anne");
+		Usuario usuario2 = new Usuario(2L, "aluno2@ccc.ufcg.edu.br", "654321", "Gilmar");
+		Usuario usuario3 = new Usuario(3L, "aluno3@ccc.ufcg.edu.br", "842321", "Yally");
+		Usuario usuario4 = new Usuario(4L, "aluno4@ccc.ufcg.edu.br", "127318", "Mathias");
+
+		turmaEmTeste.addUser(usuario1);
+		turmaEmTeste.addUser(usuario2);
+		turmaEmTeste.addUser(usuario3);
+
+		assertTrue(turmaEmTeste.getIntegrantes().contains(usuario1));
+		assertTrue(turmaEmTeste.getIntegrantes().contains(usuario2));
+		assertTrue(turmaEmTeste.getIntegrantes().contains(usuario3));
+		assertFalse(turmaEmTeste.getIntegrantes().contains(usuario4));
+
 	}
 
 	@Test
 	public void testaAcessarDadosGrupo() {
+		Turma turmaAux = new Turma("T01", "FS", "ES", 3, 10, 2);
+
+		assertEquals(0, turmaAux.quantidadeGruposNaTurma());
+		turmaAux.addQGrupo();
+		turmaAux.addQGrupo();
+		turmaAux.addQGrupo();
+		assertEquals(3, turmaAux.quantidadeGruposNaTurma());
 	}
 
 	@Test
@@ -230,6 +253,7 @@ public class TchimoTests {
 
 	@Test
 	public void testaSairDeGrupo() {
+
 	}
 
 	@Test
@@ -238,10 +262,60 @@ public class TchimoTests {
 
 	@Test
 	public void testaDistribuirUsuariosEmGruposManual() {
+		Turma turmaAux = new Turma("T01", "FS", "ES", 3, 10, 2);
+
+		Usuario usuario1 = new Usuario(1L, "aluno1@ccc.ufcg.edu.br", "123456", "Anne");
+		Usuario usuario2 = new Usuario(2L, "aluno2@ccc.ufcg.edu.br", "654321", "Gilmar");
+		Usuario usuario3 = new Usuario(3L, "aluno3@ccc.ufcg.edu.br", "842321", "Yally");
+		Usuario usuario4 = new Usuario(4L, "aluno4@ccc.ufcg.edu.br", "127318", "Mathias");
+
+		turmaAux.addUser(usuario1);
+		turmaAux.addUser(usuario2);
+		turmaAux.addUser(usuario3);
+		turmaAux.addUser(usuario4);
+
+		Grupo grupo1 = new Grupo("aluno1@ccc.ufcg.edu.br",1L);
+		Grupo grupo2 = new Grupo("aluno2@ccc.ufcg.edu.br",2L);
+		Grupo grupo3 = new Grupo("aluno3@ccc.ufcg.edu.br",3L);
+
+		turmaAux.adicionaGrupo(grupo1);
+		turmaAux.adicionaGrupo(grupo2);
+		turmaAux.adicionaGrupo(grupo3);
+		assertFalse(turmaAux.retornaIntegrantesSemGrupo().contains(usuario1));
+		assertFalse(turmaAux.retornaIntegrantesSemGrupo().contains(usuario2));
+		assertFalse(turmaAux.retornaIntegrantesSemGrupo().contains(usuario3));
+		assertTrue(turmaAux.retornaIntegrantesSemGrupo().contains(usuario4));
 	}
 
 	@Test
 	public void testaDistribuirUsuariosEmGruposAutomatico() {
+		Turma turmaAux = new Turma("T01", "FS", "ES", 3, 10, 2);
+
+		Usuario usuario1 = new Usuario(1L, "aluno1@ccc.ufcg.edu.br", "123456", "Anne");
+		Usuario usuario2 = new Usuario(2L, "aluno2@ccc.ufcg.edu.br", "654321", "Gilmar");
+		Usuario usuario3 = new Usuario(3L, "aluno3@ccc.ufcg.edu.br", "842321", "Yally");
+		Usuario usuario4 = new Usuario(4L, "aluno4@ccc.ufcg.edu.br", "127318", "Mathias");
+
+		turmaAux.addUser(usuario1);
+		turmaAux.addUser(usuario2);
+		turmaAux.addUser(usuario3);
+		turmaAux.addUser(usuario4);
+
+		Grupo grupo1 = new Grupo("aluno1@ccc.ufcg.edu.br",1L);
+		Grupo grupo2 = new Grupo("aluno2@ccc.ufcg.edu.br",2L);
+		Grupo grupo3 = new Grupo("aluno3@ccc.ufcg.edu.br",3L);
+
+		boolean typeDistribuiton = true;
+		try {
+			turmaAux.alocaUsersInGroups(typeDistribuiton);
+		} catch (UserAlreadyExistException e) {
+			e.printStackTrace();
+		}
+
+		assertTrue(turmaAux.retornaIntegrantesSemGrupo().contains(usuario1));
+		assertTrue(turmaAux.retornaIntegrantesSemGrupo().contains(usuario2));
+		assertTrue(turmaAux.retornaIntegrantesSemGrupo().contains(usuario3));
+		assertTrue(turmaAux.retornaIntegrantesSemGrupo().contains(usuario4));
 	}
 }
 

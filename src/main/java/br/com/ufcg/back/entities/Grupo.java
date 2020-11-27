@@ -64,8 +64,7 @@ public class Grupo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Grupo grupo = (Grupo) o;
-        return idGroup.equals(grupo.idGroup) &&
-                emailManager.equals(grupo.emailManager) &&
+        return emailManager.equals(grupo.emailManager) &&
                 memberIDs.equals(grupo.memberIDs);
     }
 
