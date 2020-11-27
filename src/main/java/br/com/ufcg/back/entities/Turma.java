@@ -17,6 +17,7 @@ import java.util.Objects;
 
 import java.util.Random;
 
+import java.util.*;
 
 import javax.persistence.*;
 
@@ -30,17 +31,17 @@ public class Turma {
     private long endDate;
 
     @ApiModelProperty(value = "Usuario que criou a turma.")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "idUser")
     private Usuario manager;
 
     @ManyToMany(mappedBy = "membersTurma")
     private List<Usuario> integrantes = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "turma_grupos", joinColumns = {
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "turmas_grupos", joinColumns = {
             @JoinColumn(name = "turma_grupo")}, inverseJoinColumns = {
-            @JoinColumn(name = "grupo_id")})
+            @JoinColumn(name = "group_id")})
     private List<Grupo> groups = new ArrayList<>();
 
     private String formationStrategy;
@@ -184,10 +185,6 @@ public class Turma {
         throw new GroupNotFoundException("Grupo não encontrado!");
     }
 
-    private void removeGroup(Long groupID) throws GroupNotFoundException {
-        groups.remove(grupoComId(groupID));
-    }
-
     public Grupo removeUser(String email) {
 
         long idCapturado = 0L;
@@ -225,10 +222,11 @@ public class Turma {
 
         for(Grupo grupo : groups) {
 
-            if(grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted() && formationStrategy.equals("UNIFORME")) {
-                if (grupo.getIdGroup().equals(idGroup))
+            if((grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted() && formationStrategy.equals("UNIFORME")) || formationStrategy.equals("VARIAVEL")) {
+                if (grupo.getIdGroup().equals(idGroup)) {
                     grupo.addUser(usuario.getIdUser());
-
+                    return;
+                }
             }
             throw new OverflowNumberOfGroupsException("O grupo não aceita mais integrantes!");
         }
@@ -238,7 +236,7 @@ public class Turma {
 
     private Usuario getUsuarioParaAdicionar(String emailUser) throws UserAlreadyExistException {
         for(Usuario usuario : integrantes)
-            if(usuario.getEmail().equals(emailUser) && verificaSeUsuarioAlocado(usuario.getIdUser()))
+            if(usuario.getEmail().equals(emailUser) && verificaSeUsuarioAlocado(usuario.getIdUser(),usuario.getEmail()))
                 return usuario;
         throw new UserAlreadyExistException("O usuário já pertence a um grupo.");
     }
@@ -248,7 +246,7 @@ public class Turma {
 
         grupo.removeUser(idUser);
         if (grupo.amountOfMembers() == 0 || grupo.getEmailManager().equals(emailUser))
-            removeGroup(groupID);
+            removeGrupo(groupID);
     }
 
     public void removeGrupo(Long idGroup) {
@@ -260,12 +258,12 @@ public class Turma {
             }
     }
 
-    public boolean verificaSeUsuarioAlocado(long idUser) {
+    public boolean verificaSeUsuarioAlocado(long idUser, String emailUser) {
 
         for(Grupo grupo : groups)
-            if(grupo.usuarioParticipa(idUser) || grupo.getEmailManager().equals(manager.getEmail()))
-                return true;
-        return false;
+            if(grupo.usuarioParticipa(idUser) || grupo.getEmailManager().equals(emailUser))
+                return false;
+        return true;
     }
 
     public boolean verificaGrupo(long idUser) {
@@ -299,7 +297,7 @@ public class Turma {
     public List<Usuario> retornaIntegrantesSemGrupo() {
         ArrayList<Usuario> integrantesSemGrupo = new ArrayList<>();
         for(Usuario usuario : integrantes)
-            if(!verificaSeUsuarioAlocado(usuario.getIdUser()))
+            if(verificaSeUsuarioAlocado(usuario.getIdUser(), usuario.getEmail()))
                 integrantesSemGrupo.add(usuario);
         return integrantesSemGrupo;
     }
@@ -307,31 +305,30 @@ public class Turma {
     public void alocaUsersInGroups(boolean typeDistribuiton) throws UserAlreadyExistException {
 
         ArrayList<Usuario> integrantesSemGrupo = new ArrayList<>();
-        for(Usuario usuario : integrantes)
-            if(!verificaSeUsuarioAlocado(usuario.getIdUser())) {
+        for(Usuario usuario : integrantes) {
+            if(verificaSeUsuarioAlocado(usuario.getIdUser(), usuario.getEmail())) {
                 integrantesSemGrupo.add(usuario);
             }
+        }
 
-        int[] sorteio = new int[integrantesSemGrupo.size()];
-        for(int i = 0; i < sorteio.length; i++)
-            sorteio[i] = new Random().nextInt(integrantesSemGrupo.size());
+        Collections.shuffle(integrantesSemGrupo); 
 
         if(typeDistribuiton) {
             int index = 0;
             for (Grupo grupo : groups) {
                 while (grupo.getNumberOfMembers() < grupo.getNumberFoMembersPermitted()) {
-                    grupo.addUser(integrantesSemGrupo.get(sorteio[index]).getIdUser());
+                    grupo.addUser(integrantesSemGrupo.get(index).getIdUser());
                     index += 1;
                 }
             }
         }
         else {
             int index = 0;
-            for(int i = 0; i < sorteio.length; i++) {
+            for(int i = 0; i < integrantesSemGrupo.size(); i++) {
                 if(index >= groups.size())
                     index = 0;
 
-                groups.get(index).addUser(integrantesSemGrupo.get(sorteio[index]).getIdUser());
+                groups.get(index).addUser(integrantesSemGrupo.get(i).getIdUser());
                 index += 1;
             }
         }
@@ -340,7 +337,7 @@ public class Turma {
     public boolean verificaSeGruposConsistem() throws UserNotFoundException {
         for(Grupo grupo : groups) {
             if(grupo.getNumberFoMembersPermitted() < grupo.getNumberOfMembers()) {
-                grupo.removeUser(grupo.getMemberIDs().get(1));
+                grupo.removeUser(grupo.getMemberIDs().get((grupo.getMemberIDs().size() - 1)));
                 return false;
             }
         }

@@ -137,12 +137,12 @@ public class TurmasService {
             if(turma.get().getLocked())
                 throw new TurmaLockedException("Um grupo não pode ser criado em uma turma trancada.");
 
-            if(turma.get().verificaSeUsuarioJaPertece(emailUser) && !turma.get().verificaSeUsuarioAlocado(usuario.get().getIdUser())) {
+            if(turma.get().verificaSeUsuarioJaPertece(emailUser) && turma.get().verificaSeUsuarioAlocado(usuario.get().getIdUser(),usuario.get().getEmail())) {
 
                 int quantidadeDegrupos = turma.get().quantidadeGruposNaTurma();
                 if(quantidadeDegrupos < turma.get().getQuantityOfGroups()) {
 
-                    Grupo grupo = gruposDAO.save(new Grupo((quantidadeDegrupos + 1),emailUser,usuario.get().getIdUser()));
+                    Grupo grupo = gruposDAO.save(new Grupo(emailUser,usuario.get().getIdUser()));
                     turma.get().adicionaGrupo(grupo);
                     turma.get().addQGrupo();
                     configureGroups(turma.get());
@@ -198,7 +198,7 @@ public class TurmasService {
         for(Usuario usuario: turma.getIntegrantes()) {
 
             turmaDTO.addIntegrante(new UsuarioDTO(usuario.getIdUser(), usuario.getName()));
-            if(!turma.verificaSeUsuarioAlocado(usuario.getIdUser()))
+            if(turma.verificaSeUsuarioAlocado(usuario.getIdUser(),usuario.getEmail()))
                 turmaDTO.addIntegranteSemGrupo(new UsuarioDTO(usuario.getIdUser(), usuario.getName()));
         }
     }
@@ -366,6 +366,8 @@ public class TurmasService {
     }
 
     public String processaEntradaGrupo(Notification notification, Response resposta, Usuario usuario) throws UserException, GroupException, TurmaException {
+        Optional<Usuario> usuarioTarget = usuariosDAO.findById(notification.getTargetUser());
+
         if(notification.getId_user().equals(usuario.getIdUser())) {
             if(resposta.isProcedure()) {
 
@@ -502,18 +504,24 @@ public class TurmasService {
     private void alocaUserInGroups(Turma turma) throws UserAlreadyExistException, UserNotFoundException {
 
         boolean typeDistribution = false;
+        List<Usuario> integrantesSemGrupo = turma.retornaIntegrantesSemGrupo();
+
         if(turma.getFormationStrategy().equals("UNIFORME")) {
 
             typeDistribution = true;
-            List<Usuario> integrantesSemGrupo = turma.retornaIntegrantesSemGrupo();
             while (turma.quantidadeGruposNaTurma() < turma.getQuantityOfGroups()) {
-                turma.adicionaGrupo(new Grupo(turma.quantidadeGruposNaTurma() + 1, integrantesSemGrupo.get(0).getEmail(), integrantesSemGrupo.get(0).getIdUser()));
+                turma.adicionaGrupo(new Grupo(integrantesSemGrupo.get(0).getEmail(), integrantesSemGrupo.get(0).getIdUser()));
                 turma.addQGrupo();
                 integrantesSemGrupo.remove(0);
                 configureGroups(turma);
             }
         }
 
+        if(turma.getFormationStrategy().equals("VARIAVEL") && turma.getGroups().size() <= 0) {
+            turma.adicionaGrupo(new Grupo(integrantesSemGrupo.get(0).getEmail(), integrantesSemGrupo.get(0).getIdUser()));
+            turma.addQGrupo();
+            integrantesSemGrupo.remove(0);
+        }
         turma.alocaUsersInGroups(typeDistribution);
         turmasDAO.save(turma);
     }
