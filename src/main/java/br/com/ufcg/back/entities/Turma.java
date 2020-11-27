@@ -344,7 +344,7 @@ public class Turma {
                 if(index >= groups.size())
                     index = 0;
 
-                groups.get(index).addUser(integrantesSemGrupo.get(index).getIdUser());
+                groups.get(index).addUser(integrantesSemGrupo.get(i).getIdUser());
                 index += 1;
             }
         }
