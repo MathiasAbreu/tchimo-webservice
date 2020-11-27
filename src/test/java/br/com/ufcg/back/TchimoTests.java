@@ -253,11 +253,25 @@ public class TchimoTests {
 
 	@Test
 	public void testaSairDeGrupo() {
+		Turma turmaAux = new Turma("T01", "FS", "ES", 3, 10, 2);
 
-	}
+		Grupo grupo1 = new Grupo("aluno1@ccc.ufcg.edu.br",1L);
+		Grupo grupo2 = new Grupo("aluno2@ccc.ufcg.edu.br",2L);
+		Grupo grupo3 = new Grupo("aluno3@ccc.ufcg.edu.br",3L);
 
-	@Test
-	public void testaJuntarGrupos() {
+		turmaAux.adicionaGrupo(grupo1);
+		turmaAux.adicionaGrupo(grupo2);
+		turmaAux.adicionaGrupo(grupo3);
+
+		turmaAux.addQGrupo();
+		turmaAux.addQGrupo();
+		turmaAux.addQGrupo();
+
+		turmaAux.removeGrupo(grupo1.getIdGroup());
+		assertEquals(2, turmaAux.quantidadeGruposNaTurma());
+		turmaAux.removeGrupo(grupo2.getIdGroup());
+		turmaAux.removeGrupo(grupo3.getIdGroup());
+		assertEquals(0, turmaAux.quantidadeGruposNaTurma());
 	}
 
 	@Test
@@ -294,16 +308,18 @@ public class TchimoTests {
 		Usuario usuario1 = new Usuario(1L, "aluno1@ccc.ufcg.edu.br", "123456", "Anne");
 		Usuario usuario2 = new Usuario(2L, "aluno2@ccc.ufcg.edu.br", "654321", "Gilmar");
 		Usuario usuario3 = new Usuario(3L, "aluno3@ccc.ufcg.edu.br", "842321", "Yally");
-		Usuario usuario4 = new Usuario(4L, "aluno4@ccc.ufcg.edu.br", "127318", "Mathias");
 
 		turmaAux.addUser(usuario1);
 		turmaAux.addUser(usuario2);
 		turmaAux.addUser(usuario3);
-		turmaAux.addUser(usuario4);
 
 		Grupo grupo1 = new Grupo("aluno1@ccc.ufcg.edu.br",1L);
 		Grupo grupo2 = new Grupo("aluno2@ccc.ufcg.edu.br",2L);
 		Grupo grupo3 = new Grupo("aluno3@ccc.ufcg.edu.br",3L);
+
+		turmaAux.adicionaGrupo(grupo1);
+		turmaAux.adicionaGrupo(grupo2);
+		turmaAux.adicionaGrupo(grupo3);
 
 		boolean typeDistribuiton = true;
 		try {
@@ -312,10 +328,9 @@ public class TchimoTests {
 			e.printStackTrace();
 		}
 
-		assertTrue(turmaAux.retornaIntegrantesSemGrupo().contains(usuario1));
-		assertTrue(turmaAux.retornaIntegrantesSemGrupo().contains(usuario2));
-		assertTrue(turmaAux.retornaIntegrantesSemGrupo().contains(usuario3));
-		assertTrue(turmaAux.retornaIntegrantesSemGrupo().contains(usuario4));
+		assertFalse(turmaAux.retornaIntegrantesSemGrupo().contains(usuario1));
+		assertFalse(turmaAux.retornaIntegrantesSemGrupo().contains(usuario2));
+		assertFalse(turmaAux.retornaIntegrantesSemGrupo().contains(usuario3));
 	}
 }
 
