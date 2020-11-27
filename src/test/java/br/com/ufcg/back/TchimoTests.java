@@ -3,7 +3,7 @@ package br.com.ufcg.back;
 import br.com.ufcg.back.entities.Usuario;
 import br.com.ufcg.back.entities.Turma;
 import br.com.ufcg.back.entities.Grupo;
-import br.com.ufcg.back.entities.Notifications;
+import br.com.ufcg.back.entities.Notification;
 import br.com.ufcg.back.exceptions.grupo.GroupNotFoundException;
 import br.com.ufcg.back.exceptions.user.UserAlreadyExistException;
 import br.com.ufcg.back.exceptions.user.UserNotFoundException;
@@ -117,16 +117,17 @@ public class TchimoTests {
 		assertEquals(3, grupoEmTeste.amountOfMembers());
 	}
 
-/**	@Test
+	@Test
 	public void testaAtributosDasNotificacoes() {
+		/**
 		//Assert para objeto vazio
 		Notifications notificacoesNulo = new Notifications();
 		assertEquals(null, 	notificacoesNulo.getId());
 		assertEquals(null, 	notificacoesNulo.getId_user());
 		assertEquals(null, 	notificacoesNulo.getId_turma());
-		assertEquals(null, 	notificacoesNulo.getCreationDate());
+		assertEquals(null, 	notificacoesNulo.getCreationDate());**/
 
-	}**/
+	}
 
 	@Test
 	public void testaCadastrarUsuario() {
@@ -240,7 +241,7 @@ public class TchimoTests {
 	}
 
 	@Test
-	public void testaDistribuirUsuariosEmGruposTimer() {
+	public void testaDistribuirUsuariosEmGruposAutomatico() {
 	}
 }
 
