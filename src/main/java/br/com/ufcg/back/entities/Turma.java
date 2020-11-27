@@ -318,15 +318,6 @@ public class Turma {
             }
         }
 
-        // int[] sorteio = new int[integrantesSemGrupo.size()];
-        // for(int i = 0; i < sorteio.length; i++) {
-        //     int number = new Random().nextInt(integrantesSemGrupo.size());
-        //     while(numeroPertence(sorteio,number))
-        //         number = new Random().nextInt(integrantesSemGrupo.size());
-
-        //     sorteio[i] = number;
-        // }
-
         Collections.shuffle(integrantesSemGrupo); 
 
         if(typeDistribuiton) {
@@ -344,7 +335,7 @@ public class Turma {
                 if(index >= groups.size())
                     index = 0;
 
-                groups.get(index).addUser(integrantesSemGrupo.get(index).getIdUser());
+                groups.get(index).addUser(integrantesSemGrupo.get(i).getIdUser());
                 index += 1;
             }
         }
