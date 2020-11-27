@@ -17,6 +17,7 @@ import java.util.Objects;
 
 import java.util.Random;
 
+import java.util.*;
 
 import javax.persistence.*;
 
@@ -326,7 +327,7 @@ public class Turma {
         //     sorteio[i] = number;
         // }
 
-        integrantesSemGrupo.shuffle();
+        Collections.shuffle(integrantesSemGrupo); 
 
         if(typeDistribuiton) {
             int index = 0;
