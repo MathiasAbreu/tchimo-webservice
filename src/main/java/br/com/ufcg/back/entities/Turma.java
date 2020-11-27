@@ -302,13 +302,6 @@ public class Turma {
         return integrantesSemGrupo;
     }
 
-    private boolean numeroPertence(int[] numeros, int numero) {
-        for(int num : numeros)
-            if(num == numero)
-                return true;
-        return false;
-    }
-
     public void alocaUsersInGroups(boolean typeDistribuiton) throws UserAlreadyExistException {
 
         ArrayList<Usuario> integrantesSemGrupo = new ArrayList<>();
