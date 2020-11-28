@@ -253,11 +253,16 @@ public class TchimoTests {
 
 	@Test
 	public void testaSairDeGrupo() {
+
 		Turma turmaAux = new Turma("T01", "FS", "ES", 3, 10, 2);
 
 		Grupo grupo1 = new Grupo("aluno1@ccc.ufcg.edu.br",1L);
 		Grupo grupo2 = new Grupo("aluno2@ccc.ufcg.edu.br",2L);
 		Grupo grupo3 = new Grupo("aluno3@ccc.ufcg.edu.br",3L);
+
+		grupo1.setIdGroup(1L);
+		grupo2.setIdGroup(2L);
+		grupo3.setIdGroup(3L);
 
 		turmaAux.adicionaGrupo(grupo1);
 		turmaAux.adicionaGrupo(grupo2);

@@ -51,6 +51,10 @@ public class Grupo {
         return idGroup;
     }
 
+    public void setIdGroup(Long idGroup) {
+        this.idGroup = idGroup;
+    }
+
     public int amountOfMembers(){
         return memberIDs.size();
     }
